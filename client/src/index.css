@@ -1,0 +1,15 @@
+*{
+  margin: 0px;
+  padding: 0px;
+}
+.app{
+  min-width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-box{
+  width: 450px;
+  max-width: 95%;
+}
