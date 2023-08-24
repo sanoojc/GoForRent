@@ -1,0 +1,44 @@
+.login-container{
+    background-image: url("../../../../public/pexels-moose-photos-1037995.jpg");
+    background-size: cover;
+    background-position: center;
+    width: 100%; 
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+}
+.login-box{
+    padding: 20px;
+    width: 300px;
+    background:rgba(222, 219, 219, 0.812);
+    border-radius: 8px;
+}
+.login-btn-container{
+    width: 230px;
+    gap: 10px;
+    padding-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.vehicles{
+    gap: 20px;
+    display: flex;
+}
+.vehicle-card{
+    width: 200px;
+    height: 300px;
+    border: 1px solid black;
+    border-radius: 8px;
+}
+input{
+    color: black;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

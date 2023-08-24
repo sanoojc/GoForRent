@@ -1,10 +1,21 @@
 import express from 'express'
-import { Router } from 'express-router'
-
+import cors from 'cors'
+import 'dotenv/config'
+import userRouter from './Routes/userRouter.js'
+import connectDB from './Config/dbConnect.js'
+import adminRouter from './Routes/adminRouter.js'
+import bodyParser from 'body-parser'
 const app=express()
+app.use(express.urlencoded({extended:true}))
 app.use(express.json())
+app.use(cors({
+    origin:['http://localhost:3000'],
+    credentials:true
+}))
+connectDB()
 
-
+app.use('/',userRouter)
+app.use('/admin',adminRouter)
 app.listen(8000,()=>{
     console.log('server connected')
 })
