@@ -1,95 +1,234 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import './Signup.css'
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { SignupValidationSchema } from '../../../Validations/SignupValidation';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { sentOtp, signup } from '../../../Api/UserApi';
-import Swal from 'sweetalert2'
+import { resendOtp, sentOtp, signup } from '../../../Api/UserApi';
+import { Box, Button, Modal, TextField, Typography } from '@mui/material';
+import { Toaster, toast } from 'react-hot-toast'
 
 function Signup() {
+
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(SignupValidationSchema),
   });
+  
   const navigate = useNavigate();
-  const onSubmit =async (details) => {
-    let {data}= await signup(details) 
-      if(data.error){
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: data.message
-        })
-    }else{
-      Swal.fire({
-        title: 'Enter OTP',
-        input: 'text',
-        showCancelButton: true,
-        confirmButtonText: 'Verify',
-        cancelButtonText: 'Cancel',
-        preConfirm: async (inputOtp) => {
-          if (!inputOtp) {
-            Swal.showValidationMessage('OTP is required');
-          } else {
-            try {
-              const {data} = await sentOtp(inputOtp, details);
-              console.log(data,'........')
-              if(data.error){
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: data.message
-                })
-              }else{
-                navigate('/login')
-              }
-            } catch (error) {
-              console.error('Error sending OTP:', error);
-              Swal.showValidationMessage('Error sending OTP');
-            }
-          }
-        }
-      });
-    }
+  const [countdown, setCountdown] = useState(5);
+  const [resend, setResend] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleClose = () => setOpen(false);
+  const [showModal, setShowModal] = useState(false)
+  const [otp,setOtp]=useState('')
+  const [email,setEmail]=useState({})
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
   };
 
+  useEffect(() => {
+    let intervalId;
+    if (countdown > 0 && resend) {
+      intervalId = setInterval(() => {
+        setCountdown((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else {
+      clearInterval(intervalId);
+      setResend(false)
+    }
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [countdown, resend]);
+
+const handleOtp=(e)=>setOtp(e.target.value)
+
+// async function handleOtpRequest(){
+//   try {
+//             const {data}=await sentOtp(otp, details);
+//             if (data.error) {
+//               Swal.showValidationMessage(data.message);
+//             } else {
+//               navigate('/login')
+//             }
+//           } catch (error) {
+//             console.error('Error sending OTP:', error);
+//             Swal.showValidationMessage('Error sending OTP');
+//           }
+// }
+
+  const onSubmit = async (details) => {
+    let { data } = await signup(details)
+    if(data.error){
+      toast.error(data.message)
+    }else{
+      setOpen(true)
+      setEmail({email:details.email})
+      console.log(email)
+      toast.success('OTP has been sent');
+      setShowModal(true)
+      setResend(true)
+      // Swal.fire({
+      //   title: 'Enter OTP',
+      //   input: 'text',
+      //   text: `Resend in ${countdown} seconds`,
+      //   showCancelButton: true,
+      //   confirmButtonText: 'Verify',
+      //   cancelButtonText: 'Cancel',
+      //   preConfirm: async (inputOtp) => {
+      //     if (!inputOtp) {
+      //       Swal.showValidationMessage('OTP is required');
+      //     } else {
+      //       try {
+      //         const {data}=await sentOtp(inputOtp, details);
+      //         if (data.error) {
+      //           Swal.showValidationMessage(data.message);
+      //         } else {
+      //           navigate('/login')
+      //         }
+      //       } catch (error) {
+      //         console.error('Error sending OTP:', error);
+      //         Swal.showValidationMessage('Error sending OTP');
+      //       }
+      //     }
+      //   }
+      // });
+    }
+  };
+  const resendOTP=async ()=>{
+    let {data}=await resendOtp(email)
+    if(data.error){
+      toast.error(data.message)
+    }else{
+      toast.success(data.message)
+      setCountdown(5)
+      setResend(!resend)
+    }
+  }
+  const verifyOtp=async ()=>{
+    console.log(otp,'otppppppp')
+    const {data}=await sentOtp(otp)
+    if(data.error){
+      toast.error(data.message)
+    }else{
+      toast.success(data.message)
+      navigate('/login')
+    }
+  }
+
   return (
-    <div className="login-container">
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="login-box">
-        <div className="login-input-box">
-          <div>
-            <p>Name</p>
-            <input style={{ border: '0', borderRadius: '5px' }} type="text" {...register("name")} placeholder='Name' />
-            {errors.name && <p className='text-danger'>{errors.name.message}</p>}
-          </div>
-          <div>
-            <p>Email</p>
-            <input style={{ border: '0', borderRadius: '5px' }} type="text" {...register("email")} placeholder='Email' />
-            {errors.email && <p className='text-danger'>{errors.email.message}</p>}
-          </div>
-          <div>
-            <p>Phone no </p>
-            <input style={{ border: '0', borderRadius: '5px' }} type="text" {...register("number")} placeholder='Phone no' />
-            {errors.number && <p className='text-danger'>{errors.number.message}</p>}
-          </div>
-          <div> 
-            <p>Password</p>
-            <input style={{ border: '0', borderRadius: '5px' }} type="password" {...register("password")} placeholder='Password' />
-            {errors.password && <p className='text-danger'>{errors.password.message}</p>}
-          </div>
-          <div>
-            <p>Confirm password</p>
-            <input style={{ border: '0', borderRadius: '5px' }} type="password" {...register("confirmPassword")} placeholder='confirm' />
-            {errors.confirmPassword && <p className='text-danger'>{errors.confirmPassword.message}</p>}
-          </div>
-          {/* Repeat similar code for other input fields */}
+    <>
+      {
+        showModal &&
+        <div>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description">
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Enter OTP
+              </Typography>
+              <Typography>Resend in {countdown} seconds</Typography>
+              <div className="" style={{paddingBottom:'10px'}}>
+              <TextField
+                size='small'
+                type='text'
+                name='otp'
+                value={otp}
+                onChange={handleOtp}
+                />
+                {
+                  countdown>0?
+                  <Button variant="contained" disabled
+                   >Resend OTP</Button>:<Button onClick={resendOTP}  variant="contained" 
+                   >Resend OTP</Button>
+                }
+              </div>
+                <Button variant="contained" onClick={verifyOtp}>Verify OTP</Button>
+                <Button variant="contained" >Cancel</Button>
+            </Box>
+          </Modal>
         </div>
-        <div className="login-btn-container">
-          <button type="submit">Sign Up</button>
-          <p>Already have an account? <Link to='/login'>Sign In</Link></p>
-        </div>
-      </form>
-    </div>
+      }
+      <Toaster />
+      <div className="login-container">
+        <h1>Sign Up</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="login-box">
+          <div className="signup-input-box" style={{ gap: '20px' }}>
+            <div>
+              <TextField
+                required
+                size='small'
+                type='text'
+                id="outlined-required"
+                label="Name"
+                {...register('name')}
+              />
+              {errors.name && <p className='text-danger'>{errors.name.message}</p>}
+            </div>
+            <div>
+              <TextField
+                required
+                size='small'
+                type='text'
+                id="outlined-required"
+                label="Email"
+                {...register('email')}
+              />
+              {errors.email && <p className='text-danger'>{errors.email.message}</p>}
+            </div>
+            <div>
+              <TextField
+                required
+                size='small'
+                type='number'
+                id="outlined-required"
+                label="Phone no"
+                {...register('number')}
+              />
+              {errors.number && <p className='text-danger'>{errors.number.message}</p>}
+            </div>
+            <div>
+              <TextField
+                required
+                size='small'
+                type='password'
+                id="outlined-required"
+                label="Password"
+                {...register('password')}
+              />
+              {errors.password && <p className='text-danger'>{errors.password.message}</p>}
+            </div>
+            <div>
+              <TextField
+                required
+                size='small'
+                type='password'
+                id="outlined-required"
+                label="Confirm"
+                {...register('confirmPassword')}
+              />
+              {errors.confirmPassword && <p className='text-danger'>{errors.confirmPassword.message}</p>}
+            </div>
+          </div>
+          <div className="signup-btn-container">
+            <Button variant="contained" type='submit'>Sign up</Button>
+            <p>Have an account ?<Link to='/login'> Sign In</Link></p>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
 

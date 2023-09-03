@@ -4,6 +4,15 @@ const userSchema=mongoose.Schema({
         type:String,
         require:true
     },
+    googleId : {
+        type : String ,
+        allowNull : true
+      },
+  
+      loginWithGoogle : {
+        type : Boolean ,
+        default : false 
+      },
     email:{
         type:String,
         require:true

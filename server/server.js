@@ -5,9 +5,13 @@ import userRouter from './Routes/userRouter.js'
 import connectDB from './Config/dbConnect.js'
 import adminRouter from './Routes/adminRouter.js'
 import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import path from 'path'
 const app=express()
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
+app.use(cookieParser());
+app.use(express.static(path.resolve() + "/public"))
 app.use(cors({
     origin:['http://localhost:3000'],
     credentials:true

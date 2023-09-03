@@ -1,36 +1,63 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import'../../User/Login/Login.css'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { loginValidationSchema } from '../../../Validations/LoginValidation'
+import { adminLogin } from '../../../Api/AdminApi'
+import Swal from 'sweetalert2'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import {Toaster,toast} from 'react-hot-toast'
 
 function Login() {
-    const [name,addName]=useState('')
-    const [email,addEmail]=useState('')
-    const [password,addPassword]=useState('')
-    function setName(e){
-        addName(e.target.value)
-    }
-    function setEmail(e){
-        addEmail(e.target.value)
-    }
-    function setPassword(e){
-        addPassword(e.target.value)
-    }
-    async function add(e){
-        e.preventDefault()
-        let {data}=await axios.post('/admin/login ',{name,email,password})
+    const dispatch=useDispatch()
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(loginValidationSchema)
+    })
+    const submit = async (details) => {
+        let {data}=await adminLogin(details)
+        console.log(data,'admin')
         if(data.error){
-            console.log(data.message)
-        }else{
-            console.log('success')
+            // Swal.fire({
+            //     icon: 'error',
+            //     title: 'Oops...',
+            //     text: data.message
+            //   })
+            toast.error(data.message)
         }
-    }
-  return (
-    <div>
-        <input type="text" onChange={setName} placeholder='name' value={name}  />
-        <input type="email" onChange={setEmail}  placeholder='email' value={email} />
-        <input type="text" onChange={setPassword} placeholder='password' value={password}/>
-        <button onClick={add}>submit</button>
-    </div>
-  )
+        else{
+          dispatch({type:'refresh'})
+        }
+   }
+
+    return (
+      <>
+    
+      <Toaster/>
+        <div className="login-container">
+        <form onSubmit={handleSubmit(submit)} className="login-box">
+          <div className="login-input-box">
+            <>
+              <p>email</p>
+              <input  style={{ border: '0', borderRadius: '5px' }} type="email" {...register("email")} placeholder='Email' />
+              {errors.email && <p className='text-danger'>{errors.email.message}</p>}
+            </>
+            <>
+              <p>password</p>
+              <>
+                <input  style={{border: '0', borderRadius: '5px'  }} type='password' {...register("password")} placeholder='Password' />
+                {errors.password && <p className='text-danger'>{errors.password.message}</p>}
+              </>
+            </>
+          </div>
+          <div className="login-btn-container">
+            <button className=''style={{border:'1px solid',padding:'5px',borderRadius:'5px'}}>login</button>
+          </div>
+        </form>
+  
+      </div>
+      </>
+    )
 }
 
 export default Login

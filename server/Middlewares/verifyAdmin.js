@@ -7,7 +7,9 @@ const verifyAdmin=async (req,res,next)=>{
         if(!token){
             return res.json({error:true,login:false,message:'no token found'})
         }
-        const verifiedJWT=jwt.verify(token,process.env.jwt_key)
+        const verifiedJWT=jwt.verify(token,process.env.jwt_key).then((response)=>{
+            console.log(response);
+        })
         const admin=await adminModel.findById(verifiedJWT.id,{password:0})
         if(!admin){
             return res.json({error:true,login:false,message:"admin not found"})

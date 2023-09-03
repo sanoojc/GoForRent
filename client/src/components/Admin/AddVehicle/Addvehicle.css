@@ -1,0 +1,19 @@
+
+.add-vehice-form{
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+}
+.add-vehice-innerformbox{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.add-vehicle-form{
+    border: 1px solid;
+    border-radius: 5px;
+    padding: 20px;
+}
+.text-danger{
+    color: red;
+}
