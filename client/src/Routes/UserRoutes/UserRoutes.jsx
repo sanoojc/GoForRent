@@ -8,7 +8,7 @@ import { authenticate } from '../../Api/UserApi'
 
 
 function UserRoutes() {
-  const {user, refresh}= useSelector((state) => {
+  const {user,refresh}= useSelector((state) => {
     return state;
   });
   const dispatch = useDispatch()

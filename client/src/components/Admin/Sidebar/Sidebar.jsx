@@ -1,3 +1,4 @@
+import '../Sidebar/Sidebar.css'
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -23,9 +24,14 @@ import DirectionsCarOutlinedIcon from '@mui/icons-material/DirectionsCarOutlined
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import DeviceHubOutlinedIcon from '@mui/icons-material/DeviceHubOutlined';
 import ControlPointDuplicateOutlinedIcon from '@mui/icons-material/ControlPointDuplicateOutlined';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
+import { useEffect } from 'react';
 
 const drawerWidth = 240;
+
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -93,8 +99,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function MiniDrawer() {
+    const dispatch=useDispatch()
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+const navigate=useNavigate()
+
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -103,12 +112,29 @@ export default function MiniDrawer() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
+    const handleLogout=()=>{
+        Swal.fire({
+            title: 'Are you sure?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes'
+          }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem('adminToken')
+                dispatch({type:'refresh'})
+            }
+          })
+    }
+    
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <AppBar position="fixed" open={open}>
                 <Toolbar>
+                    <div className="admin-header">
+                    <div className="" style={{display:'flex'}}>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
@@ -124,6 +150,9 @@ export default function MiniDrawer() {
                     <Typography variant="h6" noWrap component="div">
                         GoForRent
                     </Typography>
+                    </div>
+                    <Button onClick={handleLogout} variant='outlined' color='inherit' >Logout</Button>
+                    </div>
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={open}>

@@ -7,90 +7,69 @@ import { useForm } from 'react-hook-form';
 import { VehicleValidationSchema } from '../../../Validations/VehicleAddValidation';
 import { Button, TextField } from '@mui/material';
 import { addvehicle } from '../../../Api/AdminApi';
-import {Toaster, toast} from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom';
 
-
-
 function AddVehicle() {
-   const presetKey = process.env.REACT_APP_Preset_KEY;
+  const presetKey = process.env.REACT_APP_Preset_KEY;
   const cloudName = process.env.REACT_APP_Cloud_Name;
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(VehicleValidationSchema),
   });
-  const navigate=useNavigate()
-  const [image, setImage] = useState([])
+  const navigate = useNavigate()
+  const [images, setImages] = useState([])
   async function handleImageUpload(e) {
     const files = e.target.files
-    const uploadPromises=[]
-    for(const file of files){
+    const uploadPromises = []
+    for (const file of files) {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("upload_preset",presetKey);
-      formData.append("cloud_name",cloudName);
-      const uploadPromise=axios.post(
+      formData.append("upload_preset", presetKey);
+      formData.append("cloud_name", cloudName);
+      const uploadPromise = axios.post(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data"
-          },withCredentials: false,})
-          uploadPromises.push(uploadPromise)
+          }, withCredentials: false,
+        })
+      uploadPromises.push(uploadPromise)
     }
-    try{
-      const response=await Promise.all(uploadPromises)
-      const secureUrls=response.map((res)=>res.data.secure_url)
-      setImage(...secureUrls)
-    }catch(err){
+    try {
+      const response = await Promise.all(uploadPromises)
+      const secureUrls = response.map((res) => res.data.secure_url)
+      setImages([...secureUrls])
+    } catch (err) {
       console.log(err)
     }
-
-
+  }
+  const onSubmit = async (details) => {
+    const datas = {
+      details, images: images
     }
-  const onSubmit=async(details)=>{
-    console.log('hi............')
-    let {data}=await addvehicle(details,image)
-    if(data.error){
+    let { data } = await addvehicle(datas)
+    if (data.error) {
       toast.error(data.message)
-    }else{
+    } else {
       toast.success(data.message)
       navigate('/admin/vehicles')
     }
   }
 
-  //  async function fileToBase64(files){
-  //   let data
-  //   const reader=new FileReader()
-  //    reader.readAsDataURL(files)
-  //    return new Promise((resolve,reject)=>{
-  //       reader.onloadend=()=>{resolve(reader.result)}
-  //       reader.onerror = (error) => {
-  //         reject(error);
-  //       };
-  //    })
-  //   .then(data => {
-  //     console.log(data) 
-  //     setImage([...image,data])
-  //   })
-  //   .catch(error => {
-  //     console.error("Error reading file:", error);
-  //   });
-  //  }
   return (
     <>
-  <Toaster/>
-    <div className='add-vehicle-container'>
-      <Sidebar />
-      <div className="add-vehicle-form" style={{ marginLeft: '5rem' }}>
-        <form onSubmit={handleSubmit(onSubmit)} >
-          <label>
-            Name:
-            <input type="file" accept='image/*' multiple onChange={handleImageUpload} />
-            {/* {
-              image.map((img) => {
-                return (<img src={img} />)
-              })
-            } */}
+      <Toaster />
+      <div className='add-vehicle-container'>
+        <Sidebar />
+        <div className="add-vehicle-form" style={{ marginLeft: '5rem' }}>
+          <form onSubmit={handleSubmit(onSubmit)} >
+            <label>
+              <div className="">
+                Name:
+                <input type="file" accept='image/*' multiple onChange={handleImageUpload} />
+              </div>
+            </label>
             <div className="add-vehice-form">
               <div className="add-vehice-innerformbox" >
                 <div>
@@ -117,8 +96,8 @@ function AddVehicle() {
                 </div>
                 <div>
                   <p>Class of vehicle</p>
-                  <TextField required size='small' type='string' id="outlined-required" label="eg: premium" {...register('class')} />
-                  {errors.class && <p className='text-danger'>{errors.class.message}</p>}
+                  <TextField required size='small' type='string' id="outlined-required" label="eg: premium" {...register('classOfVehicle')} />
+                  {errors.classOfVehicle && <p className='text-danger'>{errors.classOfVehicle.message}</p>}
                 </div>
                 <div>
                   <p>Body type</p>
@@ -149,17 +128,13 @@ function AddVehicle() {
                   <TextField required size='small' type='number' id="outlined-required" label="rent per day"{...register('rent')} />
                   {errors.rent && <p className='text-danger'>{errors.rent.message}</p>}
                 </div>
-                <div>
-                  <TextField  size='small' type='file' id="outlined-required" />
-                 
-                </div>
               </div>
             </div>
-          </label>
-              <Button variant='contained' type='submit'  >ADD</Button>
-        </form>
+
+            <Button variant='contained' type='submit'>ADD</Button>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   )
 }

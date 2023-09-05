@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { loginValidationSchema } from '../../../Validations/LoginValidation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { login } from '../../../Api/UserApi';
+import { login, loginWithGoogle } from '../../../Api/UserApi';
 import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners'
 import TextField from '@mui/material/TextField'
@@ -38,48 +38,55 @@ function Login() {
   const [loading, setLoading] = useState({ submit: false })
   const submit = async (details) => {
     setLoading({ ...loading, submit: true })
-    let { data } = await login(details)
-    if (data.error) {
-     toast.error(data.message)
-    } else {
-      navigate('/')
-      dispatch({ type: 'refresh' })
-    }
-    setLoading({ ...loading, submit: false })
+    login(details).then((res)=>{
+      if (res.data.error) {
+       toast.error(res.data.message)
+      } else {
+        localStorage.setItem('userToken',res.data.token)
+        dispatch({type:'user',payload:res.data.user})
+        navigate('/')
+        dispatch({ type: 'refresh' })
+      }
+      setLoading({ ...loading, submit: false })
+
+    }).catch((err)=>{
+      console.log(err);
+      toast.error("error: ",err )
+    })
   }
   
-  // const googleLogin = useGoogleLogin({
-  //   onSuccess: (codeResponse) => {
-  //       try {
-  //           loginWithGoogle(codeResponse)
-  //           .then((response) => {
-           
-  //               if (!response.data.user.status) {
-  //                 generateError("Sorry You are banned")
-  //                   // navigate('/account/suspended');
-  //               }else{
-  //                   localStorage.setItem('JwtToken', response.data.token);
-  //                   dispatch(
-  //                       setUserDetails({
-  //                           name: response.data.user.firstName,
-  //                           id: response.data.user._id,
-  //                           email: response.data.user.email,
-  //                           image: response.data.user.picture,
-  //                           token: response.data.token,
-  //                       })
-  //                   );
-  //                   navigate("/");
-  //               }
-  //           }).catch((err) => {
-  //               generateError("Something went wrong please reload the page") })
-  //       } catch (err) {
-  //           generateError("Something went wrong please reload the page")
-  //       }
-  //   },
-  //   onError: (error) => {
-  //       generateError("Login Failed")
-  //   }
-  // });
+  const googleLogin = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      try {
+        console.log(codeResponse,'response')
+            loginWithGoogle(codeResponse)
+            .then((response) => {
+                if (response.data.user.ban) {
+                  generateError("Sorry You are banned")
+                    // navigate('/account/suspended');
+                }else{
+                    localStorage.setItem('userToken', response.data.token);
+                    // dispatch(
+                    //     setUserDetails({
+                    //         name: response.data.user.firstName,
+                    //         id: response.data.user._id,
+                    //         email: response.data.user.email,
+                    //         image: response.data.user.picture,
+                    //         token: response.data.token,
+                    //     })
+                    // );
+                    navigate("/");
+                }
+            }).catch((err) => {
+                toast.error("Something went wrong please reload the page") })
+        } catch (err) {
+            generateError("Something went wrong please reload the page")
+        }
+    },
+    onError: (error) => {
+        generateError("Login Failed")
+    }
+  });
   return (
     <>
     <Toaster/>
@@ -136,7 +143,7 @@ function Login() {
         </div>
         <div className="login-btn-container">
           <Button variant="contained" type='submit' color='primary'> Login<ClipLoader size={50} color='white' loading={loading.submit} /></Button>
-          <Button variant="outlined" endIcon={<GoogleIcon/>}>sign in with</Button>
+          <Button variant="outlined" onClick={googleLogin} endIcon={<GoogleIcon/>}>sign in with</Button>
           <><p>Don't have an account?<Link to='/signup'> sign up</Link></p></>
           <><Link to='/forgotpassword' >Forgot password?</Link></>
         </div>

@@ -8,6 +8,7 @@ var salt=bcrypt.genSaltSync(10)
 export async function login(req,res){
     try{
         const {email,password}=req.body
+        console.log(req.body)
         const admin=await adminModel.findOne({email})
         if(admin){
             if(!bcrypt.compareSync(password, admin.password)){
@@ -15,13 +16,15 @@ export async function login(req,res){
             }
             if(admin.role==='admin'){
                 const token=jwt.sign({id:admin._id,},'myjwtsecretkey')
-                res.cookie('adminToken',token,
-                { 
-                    httpOnly:true,
-                    secure:true,
-                    maxAge:1000 * 60 * 60 * 24 * 7 * 30,
-                    sameSite:"none"
-                }).json({error:false,login:true})
+                // res.cookie('adminToken',token,
+                // { 
+                //     httpOnly:true,
+                //     secure:true,
+                //     maxAge:1000 * 60 * 60 * 24 * 7 * 30,
+                //     sameSite:"none"
+                // })
+                admin.password=''
+                res.json({error:false,token:token,login:true,admin:admin})
             }
         }else{
             return res.json({ error: true,login:false, message: "admin not found" })
@@ -32,17 +35,18 @@ export async function login(req,res){
 }
 export async function validateAdmin(req,res){
     try {
-        const token = req.cookies.adminToken;
-        // if (!token)
-        //     return res.json({ login: false, error: true, message: "no token" });
+        const token = req.headers.authorization.split(' ')[1];
 
+        if (!token)
+            return res.json({ login: false, error: true, message: "no token" });
+        
         const verifiedJWT = jwt.verify(token, process.env.jwt_key)
         console.log(verifiedJWT,"jwt");
         const admin = await adminModel.findById(verifiedJWT.id, { password: 0 });
         if (!admin) {
-            return res.json({ login: false });
+            return res.json({error:true, login: false });
         }
-        return res.json({ admin, login: true });
+        return res.json({error:false, admin, login: true,message:'successfully logged in' });
     } catch (err) {
         console.log(err)
         res.json({ login: false, error: err });

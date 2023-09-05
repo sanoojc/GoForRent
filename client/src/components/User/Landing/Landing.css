@@ -51,10 +51,14 @@ justify-content: center;
 
 }
 .vehicle-img{
-    min-height: 250px;
+    display: flex;
+    align-items: center;
+    min-height: 200px;
+    object-fit: contain;
 }
 .vehicle-details{
     padding-left: 10px;
+    color: black;
 }
 
 .footer{

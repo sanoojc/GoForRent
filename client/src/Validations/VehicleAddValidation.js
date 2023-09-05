@@ -4,7 +4,7 @@ export const VehicleValidationSchema=Yup.object().shape({
     vehicleName: Yup.string().trim().required('Vehicle name is required'),
     brand: Yup.string().trim().required('Brand is required'),
     year: Yup.number().required('Year is required'),
-    class: Yup.string().trim().required('Class is required'),
+    classOfVehicle: Yup.string().trim().required('Class is required'),
     bodyType: Yup.string().trim().required('Body type is required'),
     transmission: Yup.string().trim().required('Transmission type is required'),
     fuelType: Yup.string().trim().required('Fuel type is required'),

@@ -15,7 +15,7 @@ const vehicleSchema=mongoose.Schema({
         type:Number,
         require:true
     },
-    class:{
+    classOfVehicle:{
         type:String
     },
     bodyType:{
@@ -30,7 +30,7 @@ const vehicleSchema=mongoose.Schema({
         type:String,
         require:true
     },
-    noOfSeat:{
+    noOfSeats:{
         type:Number,
         require:true
     },
@@ -38,9 +38,11 @@ const vehicleSchema=mongoose.Schema({
         type:Array,
         require:true
     },
+    rent:{
+        type:Number
+    },
     review:{
         type:String,
-        require:true
     },
     list:{
         type:Boolean,

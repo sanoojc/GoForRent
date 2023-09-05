@@ -1,3 +1,4 @@
+import './VehicleTable.css'
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
@@ -8,11 +9,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useEffect } from 'react';
-import { banUser} from '../../../Api/AdminApi';
 import {Button,TextField} from '@mui/material';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../axios/axios';
+import { listVehicle } from '../../../Api/AdminApi';
+import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -39,8 +42,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 //   return { No, Name, Email, Action, View };
 // }
 
-export default function UserTable() {
-  const [users, setUsers] = useState([]);
+export default function VehicleTable() {
+  const navigate=useNavigate()
+  const [vehicles, setVehicles] = useState([]);
   const [refreshPage, setRefresh] = useState(true)
 
   async function handleBan(id) {
@@ -53,11 +57,14 @@ export default function UserTable() {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes'
       });
-  
       if (result.isConfirmed) {
-        const { data } = await banUser(id);
-        console.log(data, 'ban');
-        setRefresh(!refreshPage);
+        const { data } = await listVehicle(id);
+        if(!data.error){
+          toast.success(data.message)
+          setRefresh(!refreshPage);
+        }else{
+          toast.error(data.error)
+        }
       }
     } catch (error) {
       console.error('Error banning user:', error);
@@ -69,15 +76,16 @@ export default function UserTable() {
   useEffect(() => {
     async function fetchData() {
       try { 
-        const { data } = await axiosInstance().get(`/admin/users?name=${name}`);
-        setUsers(data.user);
+        const { data } = await axiosInstance('adminToken').get(`/admin/vehicles?name=${name}`);
+        console.log(data)
+        setVehicles(data.vehicles);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     }
 
     fetchData();
-  }, [refreshPage,name]);
+  }, [name,refreshPage]);
   return (
     <>
       <div className="search" style={{ paddingLeft: '10px', paddingBottom: '20px', display: 'flex', alignItems: 'center' }}>
@@ -89,32 +97,39 @@ export default function UserTable() {
           <TableHead>
             <TableRow>
               <StyledTableCell>No</StyledTableCell>
-              <StyledTableCell align="right">Name</StyledTableCell>
-              <StyledTableCell align="right">Email</StyledTableCell>
+              <StyledTableCell align="right"> Image</StyledTableCell>
+              <StyledTableCell align="right"> Name</StyledTableCell>
+              <StyledTableCell align="right">Brand</StyledTableCell>
               <StyledTableCell align="right">Action</StyledTableCell>
+              <StyledTableCell align="right">Rent</StyledTableCell>
               <StyledTableCell align="right">View</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user, i) => (
-              <StyledTableRow key={user._id}>
+            {vehicles.map((vehicle, i) => (
+              <StyledTableRow key={vehicle._id}>
                 <StyledTableCell component="th" scope="row">
                   {i + 1}
                 </StyledTableCell>
-                <StyledTableCell align="right">{user.name}</StyledTableCell>
-                <StyledTableCell align="right">{user.email}</StyledTableCell>
+                <div className="table-vehicle-img">
+                <img align="right" src={vehicle.images}/>
+
+                </div>
+                <StyledTableCell align="right">{vehicle.vehicleName}</StyledTableCell>
+                <StyledTableCell align="right">{vehicle.brand}</StyledTableCell>
                 <StyledTableCell align="right">
                   {
-                    user.ban ? <Button onClick={(e) => handleBan(user._id)} variant="contained" color="success">
-                      unban
-                    </Button> : <Button onClick={(e) => handleBan(user._id)} variant="outlined" color="error">
-                      Ban
+                      vehicle.list ? <Button onClick={(e) => handleBan(vehicle._id)} variant="contained" color="error">
+                      unlist
+                    </Button> : <Button onClick={(e) => handleBan(vehicle._id)} variant="outlined" color="success">
+                      list
                     </Button>
 
                   }
                 </StyledTableCell>
+                <StyledTableCell align="right">{vehicle.rent}</StyledTableCell>
 
-                <StyledTableCell align="right"><Button color="secondary">view</Button></StyledTableCell>
+                <StyledTableCell align="right"><Button color="secondary" onClick={()=>navigate('/admin/vehicleDetails',{state:item})}>view</Button></StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

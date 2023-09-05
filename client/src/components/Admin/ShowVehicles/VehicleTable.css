@@ -1,0 +1,8 @@
+.table-vehicle-img{
+
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    object-fit: contain;
+}

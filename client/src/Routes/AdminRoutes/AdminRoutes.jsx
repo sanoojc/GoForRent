@@ -7,6 +7,7 @@ import Dashboard from '../../components/Admin/Dashboard/Dashboard';
 import Usermanagement from '../../components/Admin/Usermanagement/Usermanagement';
 import ShowVehicles from '../../components/Admin/ShowVehicles/ShowVehicles';
 import AddVehicle from '../../components/Admin/AddVehicle/AddVehicle';
+import ViewVehicle from '../../components/Admin/ShowVehicles/ViewVehicle/ViewVehicle';
 
 
 
@@ -31,16 +32,18 @@ function AdminRoutes() {
                 <Route path='/' element={<Dashboard/>}/>
                 <Route path='/vehicles' element={<ShowVehicles/>}/>
                 <Route path='/addvehicle' element={<AddVehicle/>}/>
+                <Route path='/vehicleDetails' element={<ViewVehicle/>}/>
               
               </>
 
           }
           {
             admin.login===false&&<>
-            <Route path='/' element={<Login></Login>}></Route>
+            <Route path='/' element={<Navigate to={'/admin/login'}/>}></Route>
             <Route path='/login' element={<Login></Login>}></Route>
             <Route path='/Dashboard' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/Users' element={<Navigate to={'/admin/login'}/>}/>
+            <Route path='/addvehicle' element={<Navigate to={'/admin/login'}/>}/>
             
             </>
           }

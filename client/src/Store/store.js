@@ -2,7 +2,8 @@ import { createStore } from 'redux'
 
 const initialState={
     admin:{login:null},
-    user:{login:null},
+    user:{login:null,
+         data:null},
     employees:{login:null},
     refresh:true
 }

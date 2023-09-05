@@ -9,18 +9,19 @@ function Header() {
     const dispatch=useDispatch()
      function handleLogut(e){
         e.preventDefault()
-    
-        Swal.fire({
-            text: "Are you sure want to logout",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Logout'
-          }).then(async() => {
-            let {data}=await logout()
-            dispatch({type:'refresh'})
-          })
+          Swal.fire({
+              title: 'Are you sure?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                  localStorage.removeItem('userToken')
+                  dispatch({type:'refresh'})
+              }
+            })
     }
   return (
     <div>
