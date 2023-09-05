@@ -4,10 +4,11 @@ import Header from '../Header/Header'
 import { getVehicles } from '../../../Api/UserApi'
 import { toast } from 'react-hot-toast'
 import { Button, TextField,} from '@mui/material'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+
 
 function Landing() {
-
+    const navigate=useNavigate()
     const [vehicles, setVehicles] = useState([])
     const [name, setName] = useState('')
     useEffect(() => {
@@ -31,11 +32,11 @@ function Landing() {
                 <div className='banner-img'>
                     <h1>Dream it Rent it Ride it.</h1>
                     <h5>find the right one</h5>
-                    <div style={{ display: 'flex' }}>
+                    <div className='flex items-center justify-center' >
                         <p>hub name</p>
                         <p>userlocation</p>
-                        <div className="landing-search-container" style={{  display: 'flex', alignItems: 'center' ,background:'#e8edea', display:'flex',alignItems:'center',borderRadius:'8px' }}>
-                            <TextField  color='primary' size='small' value={name} onChange={(e) => setName(e.target.value)} />
+                        <div className="landing-search-container flex items-center " style={{ background:'#e8edea',borderRadius:'8px' }}>
+                            <TextField  color='primary' size='small' placeholder='search' value={name} onChange={(e) => setName(e.target.value)} />
                         </div>
                             <Button color='inherit' variant='outlined' size='medium' onClick={(e) => getVehicles}>Search</Button>
                     </div>
@@ -49,7 +50,7 @@ function Landing() {
                 </div>
             </>
             <div className="category">
-                <div className="category-card">
+                <div className="category-card ">
                     <h2>premium cars</h2>
 
                 </div>
@@ -69,8 +70,8 @@ function Landing() {
                 {
                   
                     vehicles.map((item, i) => (
-                        <Link to={'/'} >
-                         <div className="vehicle-card">
+
+                         <div className="vehicle-card" onClick={()=>navigate('/view',{state:item})}>
                             <div className="vehicle-img">
                                 <img src={item.images} />
                             </div>
@@ -81,7 +82,7 @@ function Landing() {
 
                             </div>
                         </div>
-                        </Link>
+
                        
                     ))
                 }

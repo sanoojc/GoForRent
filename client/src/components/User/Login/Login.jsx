@@ -141,7 +141,7 @@ function Login() {
             </>
           </>
         </div>
-        <div className="login-btn-container">
+        <div className="login-btn-container ">
           <Button variant="contained" type='submit' color='primary'> Login<ClipLoader size={50} color='white' loading={loading.submit} /></Button>
           <Button variant="outlined" onClick={googleLogin} endIcon={<GoogleIcon/>}>sign in with</Button>
           <><p>Don't have an account?<Link to='/signup'> sign up</Link></p></>

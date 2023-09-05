@@ -8,8 +8,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useEffect } from 'react';
 import {Button,TextField} from '@mui/material';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../axios/axios';
@@ -77,7 +77,6 @@ export default function VehicleTable() {
     async function fetchData() {
       try { 
         const { data } = await axiosInstance('adminToken').get(`/admin/vehicles?name=${name}`);
-        console.log(data)
         setVehicles(data.vehicles);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -129,7 +128,7 @@ export default function VehicleTable() {
                 </StyledTableCell>
                 <StyledTableCell align="right">{vehicle.rent}</StyledTableCell>
 
-                <StyledTableCell align="right"><Button color="secondary" onClick={()=>navigate('/admin/vehicleDetails',{state:item})}>view</Button></StyledTableCell>
+                <StyledTableCell align="right"><Button color="secondary" onClick={()=>navigate('/admin/vehicleDetails',{state:vehicle})}>view</Button></StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
