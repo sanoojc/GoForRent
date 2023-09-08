@@ -5,6 +5,10 @@ function Dashboard() {
   return (
     <div>
       <Sidebar/>
+      <div className="flex justify-center">
+
+      <h2>Dashboard</h2>
+      </div>
     </div>
   )
 }

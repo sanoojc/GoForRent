@@ -6,6 +6,7 @@ import Landing from '../../components/User/Landing/Landing'
 import { useDispatch, useSelector } from 'react-redux'
 import { authenticate } from '../../Api/UserApi'
 import ViewVehicle from '../../components/User/Vehicle/ViewVehicle'
+import Profile from '../../components/User/Profile/Profile'
 
 
 function UserRoutes() {
@@ -28,6 +29,7 @@ function UserRoutes() {
             <Route path='/login' element={<Navigate to={'/home'}/>}/>
             <Route path='/signup' element={<Navigate to={'/home'}/>}/>
             <Route path='/view' element={<ViewVehicle/>}/>
+            <Route path='/profile' element={<Profile/>}/>
           </>
           )}
           {
@@ -39,6 +41,7 @@ function UserRoutes() {
             <Route path='/login' element={<Login/>}/>
             <Route path='/signup' element={<Signup/>}/>
               <Route path='/view' element={<ViewVehicle/>}/>
+            <Route path='/profile' element={<Login/>}/>
             </>
           )}
         </Routes>

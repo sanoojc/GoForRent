@@ -2,6 +2,7 @@ import adminModel from '../Model/adminModel.js'
 import  jwt  from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import userModel from '../Model/userModel.js'
+import hubModel from '../Model/hubModel.js'
 
 var salt=bcrypt.genSaltSync(10)
 
@@ -37,11 +38,10 @@ export async function validateAdmin(req,res){
     try {
         const token = req.headers.authorization.split(' ')[1];
 
-        if (!token)
+        if (!token){
             return res.json({ login: false, error: true, message: "no token" });
-        
+        }
         const verifiedJWT = jwt.verify(token, process.env.jwt_key)
-        console.log(verifiedJWT,"jwt");
         const admin = await adminModel.findById(verifiedJWT.id, { password: 0 });
         if (!admin) {
             return res.json({error:true, login: false });
@@ -50,6 +50,52 @@ export async function validateAdmin(req,res){
     } catch (err) {
         console.log(err)
         res.json({ login: false, error: err });
+    }
+}
+export async function getHub(req,res){
+    try{
+        const hub=await hubModel.find().lean()
+        return res.json({error:false,message:'sucess',hub:hub})
+    }catch(err){
+        console.log(err)
+    }
+
+}
+export async function addHub(req,res){
+    try{
+        console.log(req.body)
+        const {hubName,longitude,latitude}=req.body
+        const hub=hubModel.findOne({hubName})
+        if(hub){
+            return res.json({error:true,message:'hub already added'})
+        }else{
+            const newHub=new hubModel({hubName,longitude,latitude})
+            newHub.save()
+            return res.json({error:false,message:'hub sucessfully added'})
+        }
+
+    }catch(err){
+        console.log(err)
+    }
+}
+export async function editHub(req,res){
+    try{
+        const id=req.query.id
+        const hub=await hubModel.findByIdAndUpdate({id},{$set:{hubName,longitude,latitude}})
+        if(hub){
+            return res.json({error:false,message:'updated'})
+        }else{
+            return res.json({error:true,message:'something went wrong'})
+        }
+    }catch(err){
+        console.log(err)
+    }
+}
+export async function deleteHub(req,res){
+    try{
+        
+    }catch(err){
+        console.log(err)
     }
 }
 export async function getUsers(req,res){

@@ -115,13 +115,17 @@ const handleOtp=(e)=>setOtp(e.target.value)
     }
   }
   const verifyOtp=async ()=>{
-    console.log(otp,'otppppppp')
-    const {data}=await sentOtp(otp)
-    if(data.error){
-      toast.error(data.message)
+    if(!otp){
+      toast.error('invalid OTP')
     }else{
-      toast.success(data.message)
-      navigate('/login')
+      const {data}=await sentOtp(otp)
+      if(data.error){
+        toast.error(data.message)
+      }else{
+        toast.success(data.message)
+        navigate('/login')
+      }
+
     }
   }
 

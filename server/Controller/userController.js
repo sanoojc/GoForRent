@@ -20,13 +20,6 @@ export async function login(req,res){
 
             if( bcrypt.compareSync(password, user.password)){
                 const token=jwt.sign({id:user._id},process.env.jwt_key)
-                // res.cookie("userToken",token,
-                // {
-                //     httpOnly:true,
-                //     secure:true,
-                //     maxAge:1000 * 60 * 60 * 24 * 7 * 30,
-                //     sameSite:"none"
-                // })
                 user.password=''
                 res.json({error:false,login:true,user:user,token:token})
             }else{
@@ -42,8 +35,10 @@ export async function login(req,res){
 export async function getVehicles(req,res){
   try{
   const name=req.query.name??''
-    const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).lean()
-    console.log(vehicle)
+  const page=req.query.page??1
+  const count=req.query.count??3
+  const skip=(page-1)*count
+    const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).limit(count).skip(skip).lean()
     res.json({error:false,message:'success',vehicles:vehicle})
   }catch(err){
     console.log(err)
@@ -72,6 +67,7 @@ export async function signup(req,res){
 export async function validateUser(req,res){
     try {
         const token = req.headers.authorization.split(' ')[1];
+        console.log(token,'usertoken')
         if (!token)
         return res.json({ login: false, error: true, message: "no token" });
       
@@ -80,7 +76,7 @@ export async function validateUser(req,res){
         if (!user) {
             return res.json({ login: false });
         }
-        return res.json({ user, login: true });
+        return res.json({ user, login: true }); 
     } catch (err) {
         console.log(err)
         res.json({ login: false, error: err });
@@ -89,7 +85,6 @@ export async function validateUser(req,res){
 export async function resendOtp(req,res){
   try{
     const {email}=req.body
-    console.log(req.body) 
     const otp=otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
     Otp=otp
     console.log(otp)
@@ -101,7 +96,6 @@ export async function resendOtp(req,res){
 }
 export async function verifyOtp(req,res){
     const{name,email,number,password}=userDetails
-    console.log(userDetails)
     const otp=req.params.otp
     if(Otp==otp){
         Otp=null
@@ -119,7 +113,6 @@ export async function googleAuth (req , res) {
       if (req.body.access_token) {
         // fetching user details  from google
          axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${req.body.access_token}`).then( async (response)=> {
-         console.log(response)
          // checking user exist or not
           const user = await userModel.findOne({ email : response.data.email} , {password : 0 }).catch((err)=> {
             res.status(500).json({created : false , message : "internal server error "})
@@ -128,9 +121,9 @@ export async function googleAuth (req , res) {
   // check the user is banned or not 
             if(!user.block) {
               const token=jwt.sign({id:user._id},process.env.jwt_key)
-              res.status(200).json({error:false , user , token , message:"Login Success " })
+              res.status(200).json({error:false , user ,login:true, token , message:"Login Success " })
             }else {
-              res.status(200).json({error:true, user ,  message : "Sorry you are banned..!"})
+              res.status(200).json({error:true, user ,login:true,  message : "Sorry you are banned..!"})
             }
           }else {
             // if user not exist creating new account 
@@ -145,7 +138,7 @@ export async function googleAuth (req , res) {
             })
             // create token after creating 
             const token=jwt.sign({id:user._id},process.env.jwt_key)
-            res.status(200).json({created:true , user: newUser , token:token , message : "Signup Success"})
+            res.status(200).json({created:true ,login:true, user: newUser , token:token , message : "Signup Success"})
           }
         })
       }else{
@@ -155,7 +148,12 @@ export async function googleAuth (req , res) {
       res.json({ login: false, message: "Internal Serverl Error" });
     }
   }
-  
+
+  export async function showProfile(req,res){
+
+    const token = req.headers.authorization.split(' ')[1];
+    const user=await userModel.findById(id)
+  }
 
 export async function logout(req,res){
     try{

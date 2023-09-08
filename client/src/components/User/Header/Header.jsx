@@ -1,4 +1,5 @@
 import React from 'react'
+import './Header.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { logout } from '../../../Api/UserApi'
@@ -27,8 +28,10 @@ function Header() {
     <div>
           <div className="navbar">
                 <>
-                    <Link to='/'>logo</Link>
-                    <Link to='/'>GoForRent</Link>
+                    <Link to='/'>
+                      <div className="site-logo"></div>
+                    </Link>
+                    <Link to='/'><h4>GoForRent</h4></Link>
                 </>
                 <>
                     <Link to='/chat'>chat</Link>

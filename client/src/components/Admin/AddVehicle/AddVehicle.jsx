@@ -62,16 +62,16 @@ function AddVehicle() {
       <Toaster />
       <div className='add-vehicle-container'>
         <Sidebar />
-        <div className="add-vehicle-form" style={{ marginLeft: '5rem' }}>
+        <div className="add-vehicle-form mr-5" style={{ marginLeft: '5rem' }}>
           <form onSubmit={handleSubmit(onSubmit)} >
             <label>
-              <div className="">
-                Name:
+              <div className="ml-5 pl-5">
+               <p>Image</p>
                 <input type="file" accept='image/*' multiple onChange={handleImageUpload} />
               </div>
             </label>
             <div className="add-vehice-form">
-              <div className="add-vehice-innerformbox" >
+              <div className="add-vehice-innerformbox " >
                 <div>
                   <p>Hub id</p>
                   <TextField required size='small' type='string' id="outlined-required" label="Name of the hub" {...register('hubId')} />
@@ -124,14 +124,14 @@ function AddVehicle() {
               </div>
               <div className="add-vehice-innerformbox">
                 <div>
-                  Rent per day
+                  <p> Rent per day</p>
                   <TextField required size='small' type='number' id="outlined-required" label="rent per day"{...register('rent')} />
                   {errors.rent && <p className='text-danger'>{errors.rent.message}</p>}
                 </div>
               </div>
             </div>
-
-            <Button variant='contained' type='submit'>ADD</Button>
+            <div className="flex justify-center mt-5"><Button variant='contained' type='submit'>ADD</Button></div>
+            
           </form>
         </div>
       </div>

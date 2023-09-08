@@ -20,21 +20,15 @@ import {useGoogleLogin} from '@react-oauth/google'
 
 function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
-
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  // const [passwordType, setPasswordType] = useState('password')
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(loginValidationSchema)
   })
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  // function showPassword() {
-  //   passwordType === 'password' ? setPasswordType('text') : setPasswordType('password')
-  // }
-
   const [loading, setLoading] = useState({ submit: false })
   const submit = async (details) => {
     setLoading({ ...loading, submit: true })
@@ -43,7 +37,7 @@ function Login() {
        toast.error(res.data.message)
       } else {
         localStorage.setItem('userToken',res.data.token)
-        dispatch({type:'user',payload:res.data.user})
+        dispatch({type:'user',login:res.data.login, payload:res.data.user})
         navigate('/')
         dispatch({ type: 'refresh' })
       }
@@ -62,8 +56,7 @@ function Login() {
             loginWithGoogle(codeResponse)
             .then((response) => {
                 if (response.data.user.ban) {
-                  generateError("Sorry You are banned")
-                    // navigate('/account/suspended');
+                  generateError("Sorry Your account has suspended")
                 }else{
                     localStorage.setItem('userToken', response.data.token);
                     // dispatch(
@@ -73,8 +66,8 @@ function Login() {
                     //         email: response.data.user.email,
                     //         image: response.data.user.picture,
                     //         token: response.data.token,
-                    //     })
-                    // );
+                    //     }));
+                    dispatch({type:'refresh'})
                     navigate("/");
                 }
             }).catch((err) => {

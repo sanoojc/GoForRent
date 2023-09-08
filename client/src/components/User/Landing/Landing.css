@@ -23,6 +23,7 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 20px;
 }
 .search-box{
     border: 0;
@@ -46,7 +47,7 @@ justify-content: center;
     justify-content: center;
 }
 .vehicles{
-    padding-left: 15px;
+    padding-left: 25px;
     color: black;
 
 }
@@ -57,7 +58,7 @@ justify-content: center;
     object-fit: contain;
 }
 .vehicle-details{
-    padding-left: 10px;
+    padding-left: 20px;
     color: black;
 }
 

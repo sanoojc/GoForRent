@@ -37,11 +37,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
-
-// function createData(No, Name, Email, Action, View) {
-//   return { No, Name, Email, Action, View };
-// }
-
 export default function VehicleTable() {
   const navigate=useNavigate()
   const [vehicles, setVehicles] = useState([]);
@@ -96,12 +91,13 @@ export default function VehicleTable() {
           <TableHead>
             <TableRow>
               <StyledTableCell>No</StyledTableCell>
-              <StyledTableCell align="right"> Image</StyledTableCell>
-              <StyledTableCell align="right"> Name</StyledTableCell>
-              <StyledTableCell align="right">Brand</StyledTableCell>
-              <StyledTableCell align="right">Action</StyledTableCell>
-              <StyledTableCell align="right">Rent</StyledTableCell>
-              <StyledTableCell align="right">View</StyledTableCell>
+              <StyledTableCell align="left"> Image</StyledTableCell>
+              <StyledTableCell align="left"> Name</StyledTableCell>
+              <StyledTableCell align="left">Brand</StyledTableCell>
+              <StyledTableCell align="left">Rent</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+              <StyledTableCell align="left">Edit</StyledTableCell>
+              <StyledTableCell align="left">View</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -114,9 +110,10 @@ export default function VehicleTable() {
                 <img align="right" src={vehicle.images}/>
 
                 </div>
-                <StyledTableCell align="right">{vehicle.vehicleName}</StyledTableCell>
-                <StyledTableCell align="right">{vehicle.brand}</StyledTableCell>
-                <StyledTableCell align="right">
+                <StyledTableCell align="left">{vehicle.vehicleName}</StyledTableCell>
+                <StyledTableCell align="left">{vehicle.brand}</StyledTableCell>
+                <StyledTableCell align="left">{vehicle.rent}</StyledTableCell>
+                <StyledTableCell align="left">
                   {
                       vehicle.list ? <Button onClick={(e) => handleBan(vehicle._id)} variant="contained" color="error">
                       unlist
@@ -126,9 +123,8 @@ export default function VehicleTable() {
 
                   }
                 </StyledTableCell>
-                <StyledTableCell align="right">{vehicle.rent}</StyledTableCell>
-
-                <StyledTableCell align="right"><Button color="secondary" onClick={()=>navigate('/admin/vehicleDetails',{state:vehicle})}>view</Button></StyledTableCell>
+                <StyledTableCell align="left"><Button color="primary" onClick={()=>navigate('/admin/vehicleDetails',{state:vehicle})}>Edit</Button></StyledTableCell>
+                <StyledTableCell align="left"><Button color="secondary" onClick={()=>navigate('/admin/vehicleDetails',{state:vehicle})}>view</Button></StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
