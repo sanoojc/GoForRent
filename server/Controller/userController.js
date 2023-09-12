@@ -38,8 +38,26 @@ export async function getVehicles(req,res){
   const page=req.query.page??1
   const count=req.query.count??3
   const skip=(page-1)*count
+  const sort=req.query.sort??''
+  console.log(sort)
+
+  if(sort!=='undefined'){ 
+    if(sort==='name'){
+      const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).sort({vehicleName:1}).limit(count).skip(skip).lean()
+      return res.json({error:false,message:'success',vehicles:vehicle})
+    }else if(sort==='Low to High'){
+      const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).sort({rent:1}).limit(count).skip(skip).lean()
+      return res.json({error:false,message:'success',vehicles:vehicle})
+      
+    }else if(sort==='High to Low'){
+      const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).sort({rent:-1}).limit(count).skip(skip).lean()
+     return res.json({error:false,message:'success',vehicles:vehicle})
+
+    }
+  }else{  
     const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).limit(count).skip(skip).lean()
-    res.json({error:false,message:'success',vehicles:vehicle})
+    return res.json({error:false,message:'success',vehicles:vehicle})
+  }
   }catch(err){
     console.log(err)
   }
@@ -67,7 +85,6 @@ export async function signup(req,res){
 export async function validateUser(req,res){
     try {
         const token = req.headers.authorization.split(' ')[1];
-        console.log(token,'usertoken')
         if (!token)
         return res.json({ login: false, error: true, message: "no token" });
       

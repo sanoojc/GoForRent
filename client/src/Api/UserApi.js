@@ -7,4 +7,6 @@ export const resendOtp=(email)=> axiosInstance().post(`/resendOtp`,email)
 export const authenticate=()=> axiosInstance('userToken').get('/check-auth')
 export const logout=()=> axiosInstance('userToken').post('/logout')
 export const loginWithGoogle=(response)=> axiosInstance('userToken').post('/google-auth',response)
-export const getVehicles=(name,page,count)=>axiosInstance('userToken').get(`/vehicle?name=${name}&page=${page}&count=${count}`)
+export const getVehicles=(name,page,count,text)=>{
+    console.log(text,'text.....')
+   return axiosInstance('userToken').get(`/vehicle?name=${name}&page=${page}&count=${count}&sort=${text}`)}

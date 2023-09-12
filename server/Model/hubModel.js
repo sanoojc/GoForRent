@@ -11,6 +11,10 @@ const hubSchema=mongoose.Schema({
     latitude:{
         type:Number,
         require:true
+    },
+    list:{
+        type:Boolean,
+        default:true
     }
 
 })

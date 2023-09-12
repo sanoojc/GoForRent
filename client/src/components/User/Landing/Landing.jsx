@@ -1,23 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Landing.css'
 import Header from '../Header/Header'
 import { getVehicles } from '../../../Api/UserApi'
 import { toast } from 'react-hot-toast'
-import { Button, TextField, } from '@mui/material'
+import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField, } from '@mui/material'
+import TuneIcon from '@mui/icons-material/Tune';
 import { useNavigate } from 'react-router-dom'
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import FilterModal from '../../Modal/FilterModal'
+
 
 
 function Landing() {
     const navigate = useNavigate()
+    const [showModal,setShowModal]=useState(false)
     const [vehicles, setVehicles] = useState([])
     const [name, setName] = useState('')
-    const [page,setPage]=useState(1)
+    const [page, setPage] = useState(1)
     const [count, setCount] = useState(3)
+    const [open, setOpen] = useState(false);
+    const anchorRef = useRef(null);
+    const [sort,setSort]=useState('name')
+    const [selectedIndex, setSelectedIndex] = useState(1);
+    const options = ['name', <><CurrencyRupeeIcon/>Low to High</>,<><CurrencyRupeeIcon/> High to Low</>];
     useEffect(() => {
 
-        getVehicles(name,page,count).then((res) => {
+        getVehicles(name, page, count,sort).then((res) => {
             if (!res.data.error) {
                 console.log(res.data.vehicles, 'vehicles')
                 setVehicles(res.data.vehicles)
@@ -27,19 +38,82 @@ function Landing() {
         })
 
 
-    },[name,page])
-    function handlePage(e,value){
-        setPage(value)}
+    }, [name, page])
+    function handlePage(e, value) {
+        setPage(value)
+    }
+    
+    const handleClick = () => {
+        const selectedOption = options[selectedIndex];
+        const text = getTextFromOption(selectedOption);
+        setSort(text)
+        getVehicles(name, page, count,sort).then((res) => {
+            if (!res.data.error) {
+                console.log(res.data.vehicles, 'vehicles')
+                setVehicles(res.data.vehicles)
+            }
+        }).catch((err) => {
+            toast.error('error', err)
+        })
+        console.log(`You clicked ${text}`);
+    };
+    const getTextFromOption = (option) => {
+        if (typeof option === 'string') {
+            return option;
+        } else if (React.isValidElement(option)) {
+            const children = React.Children.toArray(option.props.children);
+            return children.map(child => {
+                if (typeof child === 'string') {
+                    return child;
+                } else {
+                    return getTextFromOption(child);
+                }
+            }).join('');
+        }
+        return '';
+    };
+    
+
+    const handleMenuItemClick = (event, index) => {
+        setSelectedIndex(index);
+        const selectedOption = options[index];
+        const text = getTextFromOption(selectedOption);
+        setSort(text)
+        getVehicles(name, page, count,text).then((res) => {
+            if (!res.data.error) {
+                console.log(res.data.vehicles, 'vehicles')
+                setVehicles(res.data.vehicles)
+            }
+        }).catch((err) => {
+            toast.error('error', err)
+        })
+        console.log(`You clicked ${text}`);
+        setOpen(false);
+    };
+
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+
+        setOpen(false);
+    };
+
     return (
-        <>
+        <>{
+            showModal&&
+            <FilterModal value={showModal} />
+        }
             <Header />
             <div className="banner" style={{ color: 'white' }}>
                 <div className='banner-img'>
                     <h1>Dream it Rent it Ride it.</h1>
-                    <h5>find the right one</h5>
+                    <h5>Find the right one</h5>
                     <div className='flex items-center justify-center' >
-                        <p>hub name</p>
-                        <p>userlocation</p>
                         <div className="landing-search-container flex items-center " style={{ background: '#e8edea', borderRadius: '8px' }}>
                             <TextField color='primary' size='small' placeholder='search' value={name} onChange={(e) => setName(e.target.value)} />
                         </div>
@@ -47,12 +121,60 @@ function Landing() {
                     </div>
                 </div>
             </div>
+            <div className="filter pt-4 pl-4 d-flex align-center gap-5">
+                <ButtonGroup variant="outlined" ref={anchorRef} aria-label="split button">
+                    <Button size='small' onClick={handleClick}>{options[selectedIndex]}</Button>
+                    <Button
+                        size="small"
+                        aria-controls={open ? 'split-button-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-label="select merge strategy"
+                        aria-haspopup="menu"
+                        onClick={handleToggle}
+                    >
+                        <ArrowDropDownIcon />
+                    </Button>
+                </ButtonGroup>
+                <Popper
+                    sx={{
+                        zIndex: 1,
+                    }}
+                    open={open}
+                    anchorEl={anchorRef.current}
+                    role={undefined}
+                    transition
+                    disablePortal
+                >
+                    {({ TransitionProps, placement }) => (
+                        <Grow
+                            {...TransitionProps}
+                            style={{
+                                transformOrigin:
+                                    placement === 'bottom' ? 'center top' : 'center bottom',
+                            }}
+                        >
+                            <Paper>
+                                <ClickAwayListener onClickAway={handleClose}>
+                                    <MenuList id="split-button-menu" autoFocusItem>
+                                        {options.map((option, index) => (
+                                            <MenuItem
+                                                key={option}
+                                                selected={index === selectedIndex}
+                                                onClick={(event) => handleMenuItemClick(event, index)}
+                                            >
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
+                <Button onClick={()=>setShowModal(!showModal)} ><TuneIcon /> filter</Button>
+            </div>
             <>
-                <h1>what are you looking for</h1>
-                <div className="">
-                    <div>cars</div>
-                    <div>bikes</div>
-                </div>
+                <h1 className='pl-3'> what are you looking for</h1>
             </>
             <div className="category">
                 <div className="category-card ">
@@ -82,38 +204,6 @@ function Landing() {
                                     <h6>RS :{item.rent}</h6>
                                 </div>
                             </div>
-
-                            // <div className="flex flex-col justify-between p-5 border rounded shadow-sm">
-                            //     <div>
-                            //         <div className="flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-indigo-50">
-                            //             <svg
-                            //                 className="w-12 h-12 text-deep-purple-accent-400"
-                            //                 stroke="currentColor"
-                            //                 viewBox="0 0 52 52"
-                            //             >
-                            //                 <polygon
-                            //                     strokeWidth="3"
-                            //                     strokeLinecap="round"
-                            //                     strokeLinejoin="round"
-                            //                     fill="none"
-                            //                     points="29 13 14 29 25 29 23 39 38 23 27 23"
-                            //                 />
-                            //             </svg>
-                            //         </div>
-                            //         <h6 className="mb-2 font-semibold leading-5">When has justice</h6>
-                            //         <p className="mb-3 text-sm text-gray-900">
-                            //             Rough pomfret lemon shark plownose chimaera southern sandfish
-                            //             kokanee northern sea.
-                            //         </p>
-                            //     </div>
-                            //     <a
-                            //         href="/"
-                            //         aria-label=""
-                            //         className="inline-flex items-center font-semibold transition-colors duration-200 text-deep-purple-accent-400 hover:text-deep-purple-800"
-                            //     >
-                            //         Learn more
-                            //     </a>
-                            // </div>
                         ))
                     }
                 </div>

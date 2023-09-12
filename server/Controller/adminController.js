@@ -37,7 +37,6 @@ export async function login(req,res){
 export async function validateAdmin(req,res){
     try {
         const token = req.headers.authorization.split(' ')[1];
-
         if (!token){
             return res.json({ login: false, error: true, message: "no token" });
         }
@@ -52,9 +51,13 @@ export async function validateAdmin(req,res){
         res.json({ login: false, error: err });
     }
 }
+
+//HUB
+
 export async function getHub(req,res){
     try{
-        const hub=await hubModel.find().lean()
+        const name=req.query.name??''
+        const hub=await hubModel.find({hubName: new RegExp(name, "i") }).lean()
         return res.json({error:false,message:'sucess',hub:hub})
     }catch(err){
         console.log(err)
@@ -63,17 +66,15 @@ export async function getHub(req,res){
 }
 export async function addHub(req,res){
     try{
-        console.log(req.body)
         const {hubName,longitude,latitude}=req.body
-        const hub=hubModel.findOne({hubName})
+        const hub = await hubModel.findOne({hubName})
         if(hub){
             return res.json({error:true,message:'hub already added'})
         }else{
-            const newHub=new hubModel({hubName,longitude,latitude})
+            const newHub= new hubModel({hubName,longitude,latitude})
             newHub.save()
             return res.json({error:false,message:'hub sucessfully added'})
         }
-
     }catch(err){
         console.log(err)
     }
@@ -91,6 +92,27 @@ export async function editHub(req,res){
         console.log(err)
     }
 }
+export async function listHub(req,res){
+    try{
+        const id=req.query.id
+        console.log(id,'hub id')
+        let hub= await hubModel.findById({_id:id})
+        console.log(hub,'hub')
+ if(hub){
+    if(hub.list){
+         hub=await hubModel.findByIdAndUpdate(id,{$set:{list:false}})
+         return res.json({error:false,message:'unlisted'})
+    }else{
+        hub=await hubModel.findByIdAndUpdate(id,{$set:{list:true}})
+        return res.json({error:false,message:'unlisted'})
+    }
+ }else{
+    return res.json({error:true,message:'Hub not found'})
+ }
+    }catch(err){
+        console.log(err)
+    }
+}
 export async function deleteHub(req,res){
     try{
         
@@ -98,6 +120,9 @@ export async function deleteHub(req,res){
         console.log(err)
     }
 }
+
+//USERS
+
 export async function getUsers(req,res){
     try{
         const name=req.query.name??''
@@ -111,7 +136,6 @@ export async function banUser(req,res){
     try{
         const id=req.params.id
         console.log(id)
-
         let user=await userModel.findById({_id:id})
         console.log(user)
         if(user){
@@ -121,13 +145,18 @@ export async function banUser(req,res){
             }else{
                user= await userModel.findByIdAndUpdate(id,{$set:{ban:true}})
                 return res.json({error:false,user:user,messsage:'user banned'})
-    
             }
         }else{
             return res.json({error:true,message:'user not found'})
         }
-
     }catch(err){
         console.log(err)
     }
 }
+
+//CATEGORY
+
+export async function addCategory(req,res){
+    const {name}=req.body
+
+}  

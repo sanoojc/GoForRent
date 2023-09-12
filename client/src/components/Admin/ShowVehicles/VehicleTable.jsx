@@ -101,7 +101,8 @@ export default function VehicleTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {vehicles.map((vehicle, i) => (
+            {
+              vehicles.map((vehicle, i) => (
               <StyledTableRow key={vehicle._id}>
                 <StyledTableCell component="th" scope="row">
                   {i + 1}

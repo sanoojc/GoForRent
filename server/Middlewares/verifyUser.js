@@ -1,20 +1,17 @@
 import jwt from 'jsonwebtoken'
-import userModel from '../Model/userModel.js'
 
 const verifyUser=async(req,res,next)=>{
     try{
-        console.log('userrrrrrr')
-        const token=req.cookies.userToken
+        const token = req.headers.authorization.split(' ')[1];
         if(!token){
             return res.json({error:true,login:false,message:'no token found'})
         }
         const verifiedJWT=jwt.verify(token,process.env.jwt_key)
-        const user=await userModel.findById(verifiedJWT.id,{password:0})
-        if(!user){
-            return res.json({error:true,login:false,message:'user not found'})
+        if(verifiedJWT){
+            next()
+        }else{
+            return res.json({error:true,message:'authorisation failed'})
         }
-        req.user=user
-        next()
     }catch(err){
         console.log(err)
     }

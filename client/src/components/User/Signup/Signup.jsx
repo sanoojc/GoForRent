@@ -52,20 +52,6 @@ function Signup() {
 
 const handleOtp=(e)=>setOtp(e.target.value)
 
-// async function handleOtpRequest(){
-//   try {
-//             const {data}=await sentOtp(otp, details);
-//             if (data.error) {
-//               Swal.showValidationMessage(data.message);
-//             } else {
-//               navigate('/login')
-//             }
-//           } catch (error) {
-//             console.error('Error sending OTP:', error);
-//             Swal.showValidationMessage('Error sending OTP');
-//           }
-// }
-
   const onSubmit = async (details) => {
     let { data } = await signup(details)
     if(data.error){
@@ -77,31 +63,6 @@ const handleOtp=(e)=>setOtp(e.target.value)
       toast.success('OTP has been sent');
       setShowModal(true)
       setResend(true)
-      // Swal.fire({
-      //   title: 'Enter OTP',
-      //   input: 'text',
-      //   text: `Resend in ${countdown} seconds`,
-      //   showCancelButton: true,
-      //   confirmButtonText: 'Verify',
-      //   cancelButtonText: 'Cancel',
-      //   preConfirm: async (inputOtp) => {
-      //     if (!inputOtp) {
-      //       Swal.showValidationMessage('OTP is required');
-      //     } else {
-      //       try {
-      //         const {data}=await sentOtp(inputOtp, details);
-      //         if (data.error) {
-      //           Swal.showValidationMessage(data.message);
-      //         } else {
-      //           navigate('/login')
-      //         }
-      //       } catch (error) {
-      //         console.error('Error sending OTP:', error);
-      //         Swal.showValidationMessage('Error sending OTP');
-      //       }
-      //     }
-      //   }
-      // });
     }
   };
   const resendOTP=async ()=>{

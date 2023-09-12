@@ -9,6 +9,8 @@ import ShowVehicles from '../../components/Admin/ShowVehicles/ShowVehicles';
 import AddVehicle from '../../components/Admin/AddVehicle/AddVehicle';
 import ViewVehicle from '../../components/Admin/ShowVehicles/ViewVehicle/ViewVehicle';
 import Hubs from '../../components/Admin/Hubs/Hubs';
+import Categories from '../../components/Admin/Categories/Categories';
+import AddHub from '../../components/Admin/Hubs/AddHub';
 
 
 
@@ -27,17 +29,18 @@ function AdminRoutes() {
     <div>
         <Routes>
               {admin.login&&<>
-                <Route path='/login' element={<Navigate to={'/admin/Dashboard'} replace/> }/>
-                <Route path='/Users' element={<Usermanagement/>}></Route>
-                <Route path='/Dashboard' element={<Dashboard/>}/>
                 <Route path='/' element={<Dashboard/>}/>
+                <Route path='/login' element={<Navigate to={'/admin/Dashboard'} replace/> }/>
+                <Route path='/Dashboard' element={<Dashboard/>}/>
+                <Route path='/Users' element={<Usermanagement/>}></Route>
                 <Route path='/vehicles' element={<ShowVehicles/>}/>
                 <Route path='/addvehicle' element={<AddVehicle/>}/>
                 <Route path='/vehicleDetails' element={<ViewVehicle/>}/>
                 <Route path='/hubs' element={<Hubs/>}/>
-              
+                <Route path='/categories' element={<Categories/>}/>
+                <Route path='/bookings' element={<Categories/>}/>
+                <Route path='/addHub' element={<AddHub/>}/>
               </>
-
           }
           {
             admin.login===false&&<>
@@ -47,12 +50,12 @@ function AdminRoutes() {
             <Route path='/Users' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/addvehicle' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/vehicles' element={<Navigate to={'/admin/login'}/>}/>
-            
+            <Route path='/categories'  element={<Navigate to={'/admin/login'}/>}/>
+            <Route path='/bookings' element={<Categories/>}/>
+            <Route path='/addHub'  element={<Navigate to={'/admin/login'}/>}/>
             </>
           }
-          
         </Routes>
-        
     </div>
   )  
 }
