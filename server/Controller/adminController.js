@@ -157,6 +157,7 @@ export async function banUser(req,res){
 //CATEGORY
 
 export async function addCategory(req,res){
-    const {name}=req.body
+    console.log(req.body)
+    const {categoryName,image}=req.body
 
 }  

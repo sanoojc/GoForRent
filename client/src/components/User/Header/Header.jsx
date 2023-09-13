@@ -2,8 +2,9 @@ import React from 'react'
 import './Header.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { logout } from '../../../Api/UserApi'
+import TextsmsRoundedIcon from '@mui/icons-material/TextsmsRounded';
 import Swal from 'sweetalert2'
+import PersonIcon from '@mui/icons-material/Person';
 
 function Header() {
     const {user}=useSelector((state)=>state)
@@ -34,11 +35,11 @@ function Header() {
                     <Link to='/'><h4>GoForRent</h4></Link>
                 </>
                 <>
-                    <Link to='/chat'>chat</Link>
+                    <Link to='/chat'><TextsmsRoundedIcon/></Link>
                     {
                         user.login?
                        ( <>
-                        <Link to='/profile'>profile</Link>
+                        <Link to='/profile'><PersonIcon/></Link>
                               <button onClick={handleLogut} style={{color:'blue'}}>logout</button>
                        </>)
                       :

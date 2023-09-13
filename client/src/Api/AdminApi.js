@@ -8,3 +8,4 @@ export const addvehicle=(data)=> axiosInstance('adminToken').post('/admin/vehicl
 export const getVehicleData=(id)=>axiosInstance('adminToken').get('/admin/getVehicleData',id)
 export const addHub=(data)=>axiosInstance('adminToken').post('/admin/hubs',data)
 export const listHub=(id)=>axiosInstance('adminToken').patch(`/admin/hubs?id=${id}`)
+export const addCategory=(data)=>axiosInstance('adminToken').post('/admmin/category',data)

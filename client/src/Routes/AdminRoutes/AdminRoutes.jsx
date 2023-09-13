@@ -11,6 +11,7 @@ import ViewVehicle from '../../components/Admin/ShowVehicles/ViewVehicle/ViewVeh
 import Hubs from '../../components/Admin/Hubs/Hubs';
 import Categories from '../../components/Admin/Categories/Categories';
 import AddHub from '../../components/Admin/Hubs/AddHub';
+import AddCategories from '../../components/Admin/Categories/AddCategories';
 
 
 
@@ -40,6 +41,7 @@ function AdminRoutes() {
                 <Route path='/categories' element={<Categories/>}/>
                 <Route path='/bookings' element={<Categories/>}/>
                 <Route path='/addHub' element={<AddHub/>}/>
+                <Route path='/addCategory' element={<AddCategories/>}/>
               </>
           }
           {
@@ -53,6 +55,7 @@ function AdminRoutes() {
             <Route path='/categories'  element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/bookings' element={<Categories/>}/>
             <Route path='/addHub'  element={<Navigate to={'/admin/login'}/>}/>
+            <Route path='/addCategory' element={<Navigate to={'/admin/login'}/>}/>
             </>
           }
         </Routes>

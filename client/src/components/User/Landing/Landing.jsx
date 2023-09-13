@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import FilterModal from '../../Modal/FilterModal'
+import CurrencyRupeeRoundedIcon from '@mui/icons-material/CurrencyRupeeRounded';
 
 
 
@@ -25,7 +26,7 @@ function Landing() {
     const anchorRef = useRef(null);
     const [sort,setSort]=useState('name')
     const [selectedIndex, setSelectedIndex] = useState(1);
-    const options = ['name', <><CurrencyRupeeIcon/>Low to High</>,<><CurrencyRupeeIcon/> High to Low</>];
+    const options = ['name', <><CurrencyRupeeIcon/>Low to High</>,<><CurrencyRupeeIcon/>High to Low</>];
     useEffect(() => {
 
         getVehicles(name, page, count,sort).then((res) => {
@@ -77,7 +78,8 @@ function Landing() {
     const handleMenuItemClick = (event, index) => {
         setSelectedIndex(index);
         const selectedOption = options[index];
-        const text = getTextFromOption(selectedOption);
+        let text = getTextFromOption(selectedOption);
+        text=text.trim()
         setSort(text)
         getVehicles(name, page, count,text).then((res) => {
             if (!res.data.error) {
@@ -121,7 +123,7 @@ function Landing() {
                     </div>
                 </div>
             </div>
-            <div className="filter pt-4 pl-4 d-flex align-center gap-5">
+            <div className="filter pt-4 pl-6 pb-3 d-flex align-center gap-5 text-black">
                 <ButtonGroup variant="outlined" ref={anchorRef} aria-label="split button">
                     <Button size='small' onClick={handleClick}>{options[selectedIndex]}</Button>
                     <Button
@@ -177,36 +179,31 @@ function Landing() {
                 <h1 className='pl-3'> what are you looking for</h1>
             </>
             <div className="category">
-                <div className="category-card ">
-                    <h2>premium cars</h2>
+                <div className="category-card shadow-md border">
+                    <h2>Premium cars</h2>
                 </div>
-                <div className="category-card">
-                    <h2>vintage cars</h2>
-                </div>
-                <div className="category-card">
-                    <h2>premium bikes</h2>
+                <div className="category-card shadow-md border">
+                    <h2>Vintage cars</h2>
                 </div>
             </div>
             <>
                 <h3 style={{ color: 'black', paddingLeft: '30px', marginTop: '40px', paddingBottom: '20px' }}>view all</h3>
             </>
-            <div className="px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
-                <div className="grid row-gap-10 mb-8 lg:grid-cols-6">
+            <div className="d-flex justify-around px-4 pt-16 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
                     {
                         vehicles.map((item, i) => (
-                            <div className="vehicle-card" onClick={() => navigate('/view', { state: item })}>
-                                <div className="vehicle-img">
+                            <div className="vehicles-card ml-3 shadow-xl" onClick={() => navigate('/view', { state: item })}>
+                                <div className="vehicle-img rounded-sm shadow-sm">
                                     <img src={item.images} />
                                 </div>
-                                <div className="vehicle-details">
-                                    <h6>{item.brand}</h6>
+                                <div className="vehicle-details pt-3">
+                                    <h4>{item.brand}</h4>
                                     <h5>{item.vehicleName}</h5>
-                                    <h6>RS :{item.rent}</h6>
+                                    <h6><CurrencyRupeeRoundedIcon/> {item.rent}</h6>
                                 </div>
                             </div>
                         ))
                     }
-                </div>
             </div>
             <div className="flex justify-center m-10">
                 <Stack spacing={2}>

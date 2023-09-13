@@ -1,5 +1,6 @@
 .navbar{
     height: 70px;
+    width: 100%;
 }
 .site-logo{
     background-image: url('/public/1691739029175.jpg');

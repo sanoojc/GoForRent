@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { authenticate } from '../../Api/UserApi'
 import ViewVehicle from '../../components/User/Vehicle/ViewVehicle'
 import Profile from '../../components/User/Profile/Profile'
+import Checkout from '../../components/User/Checkout/Checkout'
 
 
 function UserRoutes() {
@@ -30,6 +31,7 @@ function UserRoutes() {
             <Route path='/signup' element={<Navigate to={'/home'}/>}/>
             <Route path='/view' element={<ViewVehicle/>}/>
             <Route path='/profile' element={<Profile/>}/>
+            <Route path='/checkout' element={<Checkout/>}/>
           </>
           )}
           {
