@@ -6,6 +6,7 @@ import otpGenerator from 'otp-generator'
 import sentOTP from '../nodemailer.js'
 import vehicleModel from '../Model/vehicleModel.js'
 import axios from 'axios'
+import instance from '../helper/razorpay.js'
 
 let Otp;
 let userDetails;
@@ -170,6 +171,21 @@ export async function googleAuth (req , res) {
 
     const token = req.headers.authorization.split(' ')[1];
     const user=await userModel.findById(id)
+  }
+
+  //payment
+  export async function payment(req,res){
+    
+    instance.orders.create({
+      "amount": 50000,
+      "currency": "INR",
+      "receipt": "receipt#1",
+      "partial_payment": false,
+      "notes": {
+        "key1": "value3",
+        "key2": "value2"
+      }
+    })
   }
 
 export async function logout(req,res){

@@ -5,9 +5,6 @@ const categorySchema=mongoose.Schema({
         type:String,
         require:true
     },
-    image:{
-        type:String
-    },
     items:{
         type:Array
     },

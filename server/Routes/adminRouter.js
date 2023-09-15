@@ -1,5 +1,5 @@
 import express from 'express'
-import { addCategory, addHub, banUser, deleteHub, editHub, getHub, getUsers, listHub, login, validateAdmin } from '../Controller/adminController.js'
+import { addCategory, addHub, banUser, deleteHub, editHub, fetchCategory, getHub, getUsers, listHub, login, validateAdmin } from '../Controller/adminController.js'
 import { addVehicle, getVehicle, listVehicle } from '../Controller/vehicleController.js'
 import verifyAdmin from '../Middlewares/verifyAdmin.js'
 
@@ -12,6 +12,6 @@ router.get('/users',getUsers)
 router.patch('/ban/:id',banUser) 
 router.route('/vehicles').get(getVehicle).post(addVehicle).patch(listVehicle)
 router.route('/hubs').get(getHub).post(addHub).put(editHub).patch(listHub).delete(deleteHub)
-router.route('/category').post(addCategory)
+router.route('/category').get(fetchCategory).post(addCategory)
 
 export default router

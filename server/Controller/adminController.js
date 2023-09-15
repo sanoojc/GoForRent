@@ -3,6 +3,7 @@ import  jwt  from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import userModel from '../Model/userModel.js'
 import hubModel from '../Model/hubModel.js'
+import categoryModel from '../Model/categoryModel.js'
 
 var salt=bcrypt.genSaltSync(10)
 
@@ -155,9 +156,27 @@ export async function banUser(req,res){
 }
 
 //CATEGORY
+export async function fetchCategory(req,res){
+    try{
+        const categories=await categoryModel.find().lean()
+        return res.json({error:false,message:'sucess',categories:categories})
+    }catch(err){
+        console.log(err)
+    }
 
+}
 export async function addCategory(req,res){
-    console.log(req.body)
-    const {categoryName,image}=req.body
+    const {data}=req.body
+    if(data){
+        const category=await categoryModel.findOne({name:data})
+        if(category){
+            return res.json({error:true,message:'category already exists'})
+        }else{
+            const category= new categoryModel({name:data})
+            category.save()
+            return res.json({error:false,message:'sucess'})
+        }
+    }
+    return res.json({error:true,message:'field is empty'})
 
 }  

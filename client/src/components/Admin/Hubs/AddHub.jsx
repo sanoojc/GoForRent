@@ -11,7 +11,7 @@ import { addHub } from '../../../Api/AdminApi';
 import { useNavigate } from 'react-router-dom';
 
 function AddHub() {
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
         positionOptions: {
             enableHighAccuracy: false,
@@ -26,11 +26,7 @@ function AddHub() {
         } else if (!isGeolocationEnabled) {
             toast.error('Geolocation is not enabled');
         } else if (!coords) {
-            toast.promise(
-                {
-                    success: 'Success',
-                    error: 'Something wrong'
-                });
+
         } else {
             setLocation(coords)
         }
@@ -48,33 +44,38 @@ function AddHub() {
         } else {
             toast.success(data.message)
             navigate('/admin/hubs')
-            
+
         }
 
     }
 
-  return (
-    <div className='pl-20' >   
-    <Sidebar/>  
-         <form onSubmit={handleSubmit(submit)}>
-    <div className="">
-        <p>Hub Name : </p>
-        <TextField id="outlined-basic" type='string' variant="outlined" size='small' {...register('hubName')} />
-        {errors.hubName && <p className='text-red-500' >{errors.hubName.message}</p>}
-    </div>
-    <div className="pb-5">
-        <p>Hub Location : </p>
-        <Button variant='outlined' size='large' onClick={handleLocation}>
-            add location  <MyLocationIcon />
-        </Button>
-    </div>
-    {
-        (location.longitude && location.latitude) && (<Button variant='contained' type='submit' >save</Button>)
+    return (
+        <div className='pl-20' >
+            <Sidebar />
+            <div className="flex justify-center align-middle h-screen">
+                <form className='p-3 border shadow-md rounded-md h-80'  onSubmit={handleSubmit(submit)}>
+                    <div className="">
+                        <p>Hub Name : </p>
+                        <TextField id="outlined-basic" type='string' variant="outlined" size='small' {...register('hubName')} />
+                        {errors.hubName && <p className='text-red-500' >{errors.hubName.message}</p>}
+                    </div>
+                    <div className="pb-5">
+                        <p>Hub Location : </p>
+                        <Button variant='outlined' size='large' onClick={handleLocation}>
+                            add location  <MyLocationIcon />
+                        </Button>
+                    </div>
+                    {
+                        (location.longitude && location.latitude) && (
+                        <div className="flex justify-center">
+                            <Button variant='contained' type='submit' >save</Button>
+                            </div>)
 
-    }
-</form>
-</div>
-  )
+                    }
+                </form>
+            </div>
+        </div>
+    )
 }
 
 export default AddHub

@@ -62,7 +62,70 @@ function AddVehicle() {
       <Toaster />
       <div className='add-vehicle-container'>
         <Sidebar />
-        <div className="add-vehicle-form mr-5" style={{ marginLeft: '5rem' }}>
+         <div className="w-full max-w-screen-md mx-auto p-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white border shadow-md rounded-lg p-4">
+        <div className="mb-4">
+          <label htmlFor="image" className="block text-gray-600 font-semibold">Image</label>
+          <input type="file" id="image" accept='image/*' multiple onChange={handleImageUpload} className="border rounded-lg p-2 w-full" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div>
+            <label htmlFor="hubId" className="block text-gray-600 font-semibold">Hub ID</label>
+            <input required type='string' id="hubId" placeholder="Name of the hub" {...register('hubId')} className="border rounded-lg p-2 w-full" />
+            {errors.hubId && <p className='text-red-600'>{errors.hubId.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="vehicleName" className="block text-gray-600 font-semibold">Vehicle Name</label>
+            <input required type='string' id="vehicleName" placeholder="Vehicle name" {...register('vehicleName')} className="border rounded-lg p-2 w-full" />
+            {errors.vehicleName && <p className='text-red-600'>{errors.vehicleName.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="brand" className="block text-gray-600 font-semibold">Brand</label>
+            <input required type='string' id="brand" placeholder="Brand name" {...register('brand')} className="border rounded-lg p-2 w-full" />
+            {errors.brand && <p className='text-red-600'>{errors.brand.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="year" className="block text-gray-600 font-semibold">Year</label>
+            <input required type='number' id="year" placeholder="Manufacturing year" {...register('year')} className="border rounded-lg p-2 w-full" />
+            {errors.year && <p className='text-red-600'>{errors.year.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="classOfVehicle" className="block text-gray-600 font-semibold">Class of Vehicle</label>
+            <input required type='string' id="classOfVehicle" placeholder="e.g., premium" {...register('classOfVehicle')} className="border rounded-lg p-2 w-full" />
+            {errors.classOfVehicle && <p className='text-red-600'>{errors.classOfVehicle.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="bodyType" className="block text-gray-600 font-semibold">Body Type</label>
+            <input required type='string' id="bodyType" placeholder="e.g., sedan" {...register('bodyType')} className="border rounded-lg p-2 w-full" />
+            {errors.bodyType && <p className='text-red-600'>{errors.bodyType.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="transmission" className="block text-gray-600 font-semibold">Transmission Type</label>
+            <input required type='string' id="transmission" placeholder="Transmission type" {...register('transmission')} className="border rounded-lg p-2 w-full" />
+            {errors.transmission && <p className='text-red-600'>{errors.transmission.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="fuelType" className="block text-gray-600 font-semibold">Fuel Type</label>
+            <input required type='string' id="fuelType" placeholder="Type of fuel" {...register('fuelType')} className="border rounded-lg p-2 w-full" />
+            {errors.fuelType && <p className='text-red-600'>{errors.fuelType.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="noOfSeats" className="block text-gray-600 font-semibold">Number of Seats</label>
+            <input required type='number' id="noOfSeats" placeholder="Seat capacity of the vehicle" {...register('noOfSeats')} className="border rounded-lg p-2 w-full" />
+            {errors.noOfSeats && <p className='text-red-600'>{errors.noOfSeats.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="rent" className="block text-gray-600 font-semibold">Rent per Day</label>
+            <input required type='number' id="rent" placeholder="Rent per day" {...register('rent')} className="border rounded-lg p-2 w-full" />
+            {errors.rent && <p className='text-red-600'>{errors.rent.message}</p>}
+          </div>
+        </div>
+        <div className="flex justify-center mt-5">
+        <Button variant='contained' type='submit' size='large'>ADD</Button>
+        </div>
+      </form>
+    </div>
+        {/* <div className="add-vehicle-form mr-5" style={{ marginLeft: '5rem' }}>
           <form onSubmit={handleSubmit(onSubmit)} >
             <label>
               <div className="ml-5 pl-5">
@@ -131,9 +194,8 @@ function AddVehicle() {
               </div>
             </div>
             <div className="flex justify-center mt-5"><Button variant='contained' type='submit'>ADD</Button></div>
-            
           </form>
-        </div>
+        </div> */}
       </div>
     </>
   )

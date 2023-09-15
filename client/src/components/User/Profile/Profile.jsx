@@ -26,7 +26,7 @@ function Profile() {
         </div>{
           user.details.number&&
         <div class="mt-8 ">
-          <h5 class=" font-bold text-2xl tracking-wide">Phone : {user.details.number}</h5>
+          <h5 class=" font-bold  tracking-wide">Phone : {user.details.number}</h5>
         </div>
         }
 
