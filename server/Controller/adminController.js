@@ -18,13 +18,6 @@ export async function login(req,res){
             }
             if(admin.role==='admin'){
                 const token=jwt.sign({id:admin._id,},'myjwtsecretkey')
-                // res.cookie('adminToken',token,
-                // { 
-                //     httpOnly:true,
-                //     secure:true,
-                //     maxAge:1000 * 60 * 60 * 24 * 7 * 30,
-                //     sameSite:"none"
-                // })
                 admin.password=''
                 res.json({error:false,token:token,login:true,admin:admin})
             }
@@ -52,9 +45,7 @@ export async function validateAdmin(req,res){
         res.json({ login: false, error: err });
     }
 }
-
 //HUB
-
 export async function getHub(req,res){
     try{
         const name=req.query.name??''
@@ -63,7 +54,6 @@ export async function getHub(req,res){
     }catch(err){
         console.log(err)
     }
-
 }
 export async function addHub(req,res){
     try{
@@ -121,9 +111,7 @@ export async function deleteHub(req,res){
         console.log(err)
     }
 }
-
 //USERS
-
 export async function getUsers(req,res){
     try{
         const name=req.query.name??''
@@ -137,7 +125,7 @@ export async function banUser(req,res){
     try{
         const id=req.params.id
         console.log(id)
-        let user=await userModel.findById({_id:id})
+        let user=await userModel.findById({_id:id})  
         console.log(user)
         if(user){
             if(user.ban){
@@ -154,19 +142,18 @@ export async function banUser(req,res){
         console.log(err)
     }
 }
-
 //CATEGORY
 export async function fetchCategory(req,res){
     try{
-        const categories=await categoryModel.find().lean()
-        return res.json({error:false,message:'sucess',categories:categories})
+        const categories=await categoryModel.find()
+        console.log(categories)
+        return res.json({error:false,message:'sucess',categories})
     }catch(err){
         console.log(err)
     }
-
 }
 export async function addCategory(req,res){
-    const {data}=req.body
+    const {data}=req.body    
     if(data){
         const category=await categoryModel.findOne({name:data})
         if(category){
@@ -178,5 +165,7 @@ export async function addCategory(req,res){
         }
     }
     return res.json({error:true,message:'field is empty'})
-
 }  
+export async function findCategory(req,res){
+    const name=req.query.name??''
+}

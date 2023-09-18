@@ -2,15 +2,23 @@ import React, { useState } from 'react'
 import Sidebar from '../Sidebar/Sidebar'
 import { Button, TextField } from '@mui/material'
 import { addCategory } from '../../../Api/AdminApi'
+import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 function AddCategories() {
   const [categoryName,setCategoryName]=useState('')
-
+  const navigate=useNavigate()
   const handleCategory=async()=>{
     console.log(categoryName)
     if(categoryName.trim()===''){
     }else{
       let {data}=await addCategory(categoryName)
+      if(data.error){
+        toast.error(data.message)
+      }else{
+        toast.success(data.message)
+        navigate('/admin/categories')
+      }
 
     }
   }

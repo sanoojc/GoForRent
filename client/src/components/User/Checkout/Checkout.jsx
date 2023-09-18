@@ -7,6 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DetailsValidationSchema } from '../../../Validations/UserDetailsValidations';
 import axios from 'axios';
 import Backdrop from '../../Backdrop/Backdrop';
+import { checkoutVerification } from '../../../Api/UserApi';
+import toast from 'react-hot-toast';
 
 function Checkout() {
   const location = useLocation()
@@ -31,28 +33,6 @@ function Checkout() {
   }
   console.log('response data')
 
-  async function handleImageUpload(image) {
-      const file = image
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", presetKey);
-      formData.append("cloud_name", cloudName);
-       axios.post(
-        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }, withCredentials: false,
-        }).then((res) => {
-          console.log(res.data.secure_url)
-        return res.data.secure_url
-      }).catch((err) => {
-        console.log(err)
-      })
-
-  }
-
   useEffect(() => {
     const start = new Date(location.state.checkIn)
     const end = new Date(location.state.checkOut)
@@ -60,18 +40,59 @@ function Checkout() {
     setNoOfDays(Math.floor(timeDifference / (1000 * 60 * 60 * 24)))
     setTotal((Math.floor(timeDifference / (1000 * 60 * 60 * 24)))*location.state.vehicle.rent)
   },[])
-   async function submit () {
-    setLoading(true)
+ async function submit (formDatas) {
+  try{
+    // setLoading(true)
     if (idImage && licenseImage) {
-      const licenseImg=await handleImageUpload(licenseImage)
-      if(licenseImg){
-          console.log(licenseImg,'submit response')
-        }
-        const idImg= await handleImageUpload(idImage)
-        if(idImg){
-          console.log(idImg,'submit response')
-        }
+      const file = licenseImage
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", presetKey);
+      formData.append("cloud_name", cloudName);
+      const licenseImg=  await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }, withCredentials: false,
+        })
+      console.log(licenseImg,'licenseImage response')
+      const licenseUrl=licenseImg.data.secure_url
+      console.log(licenseUrl)
+
+       const idfile = idImage
+      const idformData = new FormData();
+      formData.append("file", idfile);
+      formData.append("upload_preset", presetKey);
+      formData.append("cloud_name", cloudName);
+      const idImg=  await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        idformData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }, withCredentials: false,
+        })
+      console.log(idImg,'idImage response')
+      const idUrl=idImg.data.secure_url
+      console.log(idUrl)
+      const details={
+        formDatas,
+        licenceImage:licenseImg.data.secure_url,
+        idImage:idImg.data.secure_url
+      }
+      // let{data}=await checkoutVerification(details)
+      // setLoading(false)
+      // if(data.error){
+      //   toast.error(data.error)
+      // }else{
+      //   toast.success(data.message)
+      // }
     }
+  }catch(err){
+    console.log(err)
+  }
   }
   return (
     <>
@@ -187,10 +208,10 @@ function Checkout() {
           </div>
         </div>
       </div>
-      {/* {
+      {
         loading&&
       <Backdrop open={loading} />
-      } */}
+      }
     </>
   )
 }

@@ -1,5 +1,6 @@
 import express from 'express';
-import { getVehicles, googleAuth, login, logout, resendOtp, signup, validateUser, verifyOtp } from '../Controller/userController.js';
+import { addDetails, getVehicles, googleAuth, login, logout, resendOtp, signup, validateUser, verifyOtp } from '../Controller/userController.js';
+import verifyUser from '../Middlewares/verifyUser.js';
 
 const router=express.Router();
 router.post('/login',login)
@@ -11,7 +12,8 @@ router.post('/resendOtp',resendOtp)
 router.get('/vehicle',getVehicles)
 router.post('/google-auth',googleAuth)
 
-// router.use(verifyUser)
+router.use(verifyUser)
+router.route('/checkout').post(addDetails)
 
 
 

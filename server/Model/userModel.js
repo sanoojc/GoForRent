@@ -32,11 +32,20 @@ const userSchema=mongoose.Schema({
     address:{
         type:Object
     },
-    license:{
-        type:Object
+    licenseNumber:{
+        type:String
     },
-    idCard:{
-        type:Object
+    licenseImage:{
+        type:String
+    },
+    idType:{
+        type:String
+    },
+    idNumber:{
+        type:Number
+    },
+    idImage:{
+        type:String
     },
     ban:{
         type:Boolean,

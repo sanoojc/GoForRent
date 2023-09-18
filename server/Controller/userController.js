@@ -7,7 +7,6 @@ import sentOTP from '../nodemailer.js'
 import vehicleModel from '../Model/vehicleModel.js'
 import axios from 'axios'
 import instance from '../helper/razorpay.js'
-
 let Otp;
 let userDetails;
 export async function login(req,res){
@@ -18,7 +17,6 @@ export async function login(req,res){
             if(user.ban){
                 return res.json({error:true,message:"your account has been suspended"})
             }
-
             if( bcrypt.compareSync(password, user.password)){
                 const token=jwt.sign({id:user._id},process.env.jwt_key)
                 user.password=''
@@ -41,7 +39,6 @@ export async function getVehicles(req,res){
   const skip=(page-1)*count
   const sort=req.query.sort??''
   console.log(sort)
-
   if(sort!=='undefined'){ 
     if(sort==='name'){
       const vehicle=await vehicleModel.find({ vehicleName: new RegExp(name, "i"),list:true}).sort({vehicleName:1}).limit(count).skip(skip).lean()
@@ -125,7 +122,6 @@ export async function verifyOtp(req,res){
         return res.json({error:true,message:'incorrect otp'})
     }
 }
-
 export async function googleAuth (req , res) {
     try {
       if (req.body.access_token) {
@@ -166,16 +162,16 @@ export async function googleAuth (req , res) {
       res.json({ login: false, message: "Internal Serverl Error" });
     }
   }
-
   export async function showProfile(req,res){
-
     const token = req.headers.authorization.split(' ')[1];
     const user=await userModel.findById(id)
   }
-
+  //checkout
+  export async function addDetails(req,res){
+    console.log(req.body,'checkout post body')
+  }
   //payment
-  export async function payment(req,res){
-    
+  export async function payment(req,res){ 
     instance.orders.create({
       "amount": 50000,
       "currency": "INR",
@@ -187,7 +183,6 @@ export async function googleAuth (req , res) {
       }
     })
   }
-
 export async function logout(req,res){
     try{
        res.json({error:false,message:'logged out successfully'})

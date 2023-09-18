@@ -1,7 +1,7 @@
-import { styled } from '@mui/material/styles';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
@@ -9,99 +9,89 @@ import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import Header from '../Header/Header';
-import { Button, TextField } from '@mui/material';
-
-
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-        border: 0,
-    },
-}));
+import toast, { Toaster } from 'react-hot-toast';
 
 function ViewVehicle() {
-    const navigate=useNavigate()
-    const [checkIn,setCheckin]=useState()
-    const [checkOut,setCheckOut]=useState()
-    const handleCheckIn=(e)=>setCheckin(e.target.value)
-    const handleCheckOut=(e)=>setCheckOut(e.target.value)
+    const navigate = useNavigate()
+    const [checkIn, setCheckin] = useState()
+    const [checkOut, setCheckOut] = useState()
+    const handleCheckIn = (e) => setCheckin(e.target.value)
+    const handleCheckOut = (e) => setCheckOut(e.target.value)
     const location = useLocation()
-    const handleProceed=()=>{
-        const vehicle=location.state
-        navigate('/checkout',{state:{vehicle:vehicle,checkIn:checkIn,checkOut:checkOut}})
+    const handleProceed = () => {
+        if (checkIn && checkOut) {
+            const vehicle = location.state
+            navigate('/checkout', { state: { vehicle: vehicle, checkIn: checkIn, checkOut: checkOut } })
+        }else{
+            toast.error('Select the dates')
+        }
     }
     return (
-        <div>
+        <div className='w-full'>
+            <Toaster/>
             <Header />
-            <div className="details-container p-4 flex items-center justify-center">
-                <div className="image-container w-1/2 object-fill">
+            <div className="details-container p-4 flex flex-col items-center justify-center sm:flex-row">
+                <div className="image-container w-full sm:w-1/2 object-fill">
                     <img src={location.state.images} alt="" />
                     <div className="pl-10 ml-10">
                         <div className="p-1">
-                            <h2>{location.state.brand}  {location.state.vehicleName}</h2>
+                            <h1>{location.state.brand}  {location.state.vehicleName}</h1>
                         </div>
                         <div className="pl-3">
-                            <h5>Rent (per day) <CurrencyRupeeIcon />  {location.state.rent} </h5>
+                            <h5>Rent (per day) <CurrencyRupeeIcon /> {location.state.rent} </h5>
                         </div>
                     </div>
                 </div>
-                <div className="specifications border w-auto object-contain h-auto">
+                <div className="specifications  w-full sm:w-auto object-fill h-auto">
                     <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 600 }} aria-label="customized table">
+                        <Table aria-label="customized table">
 
                             <TableBody>
-                                <StyledTableRow>
-                                    <StyledTableCell align="center">Year</StyledTableCell>
-                                    <StyledTableCell align="center">{location.state.year}</StyledTableCell>
-                                </StyledTableRow>
+                                <TableRow>
+                                    <TableCell align="left">Year</TableCell>
+                                    <TableCell align="left">{location.state.year}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell align="left">Fuel type</TableCell>
+                                    <TableCell align="left">{location.state.fuelType}</TableCell>
+                                </TableRow>
 
-                                <StyledTableRow>
-                                    <StyledTableCell align="center">Fuel type</StyledTableCell>
-                                    <StyledTableCell align="center">{location.state.fuelType}</StyledTableCell>
-                                </StyledTableRow>
+                                <TableRow>
+                                    <TableCell align="left">Seat capacity</TableCell>
+                                    <TableCell align="left">{location.state.noOfSeats}</TableCell>
+                                </TableRow>
 
-                                <StyledTableRow>
-                                    <StyledTableCell align="center">Seat capacity</StyledTableCell>
-                                    <StyledTableCell align="center">{location.state.noOfSeats}</StyledTableCell>
-                                </StyledTableRow>
+                                <TableRow>
+                                    <TableCell align="left">Location</TableCell>
+                                    <TableCell align="left">{location.state.hubId}</TableCell>
+                                </TableRow>
 
-                                <StyledTableRow>
-                                    <StyledTableCell align="center">Location</StyledTableCell>
-                                    <StyledTableCell align="center">{location.state.hubId}</StyledTableCell>
-                                </StyledTableRow>
-
-                                <StyledTableRow>
-                                    <StyledTableCell align="center">Body type</StyledTableCell>
-                                    <StyledTableCell align="center">{location.state.bodyType}</StyledTableCell>
-                                </StyledTableRow>
+                                <TableRow>
+                                    <TableCell align="left">Body type</TableCell>
+                                    <TableCell align="left">{location.state.bodyType}</TableCell>
+                                </TableRow>
                             </TableBody>
                         </Table>
                     </TableContainer>
-                </div>
-            </div>
-            <div className=" d-flex justify-center mt-5">
-                <div className="date-container d-flex p-5 flex-col gap-1 shadow-sm border rounded-md">
-                    <p>From:</p>
-                <input className='border rounded-md' type='date' min={new Date().toISOString().split('T')[0]} onChange={handleCheckIn}></input>
-                <p>To:</p>
-                <input className='border rounded-md' type='date' min={checkIn} onChange={handleCheckOut}></input>
-                <div className="pt-3 pl-5">
-                <Button variant='outlined' onClick={handleProceed}> Book now</Button>
-                </div>
+                    <div className=" flex flex-col sm:flex-row justify-center items-center gap-3 mt-5 w-full ">
+                        <div className="flex flex-col border sm:flex-row sm:border-0 sm:border-transparent max-w-full items-center gap-1  p-2 rounded-md">
+                            <div className="flex flex-col gap-2 items-start sm:flex-row sm:gap-3 ">
+                                <p>From:</p>
+                                <input className='border rounded-md' type='date' min={new Date().toISOString().split('T')[0]} onChange={handleCheckIn}></input>
+                            </div>
+                            <div className="flex flex-col gap-2 items-start sm:flex-row sm:gap-3  ">
+                                <p>To:</p>
+                                <input className='border rounded-md' type='date' min={checkIn} onChange={handleCheckOut}></input>
+                            </div>
+
+
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleProceed}>
+                            Book now
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
