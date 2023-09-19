@@ -4,9 +4,8 @@ import { Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-
-function ViewCategory({id}) {
-
+function ViewCategory({CategoryName}) {
+    console.log(CategoryName,'categoryName')
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -28,7 +27,6 @@ function ViewCategory({id}) {
     },
   }));
 
-
   const navigate=useNavigate()
   const [vehicles, setVehicles] = useState([]);
   const [refreshPage, setRefresh] = useState(true)
@@ -36,7 +34,7 @@ function ViewCategory({id}) {
   async function handleBan(id) {
     try {
       const result = await Swal.fire({
-        text: `Are you sure you want to ban this user?`,
+        text: `Are you sure ?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -44,7 +42,7 @@ function ViewCategory({id}) {
         confirmButtonText: 'Yes'
       });
       if (result.isConfirmed) {
-        const { data } = await listVehicle(id);
+        const { data } = await getCategoryItems(id);
         if(!data.error){
           toast.success(data.message)
           setRefresh(!refreshPage);
@@ -68,7 +66,6 @@ function ViewCategory({id}) {
         console.error('Error fetching users:', error);
       }
     }
-
     fetchData();
   }, [name,refreshPage]);
 
@@ -77,11 +74,8 @@ function ViewCategory({id}) {
       <Sidebar/>
         <div className="">
         <TextField id="outlined-basic" label="search" variant="outlined" size='small' value={name} onChange={(e) => setName(e.target.value)} /><Button color='secondary' variant='outlined' size='medium' onClick={(e) => searchUser}>Search</Button>
-
         </div>
         <div className="">
-
-
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>

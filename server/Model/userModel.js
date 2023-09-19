@@ -47,6 +47,9 @@ const userSchema=mongoose.Schema({
     idImage:{
         type:String
     },
+    bookings:{
+        type:Array
+    },
     ban:{
         type:Boolean,
         default:false

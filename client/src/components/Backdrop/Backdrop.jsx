@@ -1,12 +1,13 @@
-import { CircularProgress } from '@mui/material'
+import { Backdrop, CircularProgress } from '@mui/material'
 import React from 'react'
 
-function Backdrop({open}) {
+function BackdropLoader({openLoader}) {
+    console.log('akjsdhfiahwoiefhi')
     return (
         <div>
             <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={open}
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 100 }}
+                open={openLoader}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -14,4 +15,4 @@ function Backdrop({open}) {
     )
 }
 
-export default Backdrop
+export default BackdropLoader

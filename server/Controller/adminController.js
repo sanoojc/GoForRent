@@ -155,7 +155,7 @@ export async function fetchCategory(req,res){
 export async function addCategory(req,res){
     const {data}=req.body    
     if(data){
-        const category=await categoryModel.findOne({name:data})
+        const category=await categoryModel.findOne({name: new RegExp(data, "i") })
         if(category){
             return res.json({error:true,message:'category already exists'})
         }else{

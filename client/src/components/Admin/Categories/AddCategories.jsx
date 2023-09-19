@@ -3,7 +3,7 @@ import Sidebar from '../Sidebar/Sidebar'
 import { Button, TextField } from '@mui/material'
 import { addCategory } from '../../../Api/AdminApi'
 import { useNavigate } from 'react-router-dom'
-import toast from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 
 function AddCategories() {
   const [categoryName,setCategoryName]=useState('')
@@ -25,6 +25,7 @@ function AddCategories() {
 
   return (
     <div>
+      <Toaster/>
       <Sidebar />
       <h1 className='d-flex justify-center pb-10'>Add category</h1>
       <div className="d-flex  justify-center ">

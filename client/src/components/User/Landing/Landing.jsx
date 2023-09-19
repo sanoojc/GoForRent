@@ -105,81 +105,97 @@ function Landing() {
             <FilterModal value={showModal} />
         }
             <Header />
-            <div className="banner mt-3" style={{ color: 'white' }}>
+            <div className="banner mt-3">
                 <div className='banner-img'>
-                    <h1 className='tracking-widest font-normal leading-normal' >Dream it Rent it Ride it.</h1>
-                    <h4 className='tracking-widest font-light'>Find the right one</h4>
-                    <div className='flex flex-col align-middle gap-4  justify-center sm:flex-row' >
-                        <div className="flex  border rounded-md shadow-sm w-min ml-5">
-                            <PlaceIcon fontSize='large' />
-                            <div className="">
-                                <select className='bg-transparent border-none outline-none h-full mx-3 ' ref={inputRef} name="" id="">
-                                    <option value="">Calicut</option>
-                                    <option value="">malappuram</option>
-                                </select>
-                            </div>
+
+                    <div className=" mt-96 flex flex-col sm:flex-row justify-center rounded-md shadow-md ">
+                        <div className="bg-red-500 opacity-90 p-4 rounded-l-md border border-r-0 flex justify-center  text-white  font-bold">
+                            <h1>Search Your Best <br /> Cars Here.</h1>
                         </div>
-                        <div className="flex">
-                            <div className="landing-search-container flex items-center " style={{ background: '#e8edea', borderRadius: '8px' }}>
-                                <TextField color='primary' size='small' placeholder='search' value={name} onChange={(e) => setName(e.target.value)} />
+                        <div className='flex items-center gap-2 rounded-r-md bg-white  ' >
+                            <div className="flex flex-col p-5 gap-4 ,">
+                                <div className="flex flex-col sm:flex-row gap-3 ">
+                                    <div className="">
+                                        <div className=" flex items-center border rounded-md shadow-sm w-min">
+                                            <PlaceIcon fontSize='large' />
+                                            <div className="">
+                                                <select className='bg-transparent border-none outline-none h-full mx-3 ' ref={inputRef} name="" id="">
+                                                    <option value="">Calicut</option>
+                                                    <option value="">malappuram</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <div className="landing-search-container flex items-center " style={{ background: '#e8edea', borderRadius: '8px' }}>
+                                            <TextField color='primary' size='small' placeholder='search' value={name} onChange={(e) => setName(e.target.value)} />
+                                        </div>
+                                        <Button color='inherit' variant='outlined' size='medium' onClick={(e) => getVehicles}>Search</Button>
+                                    </div>
+                                </div>
+                            <div className="filter  flex gap-3 align-center  text-black">
+                                <ButtonGroup ref={anchorRef} aria-label="split button">
+                                    <Button  variant="outlined"  size='small' onClick={handleClick}>{options[selectedIndex]}</Button>
+                                    <Button
+                                        size="small"
+                                        aria-controls={open ? 'split-button-menu' : undefined}
+                                        aria-expanded={open ? 'true' : undefined}
+                                        aria-label="select merge strategy"
+                                        aria-haspopup="menu"
+                                        onClick={handleToggle}
+                                    >
+                                        <ArrowDropDownIcon />
+                                    </Button>
+                                </ButtonGroup>
+                                <Popper
+                                    sx={{
+                                        zIndex: 1,
+                                    }}
+                                    open={open}
+                                    anchorEl={anchorRef.current}
+                                    role={undefined}
+                                    transition
+                                    disablePortal
+                                >
+                                    {({ TransitionProps, placement }) => (
+                                        <Grow
+                                            {...TransitionProps}
+                                            style={{
+                                                transformOrigin:
+                                                    placement === 'bottom' ? 'center top' : 'center bottom',
+                                            }}>
+                                            <Paper>
+                                                <ClickAwayListener onClickAway={handleClose}>
+                                                    <MenuList id="split-button-menu" autoFocusItem>
+                                                        {options.map((option, index) => (
+                                                            <MenuItem
+                                                                key={option}
+                                                                selected={index === selectedIndex}
+                                                                onClick={(event) => handleMenuItemClick(event, index)}
+                                                            >
+                                                                {option}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </MenuList>
+                                                </ClickAwayListener>
+                                            </Paper>
+                                        </Grow>
+                                    )}
+                                </Popper>
+                                <Button onClick={() => setShowModal(!showModal)} ><TuneIcon /> filter</Button>
                             </div>
-                            <Button color='inherit' variant='outlined' size='medium' onClick={(e) => getVehicles}>Search</Button>
+                            </div>
                         </div>
                     </div>
+
+
+
                 </div>
             </div>
-            <div className="filter pt-4 pl-6 flex align-center gap-5 text-black">
-                <ButtonGroup variant="outlined" ref={anchorRef} aria-label="split button">
-                    <Button size='small' onClick={handleClick}>{options[selectedIndex]}</Button>
-                    <Button
-                        size="small"
-                        aria-controls={open ? 'split-button-menu' : undefined}
-                        aria-expanded={open ? 'true' : undefined}
-                        aria-label="select merge strategy"
-                        aria-haspopup="menu"
-                        onClick={handleToggle}
-                    >
-                        <ArrowDropDownIcon />
-                    </Button>
-                </ButtonGroup>
-                <Popper
-                    sx={{
-                        zIndex: 1,
-                    }}
-                    open={open}
-                    anchorEl={anchorRef.current}
-                    role={undefined}
-                    transition
-                    disablePortal
-                >
-                    {({ TransitionProps, placement }) => (
-                        <Grow
-                            {...TransitionProps}
-                            style={{
-                                transformOrigin:
-                                    placement === 'bottom' ? 'center top' : 'center bottom',
-                            }}>
-                            <Paper>
-                                <ClickAwayListener onClickAway={handleClose}>
-                                    <MenuList id="split-button-menu" autoFocusItem>
-                                        {options.map((option, index) => (
-                                            <MenuItem
-                                                key={option}
-                                                selected={index === selectedIndex}
-                                                onClick={(event) => handleMenuItemClick(event, index)}
-                                            >
-                                                {option}
-                                            </MenuItem>
-                                        ))}
-                                    </MenuList>
-                                </ClickAwayListener>
-                            </Paper>
-                        </Grow>
-                    )}
-                </Popper>
-                <Button onClick={() => setShowModal(!showModal)} ><TuneIcon /> filter</Button>
-            </div>
-            <div className="bg-slate-500 shadow-slate-300 rounded-md shadow-md pt-3 mt-4 mx-3">
+
+
+            <div className="bg-slate-500 shadow-slate-300 rounded-md shadow-md pt-3 mt-32 mx-3">
 
                 <>
                     <h1 className='pl-3 text-center mt-5 text-white  py-4' > What are you looking for ? </h1>

@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import Header from '../Header/Header';
 import toast, { Toaster } from 'react-hot-toast';
+import Footer from '../Footer/Footer';
 
 function ViewVehicle() {
     const navigate = useNavigate()
@@ -30,15 +31,15 @@ function ViewVehicle() {
         <div className='w-full'>
             <Toaster/>
             <Header />
-            <div className="details-container p-4 flex flex-col items-center justify-center sm:flex-row">
+            <div className="details-container p-4 flex flex-col items-center justify-center sm:flex-row mb-10">
                 <div className="image-container w-full sm:w-1/2 object-fill">
                     <img src={location.state.images} alt="" />
                     <div className="pl-10 ml-10">
                         <div className="p-1">
                             <h1>{location.state.brand}  {location.state.vehicleName}</h1>
                         </div>
-                        <div className="pl-3">
-                            <h5>Rent (per day) <CurrencyRupeeIcon /> {location.state.rent} </h5>
+                        <div className="pl-3 flex items-center gap-2 ">
+                        <h3 className='font-bold'>Rent</h3>      <h5> (Per Day) <CurrencyRupeeIcon /> {location.state.rent} </h5>
                         </div>
                     </div>
                 </div>
@@ -74,17 +75,15 @@ function ViewVehicle() {
                         </Table>
                     </TableContainer>
                     <div className=" flex flex-col sm:flex-row justify-center items-center gap-3 mt-5 w-full ">
-                        <div className="flex flex-col border sm:flex-row sm:border-0 sm:border-transparent max-w-full items-center gap-1  p-2 rounded-md">
-                            <div className="flex flex-col gap-2 items-start sm:flex-row sm:gap-3 ">
+                        <div className="flex flex-col sm:flex-row max-w-full items-center gap-1  p-2 ">
+                            <div className="flex flex-col items-start sm:flex-row sm:gap-3 border rounded-md ">
                                 <p>From:</p>
-                                <input className='border rounded-md' type='date' min={new Date().toISOString().split('T')[0]} onChange={handleCheckIn}></input>
+                                <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} onChange={handleCheckIn}></input>
                             </div>
-                            <div className="flex flex-col gap-2 items-start sm:flex-row sm:gap-3  ">
+                            <div className="flex flex-col  items-start sm:flex-row sm:gap-3   border rounded-md ">
                                 <p>To:</p>
-                                <input className='border rounded-md' type='date' min={checkIn} onChange={handleCheckOut}></input>
+                                <input className='outline-none' type='date' min={checkIn} onChange={handleCheckOut}></input>
                             </div>
-
-
                         </div>
                         <div className="flex items-center justify-center">
                             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleProceed}>
@@ -94,6 +93,7 @@ function ViewVehicle() {
                     </div>
                 </div>
             </div>
+            <Footer/>
         </div>
     )
 }

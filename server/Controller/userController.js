@@ -166,6 +166,13 @@ export async function googleAuth (req , res) {
     const token = req.headers.authorization.split(' ')[1];
     const user=await userModel.findById(id)
   }
+  export async function logout(req,res){
+      try{
+         res.json({error:false,message:'logged out successfully'})
+      }catch(err){
+          console.log(err)
+      }
+  }
   //checkout
   export async function addDetails(req,res){
     console.log(req.body,'checkout post body')
@@ -183,10 +190,3 @@ export async function googleAuth (req , res) {
       }
     })
   }
-export async function logout(req,res){
-    try{
-       res.json({error:false,message:'logged out successfully'})
-    }catch(err){
-        console.log(err)
-    }
-}
