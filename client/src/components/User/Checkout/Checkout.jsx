@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DetailsValidationSchema } from '../../../Validations/UserDetailsValidations';
 import axios from 'axios';
-import { checkoutVerification } from '../../../Api/UserApi';
+import { checkoutVerification, paymentVerification } from '../../../Api/UserApi';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion'
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
@@ -35,6 +35,41 @@ function Checkout() {
   }
   console.log('response data')
 
+  function handleRazorPay(order,details) {
+      try{
+
+    
+    const options = {
+      key:process.env.REACT_APP_RAZOR_PAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "GoForRent",
+      description: "Test Transaction",
+      order_id: order.id,
+      handler: async (response) => {
+       
+        const { data } = await paymentVerification({
+          response,
+          details
+        });
+        if (data.err) {
+          toast.error(data.message);
+        } else {
+          toast.success("Payment SuccessFull");
+          navigate("/profile");
+        }
+      },
+    };
+    var rzp1 = new window.Razorpay(options);
+    rzp1.open();
+    rzp1.on("payment.failed", (response) => {
+      toast.error("Payment Failed");
+    });
+  }catch(err){
+    console.log(err)
+  }
+  }
+
   useEffect(() => {
     const start = new Date(location.state.checkIn)
     const end = new Date(location.state.checkOut)
@@ -47,61 +82,63 @@ function Checkout() {
       console.log('submit......')
       setOpenLoading(true)
       if (idImage && licenseImage) {
-          const file = licenseImage
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("upload_preset", presetKey);
-          formData.append("cloud_name", cloudName);
-          const licenseImg = await axios.post(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data"
-              }, withCredentials: false,
-            })
-          console.log(licenseImg, 'licenseImage response')
-          const licenseUrl = licenseImg.data.secure_url
-          console.log(licenseUrl)
+        const file = licenseImage
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", presetKey);
+        formData.append("cloud_name", cloudName);
+        const licenseImg = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }, withCredentials: false,
+          })
+        console.log(licenseImg, 'licenseImage response')
+        const licenseUrl = licenseImg.data.secure_url
+        console.log(licenseUrl)
 
-          const idfile = idImage
-          const idformData = new FormData();
-          idformData.append("file", idfile);
-          idformData.append("upload_preset", presetKey);
-          idformData.append("cloud_name", cloudName);
-          const idImg = await axios.post(
-            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-            idformData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data"
-              }, withCredentials: false,
-            })
-          console.log(idImg, 'idImage response')
-          const idUrl = idImg.data.secure_url
-          console.log(idUrl)
+        const idfile = idImage
+        const idformData = new FormData();
+        idformData.append("file", idfile);
+        idformData.append("upload_preset", presetKey);
+        idformData.append("cloud_name", cloudName);
+        const idImg = await axios.post(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          idformData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }, withCredentials: false,
+          })
+        console.log(idImg, 'idImage response')
+        const idUrl = idImg.data.secure_url
+        console.log(idUrl)
 
-          const details = {
-            formDatas,
-            licenceImage: licenseImg.data.secure_url,
-            idImage: idImg.data.secure_url
-
-          }
-          setOpenLoading(false)
-          let{data}=await checkoutVerification(details)
-          if(data.error){
-            toast.error(data.message)
-          }else{
-            toast.success(data.message)
-          }
+        const details = {
+          formDatas,
+          licenceImage: licenseImg.data.secure_url,
+          idImage: idImg.data.secure_url,
+          amount: total,
+          vehicleData:location.state
         }
-        else {
-          setOpenLoading(false)
-          toast.error('imges not added')
+        setOpenLoading(false)
+        let { data } = await checkoutVerification({total})
+        if (data.error) {
+          toast.error(data.message)
+        } else {
+          toast.success(data.message)
+          handleRazorPay(data.order,details)
         }
-      
+      }
+      else {
+        setOpenLoading(false)
+        toast.error('imges not added')
+      }
+
     } catch (err) {
-      console.log(err.message)
+      console.log(err,err.message)
     }
   }
   return (
@@ -143,9 +180,9 @@ function Checkout() {
                         className="w-full px-2 py-1  rounded-md focus outline-red-500 focus:ring"
                         placeholder="License Number"
                         {...register('licenseNumber')}
-                        
+
                       />
-                     <p className='text-red-500'>{errors.licenseNumber?errors.idType.message: "\u00a0"}</p>
+                      <p className='text-red-500'>{errors.licenseNumber ? errors.idType.message : "\u00a0"}</p>
 
                     </>
                   ) : (
@@ -158,7 +195,7 @@ function Checkout() {
                         placeholder="License Number"
                         {...register('licenseNumber')}
                       />
-                     <p className='text-red-500'>{errors.licenseNumber?errors.idType.message: "\u00a0"}</p>
+                      <p className='text-red-500'>{errors.licenseNumber ? errors.idType.message : "\u00a0"}</p>
                     </>
                   )}
                 </div>
@@ -170,7 +207,7 @@ function Checkout() {
                     ID Type
                   </label>
 
-                {errors.idType ? (
+                  {errors.idType ? (
                     <>
                       <input
                         required
@@ -180,7 +217,7 @@ function Checkout() {
                         placeholder="idType"
                         {...register('idType')}
                       />
-                      <p className='text-red-500'>{errors.idType?errors.idType.message: "\u00a0"}</p>
+                      <p className='text-red-500'>{errors.idType ? errors.idType.message : "\u00a0"}</p>
                     </>
                   ) : (
                     <>
@@ -192,7 +229,7 @@ function Checkout() {
                         placeholder="idType"
                         {...register('idType')}
                       />
-                        <p>{errors.idType?errors.idType.message: "\u00a0"}</p>
+                      <p>{errors.idType ? errors.idType.message : "\u00a0"}</p>
                     </>
                   )}
                 </div>
@@ -210,7 +247,7 @@ function Checkout() {
                         placeholder="ID Number"
                         {...register('idNumber')}
                       />
-                      <p className='text-red-500'>{errors.idNumber?errors.idNumber.message: "\u00a0"}</p>
+                      <p className='text-red-500'>{errors.idNumber ? errors.idNumber.message : "\u00a0"}</p>
                     </>
                   ) : (
                     <>
@@ -222,7 +259,7 @@ function Checkout() {
                         placeholder="ID Number"
                         {...register('idNumber')}
                       />
-                        <p className='text-red-500'>{errors.idNumber?errors.idNumber.message: "\u00a0"}</p>
+                      <p className='text-red-500'>{errors.idNumber ? errors.idNumber.message : "\u00a0"}</p>
                     </>
                   )}
                 </div>
@@ -254,7 +291,7 @@ function Checkout() {
                 </div>
                 <p className="text-lg">Days: {noOfDays}</p>
                 <p className="text-lg">Rent (per day): {location.state.vehicle.rent}</p>
-                <h4 className="text-xl font-bold">Total: <CurrencyRupeeIcon/>{total}</h4>
+                <h4 className="text-xl font-bold">Total: <CurrencyRupeeIcon />{total}</h4>
               </div>
               <div className="flex justify-center">
                 <button onClick={handleSubmit(submit)} className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
@@ -267,9 +304,9 @@ function Checkout() {
           </div>
         </motion.div>
       </div>
-      
-        <BackdropLoader openLoader={openLoading} />
-      
+
+      <BackdropLoader openLoader={openLoading} />
+
     </>
   )
 }

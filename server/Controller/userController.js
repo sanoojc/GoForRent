@@ -9,6 +9,7 @@ import axios from 'axios'
 import instance from '../helper/razorpay.js'
 let Otp;
 let userDetails;
+
 export async function login(req,res){
     try{
         const{email,password}=req.body
@@ -175,18 +176,23 @@ export async function googleAuth (req , res) {
   }
   //checkout
   export async function addDetails(req,res){
+
     console.log(req.body,'checkout post body')
-  }
-  //payment
-  export async function payment(req,res){ 
-    instance.orders.create({
-      "amount": 50000,
-      "currency": "INR",
-      "receipt": "receipt#1",
-      "partial_payment": false,
-      "notes": {
-        "key1": "value3",
-        "key2": "value2"
+    const {total}=req.body
+    const options={
+      amount: total*100,
+      currency: "INR",
+    }
+    instance.orders.create(options,(err,order)=>{
+      if(err){
+       return res.json({error:true,message:'server error'})
+      }else{
+        console.log(order,"order in payment")
+        return res.json({error:false,message:'sucessf',order})
       }
     })
+  }
+  //payment
+  export async function paymentVerification(req,res){ 
+    console.log(req.body,'payment verification body')
   }

@@ -16,18 +16,28 @@ const vehicleSchema=mongoose.Schema({
         require:true
     },
     classOfVehicle:{
-        type:String
+        type:String,
+        enum:[
+            'Premium','Vintage','Normal'
+        ]
     },
     bodyType:{
         type:String,
+        enum:['Hatchback','Sedan','Suv','Coupe','Sports car'],
         require:true
     },
     transmission:{
         type:String,
+        enum:['Automatic','Manual','AMT'],
         require:true
     },
     fuelType:{
         type:String,
+        enum:[
+            'Petrol',
+            'Diesel',
+            'EV'
+        ],
         require:true
     },
     noOfSeats:{
