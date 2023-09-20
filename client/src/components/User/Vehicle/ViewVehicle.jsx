@@ -76,11 +76,11 @@ function ViewVehicle() {
                     </TableContainer>
                     <div className=" flex flex-col sm:flex-row justify-center items-center gap-3 mt-5 w-full ">
                         <div className="flex flex-col sm:flex-row max-w-full items-center gap-1  p-2 ">
-                            <div className="flex flex-col items-start sm:flex-row sm:gap-3 border rounded-md ">
+                            <div className="flex flex-col items-start sm:flex-row sm:gap-3 border pt-2 rounded-md px-2">
                                 <p>From:</p>
                                 <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} onChange={handleCheckIn}></input>
                             </div>
-                            <div className="flex flex-col  items-start sm:flex-row sm:gap-3   border rounded-md ">
+                            <div className="flex flex-col  items-start sm:flex-row sm:gap-3 pt-2  border rounded-md px-2 ">
                                 <p>To:</p>
                                 <input className='outline-none' type='date' min={checkIn} onChange={handleCheckOut}></input>
                             </div>

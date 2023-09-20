@@ -5,9 +5,8 @@ const bookingSchema=mongoose.Schema({
         ref:'user',
         require:true
     },
-    vehicleId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'vehicle',
+    vehicle:{
+        type:Object,
         require:true
     },
     fromDate:{
@@ -37,3 +36,5 @@ const bookingSchema=mongoose.Schema({
         default: new Date(new Date().setDate(new Date().getDate()))
     }
 })
+const bookingModel=mongoose.model('booking',bookingSchema)
+export default bookingModel

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../Header/Header'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,6 +21,7 @@ function Checkout() {
   const [openLoading, setOpenLoading] = useState(false);
   const presetKey = process.env.REACT_APP_Preset_KEY;
   const cloudName = process.env.REACT_APP_Cloud_Name;
+  const navigate=useNavigate()
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(DetailsValidationSchema)
@@ -59,6 +60,9 @@ function Checkout() {
           navigate("/profile");
         }
       },
+      theme:{
+        color: '#cf4848'
+      }
     };
     var rzp1 = new window.Razorpay(options);
     rzp1.open();
@@ -118,7 +122,7 @@ function Checkout() {
 
         const details = {
           formDatas,
-          licenceImage: licenseImg.data.secure_url,
+          licenseImage: licenseImg.data.secure_url,
           idImage: idImg.data.secure_url,
           amount: total,
           vehicleData:location.state
