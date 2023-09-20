@@ -7,6 +7,10 @@ const vehicleSchema=mongoose.Schema({
         type:String,
         require:true
     },
+    vehicleNumber:{
+        type:String,
+        require:true,
+    },
     brand:{
         type:String,
         require:true

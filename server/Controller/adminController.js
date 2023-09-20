@@ -169,3 +169,8 @@ export async function addCategory(req,res){
 export async function findCategory(req,res){
     const name=req.query.name??''
 }
+// BOOKINGS
+export async function getBookings(req,res){
+    
+    console.log(req.body)
+}

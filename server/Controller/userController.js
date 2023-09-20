@@ -206,8 +206,6 @@ export async function paymentVerification(req, res) {
       return res.json({ login: false });
     }
     const { response, details } = req.body
-    console.log(response,'..................response')
-    console.log(details,'..................details')
     const body = response.razorpay_order_id + "|" + response.razorpay_payment_id;
     const start = new Date(details.vehicleData.checkIn)
     const end = new Date(details.vehicleData.checkOut)
@@ -222,6 +220,7 @@ export async function paymentVerification(req, res) {
     if (expectedSignature === response.razorpay_signature) {
       const booking = new bookingModel({
         userId:user._id,
+        userName:user.name,
         vehicle:details.vehicleData.vehicle,
         fromDate:details.vehicleData.checkIn,
         toDate:details.vehicleData.checkOut,

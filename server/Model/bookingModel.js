@@ -5,6 +5,10 @@ const bookingSchema=mongoose.Schema({
         ref:'user',
         require:true
     },
+    userName:{
+        type:String,
+        require:true
+    },
     vehicle:{
         type:Object,
         require:true
