@@ -3,6 +3,10 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { filterElements } from '../../Api/UserApi';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const style = {
   position: 'absolute',
@@ -16,34 +20,55 @@ const style = {
   p: 4,
 };
 
-export default function FilterModal({value}) {
-    console.log(value,'va');
-  const [open, setOpen] = React.useState({value});
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+export default function FilterModal({value,setShowModal}) {
+  const [categories,setCategories]=useState([])
+  const [filterDetails,setFilterDetails]=useState()
+    useEffect(()=>{
+      (async()=>{
+        const {data}=await filterElements()
+        if(!data.error){
+          console.log(data.categories,'categories')
+          setCategories(data.categories)
+        }
+      })()
+    },[])
+    const handleFilter=()=>{
+
+      setShowModal(false)
+    }
+
 
   return (
     <>
      <Modal
-            open={open}
-            onClose={handleClose}
+            open={value}
+            onClose={()=>setShowModal(false)}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description">
             <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-               Class
-              </Typography>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-               Body type
-              </Typography>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-               fuel type
-              </Typography>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-               Transmission
-              </Typography>
+             {
+               categories.map((item)=>{
+                 <FormControl key={item._id} variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <p>hiii</p>
+                <InputLabel id="demo-simple-select-standard-label">{item.name}</InputLabel>
+                <Select
+                  labelId="demo-simple-select-standard-label"
+                  id="demo-simple-select-standard"
+                  value={item.name}
+                  label="Age"
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+            </FormControl>
+              })
+            }
               <div className="d-flex justify-center pt-5">
-                <Button  variant="outlined" onClick={handleClose}>Apply</Button>
+                <Button  variant="outlined" onClick={handleFilter}>Apply</Button>
               </div>
             </Box>
           </Modal>

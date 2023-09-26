@@ -10,7 +10,7 @@ function ShowVehicles() {
   return (
     <div>
         <Sidebar/>
-        <div className="" style={{marginLeft:"5rem",marginRight:"1rem"}}>
+        <div className="pb-5" style={{marginLeft:"5rem",marginRight:"1rem"}}>
           <div className="flex justify-end">
         <Button variant="outlined" onClick={()=>navigate('/admin/addVehicle')}>Add vehicle</Button>
           </div>

@@ -9,6 +9,8 @@ import axios from 'axios'
 import instance from '../helper/razorpay.js'
 import crypto from 'crypto'
 import bookingModel from '../Model/bookingModel.js'
+import categoryModel from '../Model/categoryModel.js'
+import hubModel from '../Model/hubModel.js'
 let Otp;
 let userDetails;
 
@@ -23,7 +25,11 @@ export async function login(req, res) {
       if (bcrypt.compareSync(password, user.password)) {
         const token = jwt.sign({ id: user._id }, process.env.jwt_key)
         user.password = ''
-        res.json({ error: false, login: true, user: user, token: token })
+        const bookings=await bookingModel.find({userId:user._id}).lean()
+        if(bookings){
+          return res.json({ error: false, login: true, user: user, token ,bookings })
+        }
+        res.json({ error: false, login: true, user: user, token})
       } else {
         res.json({ error: true, message: "incorrcet password" })
       }
@@ -39,25 +45,50 @@ export async function getVehicles(req, res) {
     const name = req.query.name ?? ''
     const page = req.query.page ?? 1
     const count = req.query.count ?? 3
-    const skip = (page - 1) * count
     const sort = req.query.sort ?? ''
-    console.log(sort)
-    if (sort !== 'undefined') {
+    const skip = (page - 1) * count
+    console.log(name,'name')
+    console.log(page,'page')
+    console.log(count,'count')
+    console.log(skip,'skip')
+    console.log(sort,'sorted')
+    const hub = req.query.hub ? req.query.hub:'calicut'
+      const hubs=await hubModel.find().lean()
+    if (sort) {
+      console.log('hellooo')
       if (sort === 'name') {
-        const vehicle = await vehicleModel.find({ vehicleName: new RegExp(name, "i"), list: true }).sort({ vehicleName: 1 }).limit(count).skip(skip).lean()
-        return res.json({ error: false, message: 'success', vehicles: vehicle })
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+        .sort({ vehicleName: 1 })
+        .limit(count).
+        skip(skip)
+        .lean()
+        console.log(vehicle,'vehicle')
+        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
       } else if (sort === 'Low to High') {
-        const vehicle = await vehicleModel.find({ vehicleName: new RegExp(name, "i"), list: true }).sort({ rent: 1 }).limit(count).skip(skip).lean()
-        return res.json({ error: false, message: 'success', vehicles: vehicle })
-
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+        .sort({ rent: 1 })
+        .limit(count)
+        .skip(skip)
+        .lean()
+        console.log(vehicle,'vehicle')
+        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
       } else if (sort === 'High to Low') {
-        const vehicle = await vehicleModel.find({ vehicleName: new RegExp(name, "i"), list: true }).sort({ rent: -1 }).limit(count).skip(skip).lean()
-        return res.json({ error: false, message: 'success', vehicles: vehicle })
-
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+        .sort({ rent: -1 })
+        .limit(count)
+        .skip(skip)
+        .lean()
+        console.log(vehicle,'vehicle')
+        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
       }
     } else {
-      const vehicle = await vehicleModel.find({ vehicleName: new RegExp(name, "i"), list: true }).limit(count).skip(skip).lean()
-      return res.json({ error: false, message: 'success', vehicles: vehicle })
+      console.log('hiiii')
+      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+      .limit(count)
+      .skip(skip)
+      .lean()
+      console.log(vehicle,'vehicle')
+      return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
     }
   } catch (err) {
     console.log(err)
@@ -86,10 +117,13 @@ export async function signup(req, res) {
 export async function validateUser(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    if (!token)
+    if (!token){
       return res.json({ login: false, error: true, message: "no token" });
-
+    }
     const verifiedJWT = jwt.verify(token, process.env.jwt_key);
+    if(!verifiedJWT){
+      return res.json({error:true,message:'Jwt verificatioin failed'})
+    }
     const user = await userModel.findById(verifiedJWT.id, { password: 0 });
     if (!user) {
       return res.json({ login: false });
@@ -165,16 +199,22 @@ export async function googleAuth(req, res) {
     res.json({ login: false, message: "Internal Serverl Error" });
   }
 }
-export async function showProfile(req, res) {
-  const token = req.headers.authorization.split(' ')[1];
-  const user = await userModel.findById(id)
-}
 export async function logout(req, res) {
   try {
     res.json({ error: false, message: 'logged out successfully' })
   } catch (err) {
     console.log(err)
   }
+}
+export async function fetchBookingData(req,res){
+  const {id}=req.query
+  console.log(id,'userid')
+  const bookings=await bookingModel.find({userId:id}).lean()
+  console.log(bookings,'bookings......')
+  if(bookings){
+   return res.json({error:false,message:'sucess',bookings})
+  } 
+  return res.json({error:true,message:'no bookings found'})
 }
 //checkout
 export async function addDetails(req, res) {
@@ -237,5 +277,25 @@ export async function paymentVerification(req, res) {
   } catch (error) {
     console.log(error);
     res.json({ error, err: true, message: "Something went wrong" });
+  }
+}
+
+//FILTER
+export async function filterElements(req,res){
+  try{
+    const categories=await categoryModel.find().lean()
+    console.log(categories)
+    return res.json({error:false,message:'sucess',categories:categories})
+  }catch(err){
+    console.log(err)
+  }
+}
+// HUB
+export async function getHub(req,res){
+  try{
+    const hubs=await hubModel.find().lean()
+    return res.json({error:false,message:'sucess',hubs})
+  }catch(err){
+    console.log(err)
   }
 }

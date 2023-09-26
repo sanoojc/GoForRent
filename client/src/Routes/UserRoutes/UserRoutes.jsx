@@ -44,6 +44,7 @@ function UserRoutes() {
             <Route path='/signup' element={<Signup/>}/>
               <Route path='/view' element={<ViewVehicle/>}/>
             <Route path='/profile' element={<Login/>}/>
+            <Route path='/checkout'  element={<Navigate to={'/home'}/>}/>
             </>
           )}
         </Routes>

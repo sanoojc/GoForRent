@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '../Sidebar/Sidebar'
-import { Box,Button,Paper } from '@mui/material'
+import { Box, Button, FormControl, InputLabel, MenuItem, Paper, Select } from '@mui/material'
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { getCategories } from '../../../Api/AdminApi';
@@ -15,7 +15,7 @@ function Categories() {
   useEffect(() => {
     const fetchData = async () => {
       let { data } = await getCategories()
-      console.log( data.categories);
+      console.log(data.categories);
       if (data.error) {
         toast.error(data.message)
       } else {
@@ -24,11 +24,9 @@ function Categories() {
     }
     fetchData()
   }, [])
-
   const [value, setValue] = useState(items[0]);
-
-  const handleChange = (event, newValue) => {
-    const valueDetails=items.filter((item)=>item.name==newValue)
+  const handleChange = (e) => {
+    const valueDetails = items.filter((item) => item.name == e.target.value)
     setValue(valueDetails);
   };
 
@@ -44,28 +42,32 @@ function Categories() {
     <div>
       <Sidebar />
       <div className="pl-10 ml-10">
-        <div className='m-4 flex justify-end'>
-          <Button variant='outlined' onClick={() => navigate('/admin/addCategory')}>Add Category</Button>
+      <div className="flex justify-center pb-5">
+          <h2>CATEGORIES</h2>
         </div>
-        <div className=" flex justify-center">
-          <Box className='w-full flex justify-center'>
-          {
-              items && items.map((item, index) => (
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              textColor="secondary"
-              indicatorColor="secondary"
-              aria-label="secondary tabs example"
-            >
-              <Tab key={index} value={item.name} label={item.name} />
-            </Tabs>
-                ))
+        <div className=" flex justify-start gap-4">
+          <Box sx={{ minWidth: 200 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Categories</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={value}
+                label='categories'
+                onChange={handleChange}
+              >
+                {
+                  items.map((item,index)=>(
+                    <MenuItem key={index} value={item.name}>{item.name}</MenuItem>
+                  ))
               }
+              </Select>
+            </FormControl>
           </Box>
+          <Button variant='contained' onClick={() => navigate('/admin/addCategory')}>Add Category</Button>
         </div>
         <div className="">
-              <ViewCategory CategoryName={value}/>
+          <ViewCategory CategoryName={value} />
         </div>
       </div>
 

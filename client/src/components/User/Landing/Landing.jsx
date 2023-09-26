@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './Landing.css'
 import Header from '../Header/Header'
-import { getVehicles } from '../../../Api/UserApi'
+import { getHub, getVehicles } from '../../../Api/UserApi'
 import { toast } from 'react-hot-toast'
 import { Button, ButtonGroup, ClickAwayListener, Grow, MenuItem, MenuList, Paper, Popper, TextField, } from '@mui/material'
 import TuneIcon from '@mui/icons-material/Tune';
@@ -17,6 +17,8 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import Footer from '../Footer/Footer'
+import BackdropLoader from '../../Backdrop/Backdrop'
+
 function Landing() {
     const inputRef = useRef(null)
     const navigate = useNavigate()
@@ -26,21 +28,31 @@ function Landing() {
     const [page, setPage] = useState(1)
     const [count, setCount] = useState(3)
     const [open, setOpen] = useState(false);
+    const [hub,setHub]=useState('calicut')
+    const [hubs,setHubs]=useState([])
     const anchorRef = useRef(null);
     const [sort, setSort] = useState('name')
     const [selectedIndex, setSelectedIndex] = useState(1);
+    const [loading,setLoading]=useState(false)
     const options = ['name', <><CurrencyRupeeIcon />Low to High</>, <><CurrencyRupeeIcon />High to Low</>];
+
     useEffect(() => {
         inputRef.current.blur()
-        getVehicles(name, page, count, sort).then((res) => {
+        setLoading(true)
+        console.log(hub)
+        getVehicles(name, page, count,sort,hub).then((res) => {
             if (!res.data.error) {
+                console.log(res.data,'responsealsdf')
                 console.log(res.data.vehicles, 'vehicles')
+                console.log(res.data.hubs, 'hubs')
+                setHubs(res.data.hubs)
                 setVehicles(res.data.vehicles)
             }
         }).catch((err) => {
             toast.error('error', err)
         })
-    }, [name, page])
+        setLoading(false)
+    }, [name, page,hub])
     function handlePage(e, value) {
         setPage(value)
     }
@@ -79,7 +91,7 @@ function Landing() {
         let text = getTextFromOption(selectedOption);
         text = text.trim()
         setSort(text)
-        getVehicles(name, page, count, text).then((res) => {
+        getVehicles(name, page, count, text,hub).then((res) => {
             if (!res.data.error) {
                 console.log(res.data.vehicles, 'vehicles')
                 setVehicles(res.data.vehicles)
@@ -99,11 +111,16 @@ function Landing() {
         }
         setOpen(false);
     };
+    const handleHub=(e)=>{
+        console.log(e.target.value)
+        setHub(e.target.value)
+    }
     return (
         <>{
             showModal &&
-            <FilterModal value={showModal} />
+            <FilterModal value={showModal} setShowModal={setShowModal} />
         }
+        <BackdropLoader openLoader={loading}/>
             <Header />
             <div className="banner mt-3">
                 <div className='banner-img'>
@@ -119,9 +136,12 @@ function Landing() {
                                         <div className=" flex items-center border rounded-md shadow-sm w-min">
                                             <PlaceIcon fontSize='large' />
                                             <div className="">
-                                                <select className='bg-transparent border-none outline-none h-full mx-3 ' ref={inputRef} name="" id="">
-                                                    <option value="">Calicut</option>
-                                                    <option value="">malappuram</option>
+                                                <select value={hub} onChange={handleHub} className='bg-transparent border-none outline-none h-full mx-3 ' ref={inputRef} name="" id="">
+                                                    {
+                                                        hubs.map((item)=>(
+                                                            <option value={item.hubName}>{item.hubName}</option>
+                                                        ))
+                                                    }
                                                 </select>
                                             </div>
 
@@ -188,12 +208,8 @@ function Landing() {
                             </div>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
-
 
             <div className="bg-slate-500 shadow-slate-300 rounded-md shadow-md pt-3 mt-32 mx-3">
 
@@ -215,7 +231,7 @@ function Landing() {
             <div className="flex justify-around flex-col px-4 pt-16 mx-auto sm:max-w-xl gap-5 sm:flex-row  md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
                 {
                     vehicles.map((item, i) => (
-                        <div className="vehicles-card ml-3 shadow-xl" onClick={() => navigate('/view', { state: item })}>
+                        <div key={item._id} className="vehicles-card ml-3 shadow-xl" onClick={() => navigate('/view', { state: item })}>
                             <div className="vehicle-img  rounded-md  ">
                                 <img className='' src={item.images} />
                             </div>

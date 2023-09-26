@@ -7,7 +7,7 @@ function Dashboard() {
       <Sidebar/>
       <div className="flex justify-center">
 
-      <h2>Dashboard</h2>
+      <h2>DASHBOARD</h2>
       </div>
     </div>
   )

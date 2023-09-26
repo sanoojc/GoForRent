@@ -15,6 +15,10 @@ import Swal from 'sweetalert2';
 import axiosInstance from '../../../axios/axios';
 
 
+
+
+
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -34,11 +38,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
-
-// function createData(No, Name, Email, Action, View) {
-//   return { No, Name, Email, Action, View };
-// }
-
 export default function UserTable() {
   const [users, setUsers] = useState([]);
   const [refreshPage, setRefresh] = useState(true)
@@ -97,13 +96,13 @@ export default function UserTable() {
           </TableHead>
           <TableBody>
             {users.map((user, i) => (
-              <StyledTableRow key={user._id}>
-                <StyledTableCell component="th" scope="row">
+              <StyledTableRow key={i} >
+                <StyledTableCell key={i} component="th" scope="row">
                   {i + 1}
                 </StyledTableCell>
-                <StyledTableCell align="right">{user.name}</StyledTableCell>
-                <StyledTableCell align="right">{user.email}</StyledTableCell>
-                <StyledTableCell align="right">
+                <StyledTableCell  align="right">{user.name}</StyledTableCell>
+                <StyledTableCell  align="right">{user.email}</StyledTableCell>
+                <StyledTableCell  align="right">
                   {
                     user.ban ? <Button onClick={(e) => handleBan(user._id)} variant="contained" color="success">
                       unban

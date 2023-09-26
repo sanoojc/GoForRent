@@ -10,8 +10,8 @@ import Paper from '@mui/material/Paper';
 import { useEffect } from 'react';
 import {Button,TextField} from '@mui/material';
 import { useState } from 'react';
-import Swal from 'sweetalert2';
-import axiosInstance from '../../../axios/axios';
+import Swal from 'sweetalert2'
+import axiosInstance from "../../../../axios/axios"
 import { listBooking } from '../../../../Api/AdminApi';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -23,6 +23,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 14,
   },
 }));
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
@@ -61,6 +62,7 @@ export default function BookingTable() {
     async function fetchData() {
       try { 
         const { data } = await axiosInstance('adminToken').get(`/admin/bookings?name=${name}`);
+        console.log(data.bookings,'bookings')
         setBookings(data.bookings);
       } catch (error) {
         console.error('Error fetching hub:', error);
@@ -69,49 +71,57 @@ export default function BookingTable() {
     fetchData();
   }, [refreshPage,name]);
   return (
-    <>
-      <div className="search " style={{ paddingLeft: '10px', paddingBottom: '20px', display: 'flex', alignItems: 'center' }}>
+    <div className=''>
+      <div className="search flex gap-2" style={{ paddingLeft: '10px', paddingBottom: '20px', display: 'flex', alignItems: 'center' }}>
         <TextField id="outlined-basic" label="search" variant="outlined" size='small' value={name} onChange={(e) => setName(e.target.value)} />
         <Button color='secondary' variant='outlined' size='medium'>Search</Button>
       </div> 
       {
-        hubs.length>=0?
+        bookings.length>=0?
       
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell>No</StyledTableCell>
-              <StyledTableCell align="right">Hub name</StyledTableCell>
-              <StyledTableCell align="right">Action</StyledTableCell>
+              <StyledTableCell align="left">Image</StyledTableCell>
+              <StyledTableCell align="right">Vehicle name</StyledTableCell>
+              <StyledTableCell align="right">User</StyledTableCell>
+              <StyledTableCell align="right">From</StyledTableCell>
+              <StyledTableCell align="right">To</StyledTableCell>
+              <StyledTableCell align="right">Total</StyledTableCell>
               <StyledTableCell align="right">View</StyledTableCell>
+              <StyledTableCell align="right">Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {bookings.map((hub, i) => (
-              <StyledTableRow key={hub._id}>
+            {bookings.map((item, i) => (
+              <StyledTableRow key={item._id}>
                 <StyledTableCell component="th" scope="row">
                   {i + 1}
                 </StyledTableCell>
-                <StyledTableCell align="right">{hub.hubName}</StyledTableCell>
-                <StyledTableCell align="right">
-                  {
-                    hub.list ? <Button onClick={(e) => handleList(hub._id)} variant="contained" color="error">
-                      unlist
-                    </Button> : <Button onClick={(e) => handleList(hub._id)} variant="outlined" color="success">
-                      list
-                    </Button>
-
-                  }
-                </StyledTableCell>
-
+                  <div className=" w-16 h-16 flex items-center object-contain">
+                     <img src={item.vehicle.images[0]} alt="" /> 
+                    </div>
+                <StyledTableCell align="right">{item.vehicle.vehicleName}</StyledTableCell>
+                <StyledTableCell align="right">{item.userId.name}</StyledTableCell>
+                <StyledTableCell align="right">{new Date(item.fromDate).toISOString().split('T')[0]}</StyledTableCell>
+                <StyledTableCell align="right">{new Date(item.toDate).toISOString().split('T')[0]}</StyledTableCell>
+                <StyledTableCell align="right">{item.totalAmount}</StyledTableCell>
                 <StyledTableCell align="right"><Button color="secondary">view</Button></StyledTableCell>
+                <StyledTableCell align="right">
+                  <select name="" id="">
+                    <option value="">Cancel</option>
+                    <option value="">Paid</option>
+                    <option value="">Completed</option>
+                  </select>
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>:'No datas found'
       }
-    </>
+    </div>
   );
 }

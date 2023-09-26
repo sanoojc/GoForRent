@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import userModel from '../Model/userModel.js'
 import hubModel from '../Model/hubModel.js'
 import categoryModel from '../Model/categoryModel.js'
+import bookingModel from '../Model/bookingModel.js'
 
 var salt=bcrypt.genSaltSync(10)
 
@@ -48,7 +49,11 @@ export async function validateAdmin(req,res){
 //HUB
 export async function getHub(req,res){
     try{
-        const name=req.query.name??''
+        let name=req.query.name
+        if(name==null || name=="undefined"){
+            name=''
+        }
+        console.log(name,'name')
         const hub=await hubModel.find({hubName: new RegExp(name, "i") }).lean()
         return res.json({error:false,message:'sucess',hub:hub})
     }catch(err){
@@ -58,7 +63,7 @@ export async function getHub(req,res){
 export async function addHub(req,res){
     try{
         const {hubName,longitude,latitude}=req.body
-        const hub = await hubModel.findOne({hubName})
+        const hub = await hubModel.findOne({hubName:new RegExp(hubName, "i") })
         if(hub){
             return res.json({error:true,message:'hub already added'})
         }else{
@@ -168,9 +173,17 @@ export async function addCategory(req,res){
 }  
 export async function findCategory(req,res){
     const name=req.query.name??''
+    const category=await categoryModel.findOne({name:new RegExp(name,"i")})
+    return res.json({error:false,message:'sucess', category})
 }
 // BOOKINGS
 export async function getBookings(req,res){
-    
-    console.log(req.body)
+    try{
+        const name=req.query.name??""
+        console.log(name,'booking')
+        const bookings =await bookingModel.find().populate('userId').lean()
+        res.json({error:false,message:'sucess',bookings})
+    }catch(err){
+        console.log(err)
+    }
 }

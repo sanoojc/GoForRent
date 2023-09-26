@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import './Login.css'
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { loginValidationSchema } from '../../../Validations/LoginValidation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { login, loginWithGoogle } from '../../../Api/UserApi';
 import { useNavigate } from 'react-router-dom';
-import { ClipLoader } from 'react-spinners'
 import TextField from '@mui/material/TextField'
 import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
@@ -16,6 +15,7 @@ import Button from '@mui/material/Button';
 import GoogleIcon from '@mui/icons-material/Google';
 import {Toaster, toast} from 'react-hot-toast'
 import {useGoogleLogin} from '@react-oauth/google'
+import BackdropLoader from '../../Backdrop/Backdrop';
 
 
 function Login() {
@@ -29,19 +29,20 @@ function Login() {
   })
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [loading, setLoading] = useState({ submit: false })
+  const [loadingSpinner, setLoadingSpinner] = useState(false)
   const submit = async (details) => {
-    setLoading({ ...loading, submit: true })
+    setLoadingSpinner(true )
     login(details).then((res)=>{
       if (res.data.error) {
        toast.error(res.data.message)
       } else {
         localStorage.setItem('userToken',res.data.token)
-        dispatch({type:'user',login:res.data.login, payload:res.data.user})
+        dispatch({type:'user',login:res.data.login,bookings:res.data.bookings, payload:res.data.user})
+        
         navigate('/')
         dispatch({ type: 'refresh' })
       }
-      setLoading({ ...loading, submit: false })
+      setLoadingSpinner(false)
 
     }).catch((err)=>{
       console.log(err);
@@ -84,8 +85,8 @@ function Login() {
     <>
     <Toaster/>
    
-    <div className="login-container">
-      <form onSubmit={handleSubmit(submit)} className="login-box">
+    <div className="login-container  ">
+      <form onSubmit={handleSubmit(submit)} className="login-box border shadow-md">
         <div className="login-input-box">
           <div style={{paddingBottom:'10px'}}>
             <p>Email</p>
@@ -135,7 +136,7 @@ function Login() {
           </>
         </div>
         <div className="login-btn-container ">
-          <Button variant="contained" type='submit' color='primary'> Login<ClipLoader size={50} color='white' loading={loading.submit} /></Button>
+          <Button variant="contained" type='submit' color='primary'> Login</Button>
           <Button variant="outlined" onClick={googleLogin} endIcon={<GoogleIcon/>}>sign in with</Button>
           <><p>Don't have an account?<Link to='/signup'> sign up</Link></p></>
           <><Link to='/forgotpassword' >Forgot password?</Link></>
@@ -143,6 +144,7 @@ function Login() {
       </form>
 
     </div>
+    <BackdropLoader openLoader={loadingSpinner}/>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Addvehicle.css'
 import Sidebar from '../Sidebar/Sidebar'
 import axios from 'axios'
@@ -6,11 +6,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { VehicleValidationSchema } from '../../../Validations/VehicleAddValidation';
 import { Button} from '@mui/material';
-import { addvehicle } from '../../../Api/AdminApi';
 import { Toaster, toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom';
+import { addvehicleData, getHub } from '../../../Api/AdminApi';
 
-function AddVehicle() {
+export default function AddVehicle() {
   const presetKey = process.env.REACT_APP_Preset_KEY;
   const cloudName = process.env.REACT_APP_Cloud_Name;
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -18,6 +18,7 @@ function AddVehicle() {
   });
   const navigate = useNavigate()
   const [images, setImages] = useState([])
+  const [hubs, setHubs] = useState([])
   async function handleImageUpload(e) {
     const files = e.target.files
     const uploadPromises = []
@@ -48,7 +49,7 @@ function AddVehicle() {
     const datas = {
       details, images: images
     }
-    let { data } = await addvehicle(datas)
+    let { data } = await addvehicleData(datas)
     if (data.error) {
       toast.error(data.message)
     } else {
@@ -56,6 +57,13 @@ function AddVehicle() {
       navigate('/admin/vehicles')
     }
   }
+  useEffect(()=>{
+    (async()=>{
+      let {data}=await getHub()
+      setHubs(data.hub)
+
+    })()
+  },[])
 
   return (
     <>
@@ -70,8 +78,15 @@ function AddVehicle() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <label htmlFor="hubId" className="block text-gray-600 font-semibold">Hub ID</label>
-                <input required type='string' id="hubId" placeholder="Name of the hub" {...register('hubId')} className="border rounded-lg p-2 w-full" />
+                <label htmlFor="hubId" className=" block text-gray-600 font-semibold">Hub ID</label>
+                <select className=' outline-none border rounded-lg p-2 w-full' id='box' required  {...register('hubId')} >
+                 {
+                  hubs.map((item)=>(
+
+                    <option name={item.hubName} value={item.hubName}>{item.hubName}</option>
+                  ))
+                 }
+                </select>
                 {errors.hubId && <p className='text-red-600'>{errors.hubId.message}</p>}
               </div>
               <div>
@@ -91,23 +106,40 @@ function AddVehicle() {
               </div>
               <div>
                 <label htmlFor="classOfVehicle" className="block text-gray-600 font-semibold">Class of Vehicle</label>
-                <input required type='string' id="classOfVehicle" placeholder="e.g., premium" {...register('classOfVehicle')} className="border rounded-lg p-2 w-full" />
+                <select className='outline-none border rounded-lg p-2 w-full' id='box' required  {...register('classOfVehicle')} >
+                  <option name='Premium' value="Premium">Premium</option>
+                  <option name='Vintage' value="Vintage">Vintage</option>
+                  <option name='Normal' value="Normal">Normal</option>
+                </select>
                 {errors.classOfVehicle && <p className='text-red-600'>{errors.classOfVehicle.message}</p>}
               </div>
               <div>
                 <label htmlFor="bodyType" className="block text-gray-600 font-semibold">Body Type</label>
-                <input required type='string' id="bodyType" placeholder="e.g., sedan" {...register('bodyType')} className="border rounded-lg p-2 w-full" />
+                <select className='outline-none border rounded-lg p-2 w-full' id='box' required  {...register('bodyType')} >
+                  <option name='Hatchback' value="Hatchback">Hatchback</option>
+                  <option name='Sedan' value="Sedan">Sedan</option>
+                  <option name='Coupe' value="Coupe">Coupe</option>
+                  <option name='Sports car' value="Sports car">Sports car</option>
+                </select>
                 {errors.bodyType && <p className='text-red-600'>{errors.bodyType.message}</p>}
               </div>
               <div>
                 <label htmlFor="transmission" className="block text-gray-600 font-semibold">Transmission Type</label>
-                <input required type='string' id="transmission" placeholder="Transmission type" {...register('transmission')} className="border rounded-lg p-2 w-full" />
+                <select className='outline-none border rounded-lg p-2 w-full' id='box' required  {...register('transmission')} >
+                  <option name='Automatic' value="Automatic">Automatic</option>
+                  <option name='Manual' value="Manual">Manual</option>
+                  <option name='AMT' value="AMT">AMT</option>
+                </select>
                 {errors.transmission && <p className='text-red-600'>{errors.transmission.message}</p>}
               </div>
               <div>
                 <label htmlFor="fuelType" className="block text-gray-600 font-semibold">Fuel Type</label>
-                <input required type='string' id="fuelType" placeholder="Type of fuel" {...register('fuelType')} className="border rounded-lg p-2 w-full" />
-                {errors.fuelType && <p className='text-red-600'>{errors.fuelType.message}</p>}
+                <select className='outline-none border rounded-lg p-2 w-full' id='box' required  {...register('fuelType')} >
+                  <option name='Petrol' value="Petrol">Petrol</option>
+                  <option name='Diesel' value="Diesel">Diesel</option>
+                  <option name='EV' value="EV">EV</option>
+                </select>
+                                {errors.fuelType && <p className='text-red-600'>{errors.fuelType.message}</p>}
               </div>
               <div>
                 <label htmlFor="noOfSeats" className="block text-gray-600 font-semibold">Number of Seats</label>
@@ -135,4 +167,3 @@ function AddVehicle() {
   )
 }
 
-export default AddVehicle

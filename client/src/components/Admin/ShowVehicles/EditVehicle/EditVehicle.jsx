@@ -6,6 +6,8 @@ import { VehicleValidationSchema } from '../../../../Validations/VehicleAddValid
 import toast, { Toaster } from 'react-hot-toast';
 import Sidebar from '../../Sidebar/Sidebar'
 import { Button} from '@mui/material';
+import { editVehicleDetails } from '../../../../Api/AdminApi';
+import axios from 'axios';
 
 
 function EditVehicle() {
@@ -18,10 +20,15 @@ function EditVehicle() {
     const location=useLocation()
     const navigate = useNavigate()
     const [images, setImages] = useState([])
-    async function handleImageUpload(e) {
-      const files = e.target.files
+    const [imgUrls,setImgUrls]=useState([])
+    const handleImage=((e)=>{
+      setImages(e.target.files)
+    })
+   
+    const onSubmit = async (details) => {
+      try {
       const uploadPromises = []
-      for (const file of files) {
+      for (const file of images) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", presetKey);
@@ -36,24 +43,21 @@ function EditVehicle() {
           })
         uploadPromises.push(uploadPromise)
       }
-      try {
         const response = await Promise.all(uploadPromises)
         const secureUrls = response.map((res) => res.data.secure_url)
-        setImages([...secureUrls])
+        setImgUrls([...secureUrls])
+        const datas = {
+          details, images: imgUrls
+        }
+        let { data } = await editVehicleDetails(location.state._id,datas)
+        if (data.error) {
+          toast.error(data.message)
+        } else {
+          toast.success(data.message)
+          navigate('/admin/vehicles')
+        }
       } catch (err) {
         console.log(err)
-      }
-    }
-    const onSubmit = async (details) => {
-      const datas = {
-        details, images: images
-      }
-      let { data } = await addvehicle(datas)
-      if (data.error) {
-        toast.error(data.message)
-      } else {
-        toast.success(data.message)
-        navigate('/admin/vehicles')
       }
     }
 
@@ -63,11 +67,11 @@ function EditVehicle() {
       <Toaster />
       <div className='add-vehicle-container'>
         <Sidebar />
-        <div className="w-full max-w-screen-md mx-auto p-6">
+        <div className="w-full  max-w-screen-md mx-auto p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="bg-white border shadow-md rounded-lg p-4">
             <div className="mb-4">
               <label htmlFor="image" className="block text-gray-600 font-semibold">Image</label>
-              <input value={location.state.vehicleImage} type="file" id="image" accept='image/*' multiple onChange={handleImageUpload} className="border rounded-lg p-2 w-full" />
+              <input value={location.state.vehicleImage} type="file" id="image" accept='image/*' multiple onChange={handleImage} className="border rounded-lg p-2 w-full" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
@@ -117,7 +121,7 @@ function EditVehicle() {
               </div>
               <div>
                 <label htmlFor="rent" className="block text-gray-600 font-semibold">Vehicle Number</label>
-                <input value={location.state.vehicleNumber}  required type='string' id="rent" placeholder="KL xx" {...register('vehicleNumber')} className="border rounded-lg p-2 w-full" />
+                <input value={location.state.vehicleNumber}  required type='string' id="rent" placeholder="KL XX XXXX" {...register('vehicleNumber')} className="border rounded-lg p-2 w-full" />
                 {errors.vehicleNumber && <p className='text-red-600'>{errors.vehicleNumber.message}</p>}
               </div>
               <div>

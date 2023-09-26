@@ -2,7 +2,6 @@ import { Backdrop, CircularProgress } from '@mui/material'
 import React from 'react'
 
 function BackdropLoader({openLoader}) {
-    console.log('akjsdhfiahwoiefhi')
     return (
         <div>
             <Backdrop

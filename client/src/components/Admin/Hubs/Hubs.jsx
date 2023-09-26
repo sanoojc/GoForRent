@@ -6,16 +6,19 @@ import HubTable from './HubTable'
 import { useNavigate } from 'react-router-dom';
 
 function Hubs() {
-    const navigate=useNavigate()
-   
+    const navigate = useNavigate()
+
     return (
         <div className='pl-20 pr-10'>
             <Sidebar />
-            <div className="p-3 d-flex justify-end">
-            <Button variant='outlined'onClick={()=>navigate('/admin/addHub')} >Add hub</Button>
+            <div className="flex justify-center pb-5">
+                <h2>HUBS</h2>
             </div>
-      
-            <HubTable/>
+            <div className="p-3 d-flex justify-end">
+                <Button variant='outlined' onClick={() => navigate('/admin/addHub')} >Add hub</Button>
+            </div>
+
+            <HubTable />
         </div>
     );
 }

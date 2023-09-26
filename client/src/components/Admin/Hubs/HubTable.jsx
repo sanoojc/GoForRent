@@ -8,7 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useEffect } from 'react';
-import {listHub} from '../../../Api/AdminApi';
+import {getHub, listHub} from '../../../Api/AdminApi';
 import {Button,TextField} from '@mui/material';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
@@ -62,7 +62,7 @@ export default function UserTable() {
   useEffect(() => {
     async function fetchData() {
       try { 
-        const { data } = await axiosInstance('adminToken').get(`/admin/hubs?name=${name}`);
+        const { data } = await getHub(name)
         setHubs(data.hub);
       } catch (error) {
         console.error('Error fetching hub:', error);
