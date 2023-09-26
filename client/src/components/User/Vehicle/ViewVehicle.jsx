@@ -33,7 +33,7 @@ function ViewVehicle() {
             <Header />
             <div className="details-container p-4 flex flex-col items-center justify-center sm:flex-row mb-10">
                 <div className="image-container w-full sm:w-1/2 object-fill ">
-                    <img src={location.state.images} alt="" />
+                    <img src={location.state.images[0]} alt="" />
                     <div className="pl-10 ml-10">
                         <div className="p-1">
                             <h1>{location.state.brand}  {location.state.vehicleName}</h1>

@@ -42,7 +42,7 @@ export async function addVehicle(req,res){
             return res.status(400).json({error:true,mesage:"enter all fields"})
         }
         if(hubId&&vehicleName&&brand&&year&&classOfVehicle&&bodyType&&transmission&&fuelType&&noOfSeats&&rent&&images&&vehicleNumber){
-            const vehicle=new vehicleModel({hubId,vehicleName,brand,year,classOfVehicle,bodyType,vehicleNumber,transmission,fuelType,noOfSeats,rent,images})//............
+            const vehicle=new vehicleModel({hubId,vehicleName,brand,year,classOfVehicle,bodyType,vehicleNumber,transmission,fuelType,noOfSeats,rent,images})
             vehicle.save()
             res.status(200).json({error:false,message:'vehicle added'})
     
@@ -57,7 +57,7 @@ export async function editVehicle(req,res){
     try{
     const {id}=req.query
     const {details,images}=req.body
-    if(details.hubId.trim()===''||details.vehicleName.trim()===''||details.brand.trim()===''||details.year.trim()===''||details.classOfVehicle.trim()===''||details.bodyType.trim()===''||details.transmission.trim()===''||details.fuelType.trim()===''||details.noOfSeats.trim()===''||details.vehicleNumber.trim()===''||details.rent.trim()===''){
+    if(details.hubId.trim()===''||details.vehicleName.trim()===''||details.brand.trim()===''|| !details.year||details.classOfVehicle.trim()===''||details.bodyType.trim()===''||details.transmission.trim()===''||details.fuelType.trim()===''|| !details.noOfSeats||details.vehicleNumber.trim()===''|| !details.rent){
         return res.json({error:true,message:'fill all fields'})
     }else{
         if(images){
@@ -74,8 +74,8 @@ export async function editVehicle(req,res){
                 noOfSeats:details.noOfSeats,
                 rent:details.noOfSeats,
                 images
-                //............
             }})
+            console.log(vehicle,'vvvvvvvvvvv')
             return res.json({error:false,message:'vehicle edited',vehicle})
         }
         else{
@@ -86,12 +86,13 @@ export async function editVehicle(req,res){
                 year:details.year,
                 classOfVehicle:details.classOfVehicle,
                 bodyType:details.bodyType,
-                vehicleNumber:details.vehicleNumber,
+                vehicleNumber:details.vehicleNumber,  
                 transmission:details.transmission,
                 fuelType:details.fuelType,
                 noOfSeats:details.noOfSeats,
-                rent:details.noOfSeats,
+                rent:details.noOfSeats
             }})
+
             return res.json({error:false,message:'vehicle edited',vehicle})
         }
     }

@@ -233,7 +233,7 @@ function Landing() {
                     vehicles.map((item, i) => (
                         <div key={item._id} className="vehicles-card ml-3 shadow-xl" onClick={() => navigate('/view', { state: item })}>
                             <div className="vehicle-img  rounded-md  ">
-                                <img className='' src={item.images} />
+                                <img className='' src={item.images[0]} />
                             </div>
                             <div className="vehicle-details pt-3">
                                 <h5>{item.brand} {item.vehicleName}</h5>

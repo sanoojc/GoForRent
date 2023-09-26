@@ -1,13 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { VehicleValidationSchema } from '../../../../Validations/VehicleAddValidation';
 import toast, { Toaster } from 'react-hot-toast';
 import Sidebar from '../../Sidebar/Sidebar'
 import { Button} from '@mui/material';
-import { editVehicleDetails } from '../../../../Api/AdminApi';
+import { editVehicleDetails, getHub } from '../../../../Api/AdminApi';
 import axios from 'axios';
+import BackdropLoader from '../../../Backdrop/Backdrop';
 
 
 function EditVehicle() {
@@ -21,45 +22,70 @@ function EditVehicle() {
     const navigate = useNavigate()
     const [images, setImages] = useState([])
     const [imgUrls,setImgUrls]=useState([])
+    const [hubs,setHubs]=useState([])
+    const [formDatas,setFormDatas]=useState()
+    const [loading,setLoading]=useState(false)
     const handleImage=((e)=>{
       setImages(e.target.files)
     })
-   
+
+    useEffect(()=>{
+      (async()=>{
+        let {data}=await getHub()
+        setHubs(data.hub)
+  
+      })()
+    },[])
+    useEffect(()=>{
+      (async()=>{
+        if(imgUrls.length){
+          console.log(imgUrls)
+          console.log(formDatas)
+          const datas={
+            details:formDatas,
+            images:imgUrls
+          }
+          let { data } = await editVehicleDetails(location.state._id,datas)
+            if (data.error) {
+              toast.error(data.message)
+            } else {
+              toast.success(data.message)
+              navigate('/admin/vehicles')
+            }
+        }
+      })()
+    })
     const onSubmit = async (details) => {
       try {
-      const uploadPromises = []
-      for (const file of images) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", presetKey);
-        formData.append("cloud_name", cloudName);
-        const uploadPromise = axios.post(
-          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }, withCredentials: false,
-          })
-        uploadPromises.push(uploadPromise)
-      }
-        const response = await Promise.all(uploadPromises)
-        const secureUrls = response.map((res) => res.data.secure_url)
-        setImgUrls([...secureUrls])
-        const datas = {
-          details, images: imgUrls
-        }
-        let { data } = await editVehicleDetails(location.state._id,datas)
-        if (data.error) {
-          toast.error(data.message)
-        } else {
-          toast.success(data.message)
-          navigate('/admin/vehicles')
-        }
+          setFormDatas(details)
+          setLoading(true)
+          const uploadPromises = []
+          for (const file of images) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", presetKey);
+            formData.append("cloud_name", cloudName);
+            const uploadPromise = axios.post(
+              `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data"
+                }, withCredentials: false,
+              })
+            uploadPromises.push(uploadPromise)
+          }
+            const response = await Promise.all(uploadPromises)
+            const secureUrls = response.map((res) => res.data.secure_url)
+            setImgUrls([...secureUrls])
+            setLoading(false)
+            submitData(details) 
       } catch (err) {
         console.log(err)
       }
     }
+
+
 
   return (
     <div>
@@ -76,8 +102,13 @@ function EditVehicle() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
                 <label htmlFor="hubId" className="block text-gray-600 font-semibold">Hub ID</label>
-                <input value={location.state.hubId} required type='string' id="hubId" placeholder="Name of the hub" {...register('hubId')} className="border rounded-lg p-2 w-full" />
-                {errors.hubId && <p className='text-red-600'>{errors.hubId.message}</p>}
+                <select className=' outline-none border rounded-lg p-2 w-full' id='box' required  {...register('hubId')} >
+                 {
+                  hubs.map((item)=>(
+                    <option name={item.hubName} value={item.hubName}>{item.hubName}</option>
+                  ))
+                 }
+                </select>
               </div>
               <div>
                 <label htmlFor="vehicleName" className="block text-gray-600 font-semibold">Vehicle Name</label>
@@ -96,7 +127,11 @@ function EditVehicle() {
               </div>
               <div>
                 <label htmlFor="classOfVehicle" className="block text-gray-600 font-semibold">Class of Vehicle</label>
-                <input value={location.state.classOfVehicle}  required type='string' id="classOfVehicle" placeholder="e.g., premium" {...register('classOfVehicle')} className="border rounded-lg p-2 w-full" />
+                <select  className='outline-none border rounded-lg p-2 w-full' id='box' required  {...register('classOfVehicle')} >
+                  <option name='Premium' value="Premium">Premium</option>
+                  <option name='Vintage' value="Vintage">Vintage</option>
+                  <option name='Normal' value="Normal">Normal</option>
+                </select>
                 {errors.classOfVehicle && <p className='text-red-600'>{errors.classOfVehicle.message}</p>}
               </div>
               <div>
@@ -131,11 +166,12 @@ function EditVehicle() {
               </div>
             </div>
             <div className="flex justify-center mt-5">
-              <Button variant='contained' type='submit' size='large'>ADD</Button>
+              <Button variant='contained' type='submit' size='large'>EDIT</Button>
             </div>
           </form>
         </div>
       </div>
+      <BackdropLoader openLoader={loading}/>
     </>
     </div>
   )

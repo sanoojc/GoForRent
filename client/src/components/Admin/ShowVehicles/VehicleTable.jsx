@@ -108,7 +108,7 @@ export default function VehicleTable() {
                   {i + 1}
                 </StyledTableCell>
                 <div className="table-vehicle-img">
-                <img align="right" src={vehicle.images}/>
+                <img align="right" src={vehicle.images[0]}/>
 
                 </div>
                 <StyledTableCell align="left">{vehicle.vehicleName}</StyledTableCell>
