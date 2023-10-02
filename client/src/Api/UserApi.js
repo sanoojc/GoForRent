@@ -13,3 +13,8 @@ export const paymentVerification=(data)=>axiosInstance('userToken').post("/verif
 export const filterElements=()=>axiosInstance('userToken').get('/filter')
 export const fetchBookings=(id)=>axiosInstance('userToken').get(`/bookingDetails?id=${id}`)
 export const getHub=()=>axiosInstance('userToken').get('/getHub')
+export const getUser=(id)=>axiosInstance('userToken').get(`/getUser/${id}`)
+
+export const userChats=(id)=>axiosInstance('userToken').get(`/chat/${id}`)
+
+export const getMessages=(id)=>axiosInstance('userToken').get(`/message/${id}`)

@@ -8,11 +8,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useEffect } from 'react';
-import {Button,TextField} from '@mui/material';
+import {Button,FormControl,InputLabel,MenuItem,Select,TextField} from '@mui/material';
 import { useState } from 'react';
 import Swal from 'sweetalert2'
 import axiosInstance from "../../../../axios/axios"
-import { listBooking } from '../../../../Api/AdminApi';
+import { changeBookingStatus, listBooking } from '../../../../Api/AdminApi';
+import toast, { Toaster } from 'react-hot-toast';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -70,8 +71,19 @@ export default function BookingTable() {
     }
     fetchData();
   }, [refreshPage,name]);
+
+  const handleBooking=async(e,id)=>{
+    const {data}=await changeBookingStatus(id,e.target.value)
+    if(!data.error){
+      toast.success(data.message)
+      setRefresh(!refreshPage)
+    }else{
+      toast.error(data.message)
+    }
+  }
   return (
     <div className=''>
+      <Toaster/>
       <div className="search flex gap-2" style={{ paddingLeft: '10px', paddingBottom: '20px', display: 'flex', alignItems: 'center' }}>
         <TextField id="outlined-basic" label="search" variant="outlined" size='small' value={name} onChange={(e) => setName(e.target.value)} />
         <Button color='secondary' variant='outlined' size='medium'>Search</Button>
@@ -110,11 +122,19 @@ export default function BookingTable() {
                 <StyledTableCell align="right">{item.totalAmount}</StyledTableCell>
                 <StyledTableCell align="right"><Button color="secondary">view</Button></StyledTableCell>
                 <StyledTableCell align="right">
-                  <select name="" id="">
-                    <option value="">Cancel</option>
-                    <option value="">Paid</option>
-                    <option value="">Completed</option>
-                  </select>
+                <FormControl size='small' sx={{minWidth:'120px'}}>
+        <InputLabel id="demo-simple-select-label"></InputLabel>
+        <Select 
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={item.paymentStatus}
+          onChange={(e)=>handleBooking(e,item._id)}
+        >
+          <MenuItem value='Paid'>Paid</MenuItem>
+          <MenuItem value='Cancelled'>Cancelled</MenuItem>
+          <MenuItem value='completed'>Completed</MenuItem>
+        </Select>
+      </FormControl>
                 </StyledTableCell>
               </StyledTableRow>
             ))}

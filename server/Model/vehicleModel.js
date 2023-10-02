@@ -63,5 +63,6 @@ const vehicleSchema=mongoose.Schema({
         default:true
     }
 })
+
 const vehicleModel=mongoose.model('vehicle',vehicleSchema)
 export default vehicleModel

@@ -37,13 +37,13 @@ function AdminRoutes() {
                 <Route path='/login' element={<Navigate to={'/admin/Dashboard'} replace/> }/>
                 <Route path='/Dashboard' element={<Dashboard/>}/>
                 <Route path='/Users' element={<Usermanagement/>}></Route>
-                <Route path='/vehicles' element={<ShowVehicles/>}/>
+                <Route path='/Vehicles' element={<ShowVehicles/>}/>
                 <Route path='/addvehicle' element={<AddVehicle/>}/>
                 <Route path='/vehicleDetails' element={<ViewVehicle/>}/>
                 <Route path='/editVehicle' element={<EditVehicle/>}/>
-                <Route path='/hubs' element={<Hubs/>}/>
-                <Route path='/categories' element={<Categories/>}/>
-                <Route path='/bookings' element={<Bookings/>}/>
+                <Route path='/Hubs' element={<Hubs/>}/>
+                <Route path='/Categories' element={<Categories/>}/>
+                <Route path='/Bookings' element={<Bookings/>}/>
                 <Route path='/addHub' element={<AddHub/>}/>
                 <Route path='/addCategory' element={<AddCategories/>}/>
                 <Route path='/viewCategory' element={<ViewCategory/>}/>
@@ -57,9 +57,9 @@ function AdminRoutes() {
             <Route path='/Dashboard' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/Users' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/addvehicle' element={<Navigate to={'/admin/login'}/>}/>
-            <Route path='/vehicles' element={<Navigate to={'/admin/login'}/>}/>
-            <Route path='/categories'  element={<Navigate to={'/admin/login'}/>}/>
-            <Route path='/bookings' element={<Navigate to={'/admin/login'}/>}/>
+            <Route path='/Vehicles' element={<Navigate to={'/admin/login'}/>}/>
+            <Route path='/Categories'  element={<Navigate to={'/admin/login'}/>}/>
+            <Route path='/Bookings' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/addHub'  element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/addCategory' element={<Navigate to={'/admin/login'}/>}/>
             <Route path='/viewCategory' element={<Navigate to={'/admin/login'}/>}/>

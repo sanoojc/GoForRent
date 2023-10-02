@@ -37,9 +37,7 @@ function Checkout() {
   console.log('response data')
 
   function handleRazorPay(order,details) {
-      try{
-
-    
+      try{    
     const options = {
       key:process.env.REACT_APP_RAZOR_PAY_KEY_ID,
       amount: order.amount,
@@ -83,7 +81,6 @@ function Checkout() {
   }, [])
   async function submit(formDatas) {
     try {
-      console.log('submit......')
       setOpenLoading(true)
       if (idImage && licenseImage) {
         const file = licenseImage

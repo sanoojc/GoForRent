@@ -57,6 +57,7 @@ export async function editVehicle(req,res){
     try{
     const {id}=req.query
     const {details,images}=req.body
+    console.log(req.body, "body ++++");
     if(details.hubId.trim()===''||details.vehicleName.trim()===''||details.brand.trim()===''|| !details.year||details.classOfVehicle.trim()===''||details.bodyType.trim()===''||details.transmission.trim()===''||details.fuelType.trim()===''|| !details.noOfSeats||details.vehicleNumber.trim()===''|| !details.rent){
         return res.json({error:true,message:'fill all fields'})
     }else{
@@ -72,10 +73,9 @@ export async function editVehicle(req,res){
                 transmission:details.transmission,
                 fuelType:details.fuelType,
                 noOfSeats:details.noOfSeats,
-                rent:details.noOfSeats,
+                rent:details.rent,
                 images
             }})
-            console.log(vehicle,'vvvvvvvvvvv')
             return res.json({error:false,message:'vehicle edited',vehicle})
         }
         else{
@@ -90,7 +90,7 @@ export async function editVehicle(req,res){
                 transmission:details.transmission,
                 fuelType:details.fuelType,
                 noOfSeats:details.noOfSeats,
-                rent:details.noOfSeats
+                rent:details.rent
             }})
 
             return res.json({error:false,message:'vehicle edited',vehicle})

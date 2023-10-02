@@ -11,6 +11,7 @@ import crypto from 'crypto'
 import bookingModel from '../Model/bookingModel.js'
 import categoryModel from '../Model/categoryModel.js'
 import hubModel from '../Model/hubModel.js'
+import adminModel from '../Model/adminModel.js'
 let Otp;
 let userDetails;
 
@@ -53,11 +54,11 @@ export async function getVehicles(req, res) {
     console.log(skip,'skip')
     console.log(sort,'sorted')
     const hub = req.query.hub ? req.query.hub:'calicut'
-      const hubs=await hubModel.find().lean()
+      const hubs=await hubModel.find({list:true}).lean()
     if (sort) {
       console.log('hellooo')
       if (sort === 'name') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
         .sort({ vehicleName: 1 })
         .limit(count).
         skip(skip)
@@ -65,7 +66,7 @@ export async function getVehicles(req, res) {
         console.log(vehicle,'vehicle')
         return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
       } else if (sort === 'Low to High') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
         .sort({ rent: 1 })
         .limit(count)
         .skip(skip)
@@ -73,7 +74,7 @@ export async function getVehicles(req, res) {
         console.log(vehicle,'vehicle')
         return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
       } else if (sort === 'High to Low') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
         .sort({ rent: -1 })
         .limit(count)
         .skip(skip)
@@ -83,7 +84,7 @@ export async function getVehicles(req, res) {
       }
     } else {
       console.log('hiiii')
-      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId:hub,list: true})
+      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
       .limit(count)
       .skip(skip)
       .lean()
@@ -199,6 +200,18 @@ export async function googleAuth(req, res) {
     res.json({ login: false, message: "Internal Serverl Error" });
   }
 }
+export async function fetchUserData(req,res){
+  try{
+    const {id}=req.params
+    const admin=await adminModel.findOne({_id:id})
+    if(admin){
+      return res.json({error:false,message:'sucess',admin})
+    }
+    return res.json({error:true,message:'no user found'})
+  }catch(err){
+    console.log(err)
+  }
+}
 export async function logout(req, res) {
   try {
     res.json({ error: false, message: 'logged out successfully' })
@@ -206,11 +219,11 @@ export async function logout(req, res) {
     console.log(err)
   }
 }
+
 export async function fetchBookingData(req,res){
   const {id}=req.query
   console.log(id,'userid')
   const bookings=await bookingModel.find({userId:id}).lean()
-  console.log(bookings,'bookings......')
   if(bookings){
    return res.json({error:false,message:'sucess',bookings})
   } 
@@ -251,7 +264,6 @@ export async function paymentVerification(req, res) {
     const end = new Date(details.vehicleData.checkOut)
     const timeDifference = end.getTime() - start.getTime()
     const noOfDays=(Math.floor(timeDifference / (1000 * 60 * 60 * 24)))
-    console.log(noOfDays,'days..........')
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZOR_PAY_SECRET_KEY)
       .update(body.toString())

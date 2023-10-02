@@ -93,10 +93,9 @@ function ViewCategory({CategoryName}) {
           <TableHead>
             <TableRow>
               <StyledTableCell>No</StyledTableCell>
-              <StyledTableCell align="left"> Image</StyledTableCell>
-              <StyledTableCell align="left"> Name</StyledTableCell>
-              <StyledTableCell align="left">Edit</StyledTableCell>
-              <StyledTableCell align="left">Delete</StyledTableCell>
+              <StyledTableCell align="left"> Items</StyledTableCell>
+
+              <StyledTableCell align="left">Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>

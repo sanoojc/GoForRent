@@ -26,7 +26,7 @@ function Header() {
             })
     }
   return (
-    <div>
+    <div className=''>
           <div className="navbar flex justify-center sm:justify-between px-5">
                 <div className='flex items-center'>
                     <Link to='/'>

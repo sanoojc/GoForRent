@@ -90,3 +90,9 @@ body {
     background-color: rgb(157, 159, 160);
     margin-top: 20px;
 }
+.poster{
+    min-height: 400px;
+    background-image: url("/public/pexels-jeerayut-rianwed-144171.jpg");
+    background-position: center;
+    background-size: cover;
+}

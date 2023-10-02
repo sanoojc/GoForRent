@@ -34,7 +34,7 @@ const bookingSchema=mongoose.Schema({
     }, 
     paymentStatus:{
         type:String,
-        enum:['Paid','Cancelled']
+        enum:['Paid','Cancelled','Completed']
     },dispatch:{
         type:Date,
         default: new Date(new Date().setDate(new Date().getDate()))

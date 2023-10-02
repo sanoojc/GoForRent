@@ -45,7 +45,7 @@ export default function VehicleTable() {
   async function handleBan(id) {
     try {
       const result = await Swal.fire({
-        text: `Are you sure you want to ban this user?`,
+        text: `Are you sure?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -82,7 +82,7 @@ export default function VehicleTable() {
   }, [name,refreshPage]);
   return (
     <>
-      <div className="search" style={{ paddingLeft: '10px', paddingBottom: '20px', display: 'flex', alignItems: 'center' }}>
+      <div className="search" style={{ paddingLeft: '10px', paddingBottom: '20px', display: 'flex', gap:'10px', alignItems: 'center' }}>
         <TextField id="outlined-basic" label="search" variant="outlined" size='small' value={name} onChange={(e) => setName(e.target.value)} /><Button color='secondary' variant='outlined' size='medium' onClick={(e) => searchUser}>Search</Button>
 
       </div>

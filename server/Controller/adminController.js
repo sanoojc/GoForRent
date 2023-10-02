@@ -5,6 +5,7 @@ import userModel from '../Model/userModel.js'
 import hubModel from '../Model/hubModel.js'
 import categoryModel from '../Model/categoryModel.js'
 import bookingModel from '../Model/bookingModel.js'
+import vehicleModel from '../Model/vehicleModel.js'
 
 var salt=bcrypt.genSaltSync(10)
 
@@ -180,10 +181,39 @@ export async function findCategory(req,res){
 export async function getBookings(req,res){
     try{
         const name=req.query.name??""
-        console.log(name,'booking')
         const bookings =await bookingModel.find().populate('userId').lean()
         res.json({error:false,message:'sucess',bookings})
     }catch(err){
+        console.log(err)
+    }
+}
+export async function changeBookingStatus(req,res){
+    console.log(req.query)
+    console.log(req.body)
+    try{
+        const booking=await bookingModel.findByIdAndUpdate({_id:req.query.id},{$set:{paymentStatus:req.body.status}})
+        if(booking){
+            return res.json({error:false,message:'sucess',booking})
+        }else{
+            return res.json({error:true,message:'error in fetching booking'})
+
+        }
+    }catch(err){
+        console.log(err)
+    }
+
+}
+
+// DASHBOARD
+export async function fetchDashboardData(req,res){
+    try{
+        const users=await userModel.find().lean()
+        const vehicles=await vehicleModel.find().lean()
+        const bookings=await bookingModel.find().lean()
+        const hubs=await hubModel.find().lean()
+        return res.json({error:false,message:'sucess',users,vehicles,bookings,hubs})
+    }
+    catch(err){
         console.log(err)
     }
 }

@@ -10,7 +10,7 @@ function Bookings() {
     <div>
       <Sidebar />
       <div className="pl-20 pr-10">
-        <div className="flex justify-center pb-5">
+        <div className="flex justify-center pb-5 text-slate-500">
           <h2>BOOKINGS</h2>
         </div>
         <BookingTable />

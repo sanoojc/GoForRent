@@ -119,6 +119,7 @@ export default function AddVehicle() {
                   <option name='Hatchback' value="Hatchback">Hatchback</option>
                   <option name='Sedan' value="Sedan">Sedan</option>
                   <option name='Coupe' value="Coupe">Coupe</option>
+                  <option name='Suv' value="Suv">Suv</option>
                   <option name='Sports car' value="Sports car">Sports car</option>
                 </select>
                 {errors.bodyType && <p className='text-red-600'>{errors.bodyType.message}</p>}

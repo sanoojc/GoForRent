@@ -7,9 +7,10 @@ import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';  
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import ChatIcon from '@mui/icons-material/Chat';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -150,8 +151,11 @@ const navigate=useNavigate()
                     <Typography variant="h6" noWrap component="div">
                         GoForRent
                     </Typography>
-                    </div>
+                    </div >
+                    <div className="flex text-white gap-5 items-center">
+                    <Link to='/admin/chat'><ChatIcon fontSize='large' sx={{color:'white'}} /></Link>
                     <Button onClick={handleLogout} variant='outlined' color='inherit' >Logout</Button>
+                    </div>
                     </div>
                 </Toolbar>
             </AppBar>
@@ -163,7 +167,7 @@ const navigate=useNavigate()
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {['Dashboard', 'vehicles', 'bookings', 'users', 'categories', 'hubs'].map((text, index) => (
+                    {['Dashboard', 'Vehicles', 'Bookings', 'Users', 'Categories', 'Hubs'].map((text, index) => (
                         <Link to={`/admin/${text}`}>
 
                             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
@@ -182,11 +186,11 @@ const navigate=useNavigate()
                                         }}
                                     >
                                         {text === 'Dashboard' ? <HomeOutlinedIcon /> :
-                                            text === 'vehicles' ? <DirectionsCarOutlinedIcon /> :
-                                                text === 'bookings' ? <AutoStoriesOutlinedIcon /> :
-                                                    text === 'users' ? <PeopleAltOutlinedIcon /> :
-                                                        text === 'categories' ? <CategoryOutlinedIcon /> :
-                                                            text === 'hubs' ? <DeviceHubOutlinedIcon /> :
+                                            text === 'Vehicles' ? <DirectionsCarOutlinedIcon /> :
+                                                text === 'Bookings' ? <AutoStoriesOutlinedIcon /> :
+                                                    text === 'Users' ? <PeopleAltOutlinedIcon /> :
+                                                        text === 'Categories' ? <CategoryOutlinedIcon /> :
+                                                            text === 'Hubs' ? <DeviceHubOutlinedIcon /> :
                                                                 <ControlPointDuplicateOutlinedIcon />
                                         }
                                     </ListItemIcon>

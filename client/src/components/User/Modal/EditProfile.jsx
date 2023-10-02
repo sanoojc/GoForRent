@@ -16,11 +16,15 @@ const style = {
   p: 4,
 };
 
-export default function AddCategoryItems({ open, handleClose }) {
-
+export default function EditProfile() {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  handleOpen
 
   return (
-    <div className='rounded-md'>
+    <div>
+      
       <Modal
         open={open}
         onClose={handleClose}
@@ -28,15 +32,12 @@ export default function AddCategoryItems({ open, handleClose }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className=" flex flex-col gap-4 items-center">
-            <Typography id="modal-modal-title" variant="h5" component="h1">
-              ADD ITEMS
-            </Typography>
-            <input placeholder='ADD....' className='w-full border pl-2 pt-2 border-black rounded-md my-2' type="text" />
-            <button  className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
-              ADD ITEM
-            </button>
-          </div>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
         </Box>
       </Modal>
     </div>

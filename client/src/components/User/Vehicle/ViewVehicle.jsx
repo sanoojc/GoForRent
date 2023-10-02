@@ -66,7 +66,6 @@ function ViewVehicle() {
                                     <TableCell align="left">Location</TableCell>
                                     <TableCell align="left">{location.state.hubId}</TableCell>
                                 </TableRow>
-
                                 <TableRow>
                                     <TableCell align="left">Body type</TableCell>
                                     <TableCell align="left">{location.state.bodyType}</TableCell>
@@ -78,7 +77,7 @@ function ViewVehicle() {
                         <div className="flex flex-col sm:flex-row max-w-full items-center gap-1  p-2 ">
                             <div className="flex flex-col items-start sm:flex-row sm:gap-3 border pt-2 rounded-md px-2">
                                 <p>From:</p>
-                                <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} onChange={handleCheckIn}></input>
+                                <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} defaultValue={'2023-10-06'} onChange={handleCheckIn}></input>
                             </div>
                             <div className="flex flex-col  items-start sm:flex-row sm:gap-3 pt-2  border rounded-md px-2 ">
                                 <p>To:</p>

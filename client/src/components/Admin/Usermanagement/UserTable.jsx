@@ -88,10 +88,10 @@ export default function UserTable() {
           <TableHead>
             <TableRow>
               <StyledTableCell>No</StyledTableCell>
-              <StyledTableCell align="right">Name</StyledTableCell>
-              <StyledTableCell align="right">Email</StyledTableCell>
-              <StyledTableCell align="right">Action</StyledTableCell>
-              <StyledTableCell align="right">View</StyledTableCell>
+              <StyledTableCell align="left">Name</StyledTableCell>
+              <StyledTableCell align="left">Email</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
+              <StyledTableCell align="left">View</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,9 +100,9 @@ export default function UserTable() {
                 <StyledTableCell key={i} component="th" scope="row">
                   {i + 1}
                 </StyledTableCell>
-                <StyledTableCell  align="right">{user.name}</StyledTableCell>
-                <StyledTableCell  align="right">{user.email}</StyledTableCell>
-                <StyledTableCell  align="right">
+                <StyledTableCell  align="left">{user.name}</StyledTableCell>
+                <StyledTableCell  align="left">{user.email}</StyledTableCell>
+                <StyledTableCell  align="left">
                   {
                     user.ban ? <Button onClick={(e) => handleBan(user._id)} variant="contained" color="success">
                       unban
@@ -113,7 +113,7 @@ export default function UserTable() {
                   }
                 </StyledTableCell>
 
-                <StyledTableCell align="right"><Button color="secondary">view</Button></StyledTableCell>
+                <StyledTableCell align="left"><Button color="secondary">view</Button></StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

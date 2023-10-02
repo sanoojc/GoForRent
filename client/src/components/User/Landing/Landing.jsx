@@ -18,6 +18,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
 import Footer from '../Footer/Footer'
 import BackdropLoader from '../../Backdrop/Backdrop'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function Landing() {
     const inputRef = useRef(null)
@@ -32,7 +34,7 @@ function Landing() {
     const [hubs,setHubs]=useState([])
     const anchorRef = useRef(null);
     const [sort, setSort] = useState('name')
-    const [selectedIndex, setSelectedIndex] = useState(1);
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const [loading,setLoading]=useState(false)
     const options = ['name', <><CurrencyRupeeIcon />Low to High</>, <><CurrencyRupeeIcon />High to Low</>];
 
@@ -154,10 +156,11 @@ function Landing() {
                                         <Button color='inherit' variant='outlined' size='medium' onClick={(e) => getVehicles}>Search</Button>
                                     </div>
                                 </div>
-                            <div className="filter  flex gap-3 align-center  text-black">
+                            <div  className="filter  flex gap-3 align-center  text-black">
                                 <ButtonGroup ref={anchorRef} aria-label="split button">
-                                    <Button  variant="outlined"  size='small' onClick={handleClick}>{options[selectedIndex]}</Button>
+                                    <Button sx={{color:'black', borderColor:'black'}} variant="outlined"  size='small' onClick={handleClick}>{options[selectedIndex]}</Button>
                                     <Button
+                                    sx={{borderColor:'black'}}
                                         size="small"
                                         aria-controls={open ? 'split-button-menu' : undefined}
                                         aria-expanded={open ? 'true' : undefined}
@@ -165,12 +168,14 @@ function Landing() {
                                         aria-haspopup="menu"
                                         onClick={handleToggle}
                                     >
-                                        <ArrowDropDownIcon />
+                                        <ArrowDropDownIcon sx={{color:'black'}} />
                                     </Button>
                                 </ButtonGroup>
                                 <Popper
                                     sx={{
                                         zIndex: 1,
+                                        color:'black',
+                                        borderColor:'black'
                                     }}
                                     open={open}
                                     anchorEl={anchorRef.current}
@@ -203,7 +208,7 @@ function Landing() {
                                         </Grow>
                                     )}
                                 </Popper>
-                                <Button onClick={() => setShowModal(!showModal)} ><TuneIcon /> filter</Button>
+                                <Button variant='outlined' sx={{color:'black',borderColor:'black'}} onClick={() => setShowModal(!showModal)} ><TuneIcon /> filter</Button>
                             </div>
                             </div>
                         </div>
@@ -211,27 +216,26 @@ function Landing() {
                 </div>
             </div>
 
-            <div className="bg-slate-500 shadow-slate-300 rounded-md shadow-md pt-3 mt-32 mx-3">
+            <div className="poster shadow-slate-300 text-slate-200 flex flex-col rounded-md shadow-md pt-28 gap-3 pl-5 sm:pl-60 mt-48 sm:mt-32 mx-3">
+                    <h1>Explore The <br /> Best Collections <br /> From Us. </h1>
 
-                <>
-                    <h1 className='pl-3 text-center mt-5 text-white  py-4' > What are you looking for ? </h1>
-                </>
-                <div className="category flex pl-5 justify-center flex-col pb-5  gap-10 sm:max-h-max sm:flex-row">
+                {/* <div className="category flex pl-5 justify-center flex-col pb-5  gap-10 sm:max-h-max sm:flex-row">
                     <div className=" flex category-card shadow-md border bg-white  rounded-md sm:w-full h-max p-4">
                         <h2>Premium cars</h2>
                     </div>
                     <div className="category-card shadow-md border bg-white rounded-md sm:w-full h-max p-4">
                         <h2>Vintage cars</h2>
                     </div>
-                </div>
+                </div> */}
+                
             </div>
-            <>
+            {/* <>
                 <h3 style={{ color: 'black', paddingLeft: '30px', marginTop: '40px', paddingBottom: '20px' }}>Explore all</h3>
-            </>
+            </> */}
             <div className="flex justify-around flex-col px-4 pt-16 mx-auto sm:max-w-xl gap-5 sm:flex-row  md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8">
                 {
                     vehicles.map((item, i) => (
-                        <div key={item._id} className="vehicles-card ml-3 shadow-xl" onClick={() => navigate('/view', { state: item })}>
+                        <div key={item._id} className="vehicles-card ml-3 mt-5 shadow-xl border" onClick={() => navigate('/view', { state: item })}>
                             <div className="vehicle-img  rounded-md  ">
                                 <img className='' src={item.images[0]} />
                             </div>

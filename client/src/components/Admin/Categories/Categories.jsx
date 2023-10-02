@@ -42,7 +42,7 @@ function Categories() {
     <div>
       <Sidebar />
       <div className="pl-10 ml-10">
-      <div className="flex justify-center pb-5">
+      <div className="flex justify-center pb-5 text-slate-500">
           <h2>CATEGORIES</h2>
         </div>
         <div className=" flex justify-start gap-4">

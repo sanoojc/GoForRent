@@ -11,6 +11,9 @@ function ShowVehicles() {
     <div>
         <Sidebar/>
         <div className="pb-5" style={{marginLeft:"5rem",marginRight:"1rem"}}>
+        <div className="flex justify-center pb-5 text-slate-500">
+          <h2>VEHICLES</h2>
+        </div>
           <div className="flex justify-end">
         <Button variant="outlined" onClick={()=>navigate('/admin/addVehicle')}>Add vehicle</Button>
           </div>

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { filterElements } from '../../Api/UserApi';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
@@ -27,7 +26,6 @@ export default function FilterModal({value,setShowModal}) {
       (async()=>{
         const {data}=await filterElements()
         if(!data.error){
-          console.log(data.categories,'categories')
           setCategories(data.categories)
         }
       })()
@@ -36,6 +34,7 @@ export default function FilterModal({value,setShowModal}) {
 
       setShowModal(false)
     }
+    console.log(categories,'hhhh')
 
 
   return (
@@ -49,7 +48,6 @@ export default function FilterModal({value,setShowModal}) {
              {
                categories.map((item)=>{
                  <FormControl key={item._id} variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                  <p>hiii</p>
                 <InputLabel id="demo-simple-select-standard-label">{item.name}</InputLabel>
                 <Select
                   labelId="demo-simple-select-standard-label"
