@@ -106,7 +106,7 @@ const handleOtp=(e)=>setOtp(e.target.value)
               </Typography>
               <Typography>Resend in {countdown} seconds</Typography>
               <div className="" style={{paddingBottom:'10px'}}>
-              <TextField
+              <TextField sx={{paddingRight:"10px"}}
                 size='small'
                 type='text'
                 name='otp'
@@ -116,12 +116,14 @@ const handleOtp=(e)=>setOtp(e.target.value)
                 {
                   countdown>0?
                   <Button variant="contained" disabled
-                   >Resend OTP</Button>:<Button onClick={resendOTP}  variant="contained" 
+                   >Resend OTP</Button>:<Button onClick={resendOTP} 
                    >Resend OTP</Button>
                 }
               </div>
-                <Button variant="contained" onClick={verifyOtp}>Verify OTP</Button>
-                <Button variant="contained" >Cancel</Button>
+              <div className=" flex gap-2 mt-2">
+                <Button  variant="contained" onClick={verifyOtp}>Verify OTP</Button>
+                <Button  variant="outlined" >Cancel</Button>
+              </div>
             </Box>
           </Modal>
         </div>

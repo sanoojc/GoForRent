@@ -19,23 +19,11 @@ const style = {
   p: 4,
 };
 
-export default function FilterModal({value,setShowModal}) {
-  const [categories,setCategories]=useState([])
-  const [filterDetails,setFilterDetails]=useState()
-    useEffect(()=>{
-      (async()=>{
-        const {data}=await filterElements()
-        if(!data.error){
-          setCategories(data.categories)
-        }
-      })()
-    },[])
-    const handleFilter=()=>{
+export default function FilterModal({value,setShowModal,categories}) {
 
+    const handleFilter=()=>{
       setShowModal(false)
     }
-    console.log(categories,'hhhh')
-
 
   return (
     <>
@@ -45,6 +33,8 @@ export default function FilterModal({value,setShowModal}) {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description">
             <Box sx={style}>
+              <div className=" flex">
+
              {
                categories.map((item)=>{
                  <FormControl key={item._id} variant="standard" sx={{ m: 1, minWidth: 120 }}>
@@ -54,7 +44,7 @@ export default function FilterModal({value,setShowModal}) {
                   id="demo-simple-select-standard"
                   value={item.name}
                   label="Age"
-                >
+                  >
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
@@ -65,6 +55,7 @@ export default function FilterModal({value,setShowModal}) {
             </FormControl>
               })
             }
+            </div>
               <div className="d-flex justify-center pt-5">
                 <Button  variant="outlined" onClick={handleFilter}>Apply</Button>
               </div>

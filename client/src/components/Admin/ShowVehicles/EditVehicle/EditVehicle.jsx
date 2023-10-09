@@ -171,7 +171,18 @@ function EditVehicle() {
                 </div>
                 <div>
                   <label htmlFor="year" className="block text-gray-600 font-semibold">Year</label>
-                  <input value={location.state.year} required type='number' id="year" placeholder="Manufacturing year" {...register('year')} className="border rounded-lg p-2 w-full" />
+                  <input
+                    required
+                    type='number'
+                    min='1900'
+                    max={new Date().getFullYear()} 
+                    id="year"
+                    name='year'
+                    placeholder="Manufacturing year"
+                    {...register('year')}
+                    className="border rounded-lg p-2 w-full"
+                  />
+
                   {/* {errors.year && <p className='text-red-600'>{errors.year.message}</p>} */}
                 </div>
                 <div>
@@ -214,12 +225,12 @@ function EditVehicle() {
                 </div>
                 <div>
                   <label htmlFor="noOfSeats" className="block text-gray-600 font-semibold">Number of Seats</label>
-                  <input value={location.state.noOfSeats} required type='number' id="noOfSeats" placeholder="Seat capacity of the vehicle" {...register('noOfSeats')} className="border rounded-lg p-2 w-full" />
+                  <input required type='number' id="noOfSeats" placeholder="Seat capacity of the vehicle" {...register('noOfSeats')} className="border rounded-lg p-2 w-full" />
                   {/* {errors.noOfSeats && <p className='text-red-600'>{errors.noOfSeats.message}</p>} */}
                 </div>
                 <div>
                   <label htmlFor="rent" className="block text-gray-600 font-semibold">Vehicle Number</label>
-                  <input value={location.state.vehicleNumber} required type='string' id="rent" placeholder="KL XX XXXX" {...register('vehicleNumber')} className="border rounded-lg p-2 w-full" />
+                  <input required type='string' id="rent" placeholder="KL XX XXXX" {...register('vehicleNumber')} className="border rounded-lg p-2 w-full" />
                   {/* {errors.vehicleNumber && <p className='text-red-600'>{errors.vehicleNumber.message}</p>} */}
                 </div>
                 <div>

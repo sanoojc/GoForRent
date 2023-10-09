@@ -5,20 +5,30 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import Header from '../Header/Header';
 import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../Footer/Footer';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 function ViewVehicle() {
+    
     const navigate = useNavigate()
-    const [checkIn, setCheckin] = useState()
-    const [checkOut, setCheckOut] = useState()
-    const handleCheckIn = (e) => setCheckin(e.target.value)
-    const handleCheckOut = (e) => setCheckOut(e.target.value)
+    const [checkIn, setCheckin] = useState(null)
+    const [checkOut, setCheckOut] = useState(null)
+    const handleCheckIn = (date) => setCheckin(date)
+    const handleCheckOut = (date) => setCheckOut(date)
     const location = useLocation()
+    useEffect(()=>{
+        (async()=>{
+            const {data}=await fetchBookedDates(location.state._id)
+        })()
+    })
+    const today = new Date();
     const handleProceed = () => {
         if (checkIn && checkOut) {
             const vehicle = location.state
@@ -77,11 +87,23 @@ function ViewVehicle() {
                         <div className="flex flex-col sm:flex-row max-w-full items-center gap-1  p-2 ">
                             <div className="flex flex-col items-start sm:flex-row sm:gap-3 border pt-2 rounded-md px-2">
                                 <p>From:</p>
-                                <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} defaultValue={'2023-10-06'} onChange={handleCheckIn}></input>
+                                <DatePicker placeholderText='dd/mm/yyyy'
+                                    selected={checkIn}
+                                    minDate={today}
+                                    maxDate={checkOut}
+                                    dateFormat="dd/MM/yyyy"
+                                    onChange={handleCheckIn}
+                                />
+                                {/* <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} defaultValue={'2023-10-06'} onChange={handleCheckIn}></input> */}
                             </div>
                             <div className="flex flex-col  items-start sm:flex-row sm:gap-3 pt-2  border rounded-md px-2 ">
                                 <p>To:</p>
-                                <input className='outline-none' type='date' min={checkIn} onChange={handleCheckOut}></input>
+                                <DatePicker placeholderText='dd/mm/yyyy'
+                                    selected={checkOut}
+                                    minDate={checkIn}
+                                    dateFormat="dd/MM/yyyy"
+                                    onChange={handleCheckOut}
+                                    />
                             </div>
                         </div>
                         <div className="flex items-center justify-center">

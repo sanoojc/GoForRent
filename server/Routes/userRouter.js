@@ -1,5 +1,5 @@
 import express from 'express';
-import { addDetails, fetchBookingData, fetchUserData, filterElements, getHub, getVehicles, googleAuth, login, logout, paymentVerification, resendOtp, signup, validateUser, verifyOtp } from '../Controller/userController.js';
+import { addDetails, editProfile, fetchBookingData, fetchUserData, filterElements, getHub, getVehicles, googleAuth, login, logout, paymentVerification, resendOtp, signup, validateUser, verifyOtp } from '../Controller/userController.js';
 import verifyUser from '../Middlewares/verifyUser.js';
 
 const router=express.Router();
@@ -14,6 +14,7 @@ router.post('/google-auth',googleAuth)
 router.route('/filter').get(filterElements)
 router.get('/getHub',getHub)
 router.get('/getUser/:id',fetchUserData)
+router.put('/user',editProfile)
 
 router.use(verifyUser)
 router.route('/checkout').post(addDetails)

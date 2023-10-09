@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { Suspense, useEffect, useRef, useState } from 'react'
 import './Landing.css'
 import Header from '../Header/Header'
 import { getHub, getVehicles } from '../../../Api/UserApi'
@@ -20,6 +20,7 @@ import Footer from '../Footer/Footer'
 import BackdropLoader from '../../Backdrop/Backdrop'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Jelly } from '@uiball/loaders'
 
 function Landing() {
     const inputRef = useRef(null)
@@ -36,6 +37,7 @@ function Landing() {
     const [sort, setSort] = useState('name')
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [loading,setLoading]=useState(false)
+    const [categories,setCategories]=useState([])
     const options = ['name', <><CurrencyRupeeIcon />Low to High</>, <><CurrencyRupeeIcon />High to Low</>];
 
     useEffect(() => {
@@ -44,9 +46,7 @@ function Landing() {
         console.log(hub)
         getVehicles(name, page, count,sort,hub).then((res) => {
             if (!res.data.error) {
-                console.log(res.data,'responsealsdf')
-                console.log(res.data.vehicles, 'vehicles')
-                console.log(res.data.hubs, 'hubs')
+                setCategories(res.data.categories)
                 setHubs(res.data.hubs)
                 setVehicles(res.data.vehicles)
             }
@@ -101,7 +101,6 @@ function Landing() {
         }).catch((err) => {
             toast.error('error', err)
         })
-        console.log(`You clicked ${text}`);
         setOpen(false);
     };
     const handleToggle = () => {
@@ -118,10 +117,21 @@ function Landing() {
         setHub(e.target.value)
     }
     return (
-        <>{
-            showModal &&
-            <FilterModal value={showModal} setShowModal={setShowModal} />
-        }
+        <>
+
+      {/* Modal */}
+      <div className="flex justify-center bg-red-500">
+        <Suspense fallback={
+          <Jelly 
+          size={80}
+          speed={0.9} 
+          color="black" 
+         />
+        }>
+          {showModal &&<FilterModal value={showModal} setShowModal={setShowModal} categories={categories} />}
+        </Suspense>
+      </div>
+      {/* Modal  */}
         <BackdropLoader openLoader={loading}/>
             <Header />
             <div className="banner mt-3">

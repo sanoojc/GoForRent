@@ -41,60 +41,7 @@ export async function login(req, res) {
     console.log(err)
   }
 }
-export async function getVehicles(req, res) {
-  try {
-    const name = req.query.name ?? ''
-    const page = req.query.page ?? 1
-    const count = req.query.count ?? 3
-    const sort = req.query.sort ?? ''
-    const skip = (page - 1) * count
-    console.log(name,'name')
-    console.log(page,'page')
-    console.log(count,'count')
-    console.log(skip,'skip')
-    console.log(sort,'sorted')
-    const hub = req.query.hub ? req.query.hub:'calicut'
-      const hubs=await hubModel.find({list:true}).lean()
-    if (sort) {
-      console.log('hellooo')
-      if (sort === 'name') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
-        .sort({ vehicleName: 1 })
-        .limit(count).
-        skip(skip)
-        .lean()
-        console.log(vehicle,'vehicle')
-        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
-      } else if (sort === 'Low to High') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
-        .sort({ rent: 1 })
-        .limit(count)
-        .skip(skip)
-        .lean()
-        console.log(vehicle,'vehicle')
-        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
-      } else if (sort === 'High to Low') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
-        .sort({ rent: -1 })
-        .limit(count)
-        .skip(skip)
-        .lean()
-        console.log(vehicle,'vehicle')
-        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
-      }
-    } else {
-      console.log('hiiii')
-      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
-      .limit(count)
-      .skip(skip)
-      .lean()
-      console.log(vehicle,'vehicle')
-      return res.json({ error: false, message: 'success',hubs, vehicles: vehicle })
-    }
-  } catch (err) {
-    console.log(err)
-  }
-}
+
 export async function signup(req, res) {
   const { name, email, number, password, confirmPassword } = req.body
   const user = await userModel.findOne({ email })
@@ -212,9 +159,64 @@ export async function fetchUserData(req,res){
     console.log(err)
   }
 }
+export async function editProfile (req,res){
+  const {id}=req.params
+  
+  
+}
 export async function logout(req, res) {
   try {
     res.json({ error: false, message: 'logged out successfully' })
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export async function getVehicles(req, res) {
+  try {
+    const name = req.query.name ?? ''
+    const page = req.query.page ?? 1
+    const count = req.query.count ?? 3
+    const sort = req.query.sort ?? ''
+    const skip = (page - 1) * count
+    console.log(name,'name')
+    console.log(page,'page')
+    console.log(count,'count')
+    console.log(skip,'skip')
+    console.log(sort,'sorted')
+    const hub = req.query.hub ? req.query.hub:'calicut'
+      const hubs=await hubModel.find({list:true}).lean()
+      const categories=await categoryModel.find().lean()
+    if (sort) {
+      if (sort === 'name') {
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+        .sort({ vehicleName: 1 })
+        .limit(count).
+        skip(skip)
+        .lean()
+        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
+      } else if (sort === 'Low to High') {
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+        .sort({ rent: 1 })
+        .limit(count)
+        .skip(skip)
+        .lean()
+        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
+      } else if (sort === 'High to Low') {
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+        .sort({ rent: -1 })
+        .limit(count)
+        .skip(skip)
+        .lean()
+        return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
+      }
+    } else {
+      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+      .limit(count)
+      .skip(skip)
+      .lean()
+      return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
+    }
   } catch (err) {
     console.log(err)
   }

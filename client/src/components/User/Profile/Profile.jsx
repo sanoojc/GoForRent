@@ -18,6 +18,7 @@ import { fetchBookings } from '../../../Api/UserApi';
 import Swal from 'sweetalert2';
 import PasswordIcon from '@mui/icons-material/Password';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
+import HistoryIcon from '@mui/icons-material/History';
 const EditProfileModal = lazy(() => import('../../Modal/EditProfileModal'))
 import { Jelly } from '@uiball/loaders'
 
@@ -72,7 +73,7 @@ function Profile() {
       </div>
       {/* Modal  */}
 
-      <section style={{ backgroundColor: '#eee' }}>
+      <section style={{ backgroundColor: '#eee', height:'auto' }}>
         <MDBContainer className="py-5">
           <MDBRow>
             <MDBCol lg="4">
@@ -99,8 +100,12 @@ function Profile() {
                 </MDBCardBody>
               </MDBCard>
               <MDBCard className=" mb-4 mb-lg-0">
-                <MDBCardBody className="p-0">
+                <MDBCardBody className="p-0 ">
                   <MDBListGroup flush className="rounded-3">
+                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
+                      <PasswordIcon />
+                      <MDBCardText>Wallet</MDBCardText>
+                    </MDBListGroupItem>
                     <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
                       <PasswordIcon />
                       <MDBCardText>Reset Password</MDBCardText>
@@ -110,16 +115,8 @@ function Profile() {
                       <MDBCardText>Add Proof</MDBCardText>
                     </MDBListGroupItem>
                     <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
-                      <MDBIcon fab icon="twitter fa-lg" style={{ color: '#55acee' }} />
-                      <MDBCardText>@mdbootstrap</MDBCardText>
-                    </MDBListGroupItem>
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
-                      <MDBIcon fab icon="instagram fa-lg" style={{ color: '#ac2bac' }} />
-                      <MDBCardText>mdbootstrap</MDBCardText>
-                    </MDBListGroupItem>
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
-                      <MDBIcon fab icon="facebook fa-lg" style={{ color: '#3b5998' }} />
-                      <MDBCardText>mdbootstrap</MDBCardText>
+                      <HistoryIcon />
+                      <MDBCardText>Booking History</MDBCardText>
                     </MDBListGroupItem>
                   </MDBListGroup>
                 </MDBCardBody>
@@ -149,6 +146,7 @@ function Profile() {
                   <hr />
 
                   {bookings.map((booking) => (
+                    <>
                     <MDBRow key={booking._id} className="align-items-center">
                       <MDBCol sm="2" md="2">
                         <MDBCardText className="w-20 h-10">
@@ -170,12 +168,14 @@ function Profile() {
                       <MDBCol sm="2" md="2">
                         {booking.paymentStatus === "Paid" ? (
                           <MDBBtn className="" >Cancel</MDBBtn>
-                        ) : (
-                          <MDBBtn className="" disabled>Cancel</MDBBtn>
-                        )
-                        }
+                          ) : (
+                            <MDBBtn className="" disabled>Cancel</MDBBtn>
+                            )
+                          }
                       </MDBCol>
                     </MDBRow>
+                    <hr />
+                          </>
                   ))}
                 </MDBCardBody>
               </MDBCard>

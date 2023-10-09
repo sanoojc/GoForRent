@@ -14,6 +14,11 @@ export const filterElements=()=>axiosInstance('userToken').get('/filter')
 export const fetchBookings=(id)=>axiosInstance('userToken').get(`/bookingDetails?id=${id}`)
 export const getHub=()=>axiosInstance('userToken').get('/getHub')
 export const getUser=(id)=>axiosInstance('userToken').get(`/getUser/${id}`)
+export const editUser=(id)=>axiosInstance('userToken').put(`/user/${id}`)
+export const fetchBookedDates=(id)=>axiosInstance('userToken').put(`/bookings/${id}`)
+
+
+
 
 export const userChats=(id)=>axiosInstance('userToken').get(`/chat/${id}`)
 
