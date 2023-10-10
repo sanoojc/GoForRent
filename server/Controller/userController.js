@@ -313,3 +313,28 @@ export async function getHub(req,res){
     console.log(err)
   }
 }
+
+export async function bookingDates (req,res){
+  try{
+    const {id}=req.params
+    const bookings = await bookingModel.find({ 'vehicle._id': id });
+    const dates=bookings.map((booking)=>{
+      return [booking.fromDate,booking.toDate]
+    })
+    const allDates=[]
+    dates.map((item)=>{
+      const from=item[0]
+      const to=item[1]
+      let currentDate=new Date(from)
+      while(currentDate<=to){
+        allDates.push(currentDate.toISOString().split('T')[0]);
+        currentDate.setDate(currentDate.getDate() + 1); 
+      }
+    })
+    return res.json({error:false,message:'sucess',allDates})
+  }catch(err){
+    res.json({error:true,message:'Internal server error'})
+    console.log(err)
+  }
+
+}

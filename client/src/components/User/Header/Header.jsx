@@ -40,10 +40,10 @@ function Header() {
                         user.login?
                        ( <>
                         <Link to='/profile'><PersonIcon/></Link>
-                              <button onClick={handleLogut} style={{color:'blue'}}><LogoutIcon/></button>
+                              <button className='text-blue-600 opacity-90' onClick={handleLogut}><LogoutIcon/></button>
                        </>)
                       :
-                        <Link to='/login'>login</Link>
+                        <Link className='text-blue-500' to='/login'>login</Link>
                     }
                 </div>
             </div>

@@ -1,23 +1,33 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import { filterElements } from '../../Api/UserApi';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { useState } from 'react';
-import { useEffect } from 'react';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import React, { useState } from "react";
+import {
+  TERipple,
+  TEModal,
+  TEModalDialog,
+  TEModalContent,
+  TEModalHeader,
+  TEModalBody,
+} from "tw-elements-react";
+
+// import Box from '@mui/material/Box';
+// import Button from '@mui/material/Button';
+// import Modal from '@mui/material/Modal';
+// import { filterElements } from '../../Api/UserApi';
+// import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+// import { useState } from 'react';
+// import { useEffect } from 'react';
+
+// const style = {
+//   position: 'absolute',
+//   top: '50%',
+//   left: '50%',
+//   transform: 'translate(-50%, -50%)',
+//   width: 400,
+//   bgcolor: 'background.paper',
+//   border: '2px solid #000',
+//   boxShadow: 24,
+//   p: 4,
+// };
 
 export default function FilterModal({value,setShowModal,categories}) {
 
@@ -27,7 +37,7 @@ export default function FilterModal({value,setShowModal,categories}) {
 
   return (
     <>
-     <Modal
+     {/* <Modal
             open={value}
             onClose={()=>setShowModal(false)}
             aria-labelledby="modal-modal-title"
@@ -60,7 +70,7 @@ export default function FilterModal({value,setShowModal,categories}) {
                 <Button  variant="outlined" onClick={handleFilter}>Apply</Button>
               </div>
             </Box>
-          </Modal>
+          </Modal> */}
     </>
   );
 }

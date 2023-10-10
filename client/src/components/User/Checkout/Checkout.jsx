@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../Header/Header'
+import {format} from 'date-fns'
 import { useLocation, useNavigate } from 'react-router-dom'
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,8 @@ import BackdropLoader from '../../Backdrop/Backdrop';
 function Checkout() {
   const location = useLocation()
   const [noOfDays, setNoOfDays] = useState()
+  const[fromDay,setFromDay]=useState()
+  const[toDay,setToDay]=useState()
   const [total, setTotal] = useState(0)
   const [licenseImage, setLicenseImage] = useState()
   const [idImage, setIdImage] = useState()
@@ -73,11 +76,17 @@ function Checkout() {
   }
 
   useEffect(() => {
-    const start = new Date(location.state.checkIn)
-    const end = new Date(location.state.checkOut)
-    const timeDifference = end.getTime() - start.getTime()
-    setNoOfDays(Math.floor(timeDifference / (1000 * 60 * 60 * 24)))
-    setTotal((Math.floor(timeDifference / (1000 * 60 * 60 * 24))) * location.state.vehicle.rent)
+
+    const startDate = new Date(location.state.checkIn);
+    const endDate = new Date(location.state.checkOut);
+    const start = format(startDate, 'dd/MM/yyyy');
+    const end = format(endDate, 'dd/MM/yyyy');
+    setFromDay(start)
+    setToDay(end)
+    console.log(start,end)
+    const timeDifference = endDate.getTime() - startDate.getTime()
+    setNoOfDays(Math.floor(timeDifference / (1000 * 60 * 60 * 24))+1)
+    setTotal(((Math.floor(timeDifference / (1000 * 60 * 60 * 24)))+1) * location.state.vehicle.rent)
   }, [])
   async function submit(formDatas) {
     try {
@@ -286,8 +295,8 @@ function Checkout() {
                 <div className="">
                   <h5 className='pb-2 text-lg'>Rental Period</h5>
                   <div className='pl-2 flex gap-2'>
-                    <span className='border rounded-md p-1'>{location.state.checkIn}</span>
-                    <span className='border-2  rounded-md p-1 '>{location.state.checkOut}</span>
+                    <span className='border rounded-md p-1'>{fromDay}</span>
+                    <span className='border-2  rounded-md p-1 '>{toDay}</span>
                   </div>
                 </div>
                 <p className="text-lg">Days: {noOfDays}</p>

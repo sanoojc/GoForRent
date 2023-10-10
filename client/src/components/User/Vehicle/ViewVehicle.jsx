@@ -13,6 +13,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from '../Footer/Footer';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { fetchBookedDates } from '../../../Api/UserApi';
 
 
 function ViewVehicle() {
@@ -20,19 +21,32 @@ function ViewVehicle() {
     const navigate = useNavigate()
     const [checkIn, setCheckin] = useState(null)
     const [checkOut, setCheckOut] = useState(null)
+    const [disableDays,setDisableDays]=useState([])
     const handleCheckIn = (date) => setCheckin(date)
     const handleCheckOut = (date) => setCheckOut(date)
+
     const location = useLocation()
     useEffect(()=>{
         (async()=>{
             const {data}=await fetchBookedDates(location.state._id)
+            const dates=data.allDates.map((date)=> new Date(date))
+            setDisableDays([...dates])
         })()
-    })
+    },[])
     const today = new Date();
     const handleProceed = () => {
         if (checkIn && checkOut) {
             const vehicle = location.state
-            navigate('/checkout', { state: { vehicle: vehicle, checkIn: checkIn, checkOut: checkOut } })
+            console.log(checkIn,checkOut)
+            navigate('/checkout', { state: { vehicle: vehicle, checkIn: checkIn.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+              }), checkOut: checkOut.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+              }) } })
         }else{
             toast.error('Select the dates')
         }
@@ -92,6 +106,7 @@ function ViewVehicle() {
                                     minDate={today}
                                     maxDate={checkOut}
                                     dateFormat="dd/MM/yyyy"
+                                    excludeDates={disableDays}
                                     onChange={handleCheckIn}
                                 />
                                 {/* <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} defaultValue={'2023-10-06'} onChange={handleCheckIn}></input> */}
@@ -102,6 +117,7 @@ function ViewVehicle() {
                                     selected={checkOut}
                                     minDate={checkIn}
                                     dateFormat="dd/MM/yyyy"
+                                    excludeDates={disableDays}
                                     onChange={handleCheckOut}
                                     />
                             </div>

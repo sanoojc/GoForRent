@@ -21,6 +21,7 @@ import PermMediaIcon from '@mui/icons-material/PermMedia';
 import HistoryIcon from '@mui/icons-material/History';
 const EditProfileModal = lazy(() => import('../../Modal/EditProfileModal'))
 import { Jelly } from '@uiball/loaders'
+import ResetPassword from '../../Modal/ResetPassword';
 
 
 function Profile() {
@@ -28,6 +29,8 @@ function Profile() {
   const [bookings, setbookings] = useState([])
   const { user } = useSelector((state) => state)
   const [open, setOpen] = useState(false)
+  const [openResetPassword, setOpenResetPassword] = useState(false)
+
   useEffect(() => {
     (async () => {
       const { data } = await fetchBookings(user.details._id)
@@ -73,6 +76,21 @@ function Profile() {
       </div>
       {/* Modal  */}
 
+      {/* reset password */}
+      <div className="flex justify-center bg-red-500">
+        <Suspense fallback={
+          <Jelly 
+          size={80}
+          speed={0.9} 
+          color="black" 
+         />
+        }>
+          {openResetPassword && <ResetPassword close={() => setOpenResetPassword(false)} />}
+        </Suspense>
+      </div>
+      {/* reset password */}
+
+
       <section style={{ backgroundColor: '#eee', height:'auto' }}>
         <MDBContainer className="py-5">
           <MDBRow>
@@ -106,7 +124,7 @@ function Profile() {
                       <PasswordIcon />
                       <MDBCardText>Wallet</MDBCardText>
                     </MDBListGroupItem>
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
+                    <MDBListGroupItem onClick={()=>setOpenResetPassword(true)} className="d-flex justify-content-between align-items-center p-3">
                       <PasswordIcon />
                       <MDBCardText>Reset Password</MDBCardText>
                     </MDBListGroupItem>
