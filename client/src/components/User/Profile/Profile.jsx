@@ -19,9 +19,13 @@ import Swal from 'sweetalert2';
 import PasswordIcon from '@mui/icons-material/Password';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import HistoryIcon from '@mui/icons-material/History';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 const EditProfileModal = lazy(() => import('../../Modal/EditProfileModal'))
 import { Jelly } from '@uiball/loaders'
 import ResetPassword from '../../Modal/ResetPassword';
+import BookingHistoryModal from '../../Modal/BookingHistoryModal';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import AddProof from '../../Modal/AddProof';
 
 
 function Profile() {
@@ -30,17 +34,16 @@ function Profile() {
   const { user } = useSelector((state) => state)
   const [open, setOpen] = useState(false)
   const [openResetPassword, setOpenResetPassword] = useState(false)
+  const [openBookings, setOpenBookings] = useState(false)
+  const [openProof, setOpenProof] = useState(false)
 
   useEffect(() => {
     (async () => {
       const { data } = await fetchBookings(user.details._id)
-      console.log(data.bookings, 'booking data')
       setbookings(data.bookings)
     })()
   }, [])
-  function handleClose() {
-
-  }
+  const bookingHistory = bookings.filter((booking) => booking.paymentStatus !== "Paid")
   function handleLogut(e) {
     e.preventDefault()
     Swal.fire({
@@ -65,11 +68,11 @@ function Profile() {
       {/* Modal */}
       <div className="flex justify-center bg-red-500">
         <Suspense fallback={
-          <Jelly 
-          size={80}
-          speed={0.9} 
-          color="black" 
-         />
+          <Jelly
+            size={80}
+            speed={0.9}
+            color="black"
+          />
         }>
           {open && <EditProfileModal user={user} close={() => setOpen(false)} />}
         </Suspense>
@@ -79,19 +82,48 @@ function Profile() {
       {/* reset password */}
       <div className="flex justify-center bg-red-500">
         <Suspense fallback={
-          <Jelly 
-          size={80}
-          speed={0.9} 
-          color="black" 
-         />
+          <Jelly
+            size={80}
+            speed={0.9}
+            color="black"
+          />
         }>
           {openResetPassword && <ResetPassword close={() => setOpenResetPassword(false)} />}
         </Suspense>
       </div>
       {/* reset password */}
+      {/* booking history */}
+      <div className="flex justify-center bg-red-500">
+        <Suspense fallback={
+          <Jelly
+            size={80}
+            speed={0.9}
+            color="black"
+          />
+        }>
+          {
+            openBookings && <BookingHistoryModal bookings={bookingHistory} close={() => setOpenBookings(false)} />
+          }
+        </Suspense>
+      </div>
+      {/* booking history */}
+      {/* Add Proof */}
+      <div className="flex justify-center bg-red-500">
+        <Suspense fallback={
+          <Jelly
+            size={80}
+            speed={0.9}
+            color="black"
+          />
+        }>
+          {
+            openProof && <AddProof  close={() => setOpenBookings(false)} />
+          }
+        </Suspense>
+      </div>
+      {/* Add Proof */}
 
-
-      <section style={{ backgroundColor: '#eee', height:'auto' }}>
+      <section style={{ backgroundColor: '#eee', height: 'auto' }}>
         <MDBContainer className="py-5">
           <MDBRow>
             <MDBCol lg="4">
@@ -109,7 +141,8 @@ function Profile() {
                   </div>
                   <div className="text-center">
                     <h4 className="text-muted mb-2">{user.details.name}</h4>
-                    <p className="text-muted mb-4">{user.details.email}</p>
+                    <p className="text-muted mb-2">{user.details.email}</p>
+                    <p className="text-muted mb-4">{`+91 ${user.details.number}`}</p>
                   </div>
                   <div className="d-flex justify-content-center gap-3 mb-3">
                     <MDBBtn className='btn-warning' onClick={() => setOpen(!open)}>Edit</MDBBtn>
@@ -117,22 +150,25 @@ function Profile() {
                   </div>
                 </MDBCardBody>
               </MDBCard>
-              <MDBCard className=" mb-4 mb-lg-0">
+              <MDBCard className="cursor-custom hover:cursor-pointer mb-4 mb-lg-0">
                 <MDBCardBody className="p-0 ">
                   <MDBListGroup flush className="rounded-3">
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
-                      <PasswordIcon />
+                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100 ">
+                      <div className="flex gap-3">
+                      <AccountBalanceWalletIcon />
+                      <MDBCardText className='text-muted' ><span className='text-xs'><CurrencyRupeeIcon/></span>0</MDBCardText>
+                      </div>
                       <MDBCardText>Wallet</MDBCardText>
                     </MDBListGroupItem>
-                    <MDBListGroupItem onClick={()=>setOpenResetPassword(true)} className="d-flex justify-content-between align-items-center p-3">
+                    <MDBListGroupItem onClick={() => setOpenResetPassword(true)} className=" hover:bg-slate-100 d-flex justify-content-between align-items-center p-3">
                       <PasswordIcon />
-                      <MDBCardText>Reset Password</MDBCardText>
+                      <MDBCardText>Change Password</MDBCardText>
                     </MDBListGroupItem>
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
+                    <MDBListGroupItem onClick={()=>setOpenProof(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
                       <PermMediaIcon />
                       <MDBCardText>Add Proof</MDBCardText>
                     </MDBListGroupItem>
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3">
+                    <MDBListGroupItem onClick={() => setOpenBookings(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
                       <HistoryIcon />
                       <MDBCardText>Booking History</MDBCardText>
                     </MDBListGroupItem>
@@ -163,37 +199,37 @@ function Profile() {
                   </MDBRow>
                   <hr />
 
-                  {bookings.map((booking) => (
+                  {bookings.filter((booking) => booking.paymentStatus === 'Paid').map((booking) => (
                     <>
-                    <MDBRow key={booking._id} className="align-items-center">
-                      <MDBCol sm="2" md="2">
-                        <MDBCardText className="w-20 h-10">
-                          <img src={booking?.vehicle?.images[0]} alt="" className="img-fluid" />
-                        </MDBCardText>
-                      </MDBCol>
-                      <MDBCol sm="2" md="2">
-                        <MDBCardText>{booking.vehicle.vehicleName}</MDBCardText>
-                      </MDBCol>
-                      <MDBCol sm="2" md="2">
-                        <MDBCardText>{new Date(booking?.fromDate).toISOString().split('T')[0]}</MDBCardText>
-                      </MDBCol>
-                      <MDBCol sm="2" md="2">
-                        <MDBCardText className="">{booking.noOfDays}</MDBCardText>
-                      </MDBCol>
-                      <MDBCol sm="2" md="2">
-                        <MDBCardText className="">{booking.paymentStatus}</MDBCardText>
-                      </MDBCol>
-                      <MDBCol sm="2" md="2">
-                        {booking.paymentStatus === "Paid" ? (
-                          <MDBBtn className="" >Cancel</MDBBtn>
+                      <MDBRow key={booking._id} className="align-items-center">
+                        <MDBCol sm="2" md="2">
+                          <MDBCardText className="w-20 h-10">
+                            <img src={booking?.vehicle?.images[0]} alt="" className="img-fluid" />
+                          </MDBCardText>
+                        </MDBCol>
+                        <MDBCol sm="2" md="2">
+                          <MDBCardText>{booking.vehicle.vehicleName}</MDBCardText>
+                        </MDBCol>
+                        <MDBCol sm="2" md="2">
+                          <MDBCardText>{new Date(booking?.fromDate).toISOString().split('T')[0]}</MDBCardText>
+                        </MDBCol>
+                        <MDBCol sm="2" md="2">
+                          <MDBCardText className="">{booking.noOfDays}</MDBCardText>
+                        </MDBCol>
+                        <MDBCol sm="2" md="2">
+                          <MDBCardText className="">{booking.paymentStatus}</MDBCardText>
+                        </MDBCol>
+                        <MDBCol sm="2" md="2">
+                          {booking.paymentStatus === "Paid" ? (
+                            <MDBBtn className="" >Cancel</MDBBtn>
                           ) : (
                             <MDBBtn className="" disabled>Cancel</MDBBtn>
-                            )
+                          )
                           }
-                      </MDBCol>
-                    </MDBRow>
-                    <hr />
-                          </>
+                        </MDBCol>
+                      </MDBRow>
+                      <hr />
+                    </>
                   ))}
                 </MDBCardBody>
               </MDBCard>

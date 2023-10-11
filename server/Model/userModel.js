@@ -27,7 +27,7 @@ const userSchema=mongoose.Schema({
     },
     profile:{
         type:Object,
-        default:'avathar1.png'
+        default:'https://res.cloudinary.com/dik9ovj3j/image/upload/v1697007343/lj3kdkapkcdf0sxbsewo.png'
     },
     address:{
         type:Object
@@ -53,6 +53,10 @@ const userSchema=mongoose.Schema({
     ban:{
         type:Boolean,
         default:false
+    },
+    wallet:{
+        type:Number,
+        default:0
     }
 })
 const userModel=mongoose.model('user',userSchema)

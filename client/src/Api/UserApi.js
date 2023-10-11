@@ -14,7 +14,7 @@ export const filterElements=()=>axiosInstance('userToken').get('/filter')
 export const fetchBookings=(id)=>axiosInstance('userToken').get(`/bookingDetails?id=${id}`)
 export const getHub=()=>axiosInstance('userToken').get('/getHub')
 export const getUser=(id)=>axiosInstance('userToken').get(`/getUser/${id}`)
-export const editUser=(id)=>axiosInstance('userToken').put(`/user/${id}`)
+export const editUser=(details)=>axiosInstance('userToken').put(`/user`,details)
 export const fetchBookedDates=(id)=>axiosInstance('userToken').get(`/bookingDates/${id}`)
 
 

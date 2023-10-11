@@ -160,7 +160,21 @@ export async function fetchUserData(req,res){
   }
 }
 export async function editProfile (req,res){
-  const {id}=req.params
+  try{
+    const{id,name,profileUrl}=req.body
+    console.log(profileUrl)
+    if(profileUrl){
+      const user=await userModel.findByIdAndUpdate(id,{$set:{name,profile:profileUrl}})
+      res.json({error:false,message:'success',user})
+    }else{
+      const user=await userModel.findByIdAndUpdate(id,{$set:{name}})
+      res.json({error:false,message:'success',user})
+
+    }
+    console.log(user)
+  }catch(err){
+    console.log(err)
+  }
   
   
 }
@@ -224,7 +238,6 @@ export async function getVehicles(req, res) {
 
 export async function fetchBookingData(req,res){
   const {id}=req.query
-  console.log(id,'userid')
   const bookings=await bookingModel.find({userId:id}).lean()
   if(bookings){
    return res.json({error:false,message:'sucess',bookings})
