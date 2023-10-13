@@ -43,7 +43,6 @@ function Landing() {
     useEffect(() => {
         inputRef.current.blur()
         setLoading(true)
-        console.log(hub)
         getVehicles(name, page, count,sort,hub).then((res) => {
             if (!res.data.error) {
                 setCategories(res.data.categories)

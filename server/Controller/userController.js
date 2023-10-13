@@ -178,6 +178,28 @@ export async function editProfile (req,res){
   
   
 }
+export async function changePassword(req,res){
+  try{
+    const{id,currentPassword,newPassword,confirmPassword}=req.body
+    const user=await userModel.findById(id)
+    if(bcrypt.compareSync(currentPassword,user.password)){
+      if(newPassword.trim()===''||confirmPassword.trim()===''){
+        return res.json({error:true,message:'Password does not match'})
+      }else{
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+        user.password=hashedPassword
+        await user.save()
+        return res.json({error:false,message:'sucess'})
+      }
+    }else{
+      return res.json({error:true,message:'Incorrect password'})
+    }
+  }catch(err){
+    return res.json({error:true,message:"Internal server error"})
+    console.log(err)
+  }
+
+}
 export async function logout(req, res) {
   try {
     res.json({ error: false, message: 'logged out successfully' })
@@ -307,6 +329,29 @@ export async function paymentVerification(req, res) {
   }
 }
 
+export async function refund(req,res){
+  try{
+    const {id}=req.body
+    const booking=await bookingModel.findById(id)
+    
+    const paymentId=booking.paymentDetails.razorpay_payment_id
+    const amount=(booking.totalAmount*100)
+    console.log(amount)
+    const refund=await instance.payments.refund(paymentId,{
+      amount: amount,
+      speed: "optimum",
+      receipt: booking.paymentDetails.razorpay_order_id
+    })
+    booking.paymentStatus="Cancelled"
+    await booking.save()
+    res.json({error:false,message:'sucess'})
+  }catch(err){
+    res.json({error:true,message:'Internal server error'})
+    console.log(err)
+  }
+
+}
+
 //FILTER
 export async function filterElements(req,res){
   try{
@@ -330,7 +375,7 @@ export async function getHub(req,res){
 export async function bookingDates (req,res){
   try{
     const {id}=req.params
-    const bookings = await bookingModel.find({ 'vehicle._id': id });
+    const bookings = await bookingModel.find({ 'vehicle._id': id, 'paymentStatus': { $ne: 'Cancelled' } });
     const dates=bookings.map((booking)=>{
       return [booking.fromDate,booking.toDate]
     })

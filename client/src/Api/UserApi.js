@@ -16,6 +16,8 @@ export const getHub=()=>axiosInstance('userToken').get('/getHub')
 export const getUser=(id)=>axiosInstance('userToken').get(`/getUser/${id}`)
 export const editUser=(details)=>axiosInstance('userToken').put(`/user`,details)
 export const fetchBookedDates=(id)=>axiosInstance('userToken').get(`/bookingDates/${id}`)
+export const changePassword=(data)=>axiosInstance('userToken').patch(`/password`,data)
+export const cancelBooking=(id)=>axiosInstance('userToken').patch(`/refund`,{id})
 
 
 

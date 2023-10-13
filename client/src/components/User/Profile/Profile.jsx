@@ -14,7 +14,7 @@ import {
   MDBListGroup,
   MDBListGroupItem
 } from 'mdb-react-ui-kit';
-import { fetchBookings } from '../../../Api/UserApi';
+import { cancelBooking, fetchBookings } from '../../../Api/UserApi';
 import Swal from 'sweetalert2';
 import PasswordIcon from '@mui/icons-material/Password';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
@@ -26,6 +26,7 @@ import ResetPassword from '../../Modal/ResetPassword';
 import BookingHistoryModal from '../../Modal/BookingHistoryModal';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import AddProof from '../../Modal/AddProof';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 function Profile() {
@@ -33,6 +34,7 @@ function Profile() {
   const [bookings, setbookings] = useState([])
   const { user } = useSelector((state) => state)
   const [open, setOpen] = useState(false)
+  const [fetch, setfetch] = useState(false)
   const [openResetPassword, setOpenResetPassword] = useState(false)
   const [openBookings, setOpenBookings] = useState(false)
   const [openProof, setOpenProof] = useState(false)
@@ -42,7 +44,7 @@ function Profile() {
       const { data } = await fetchBookings(user.details._id)
       setbookings(data.bookings)
     })()
-  }, [])
+  }, [fetch])
   const bookingHistory = bookings.filter((booking) => booking.paymentStatus !== "Paid")
   function handleLogut(e) {
     e.preventDefault()
@@ -61,10 +63,32 @@ function Profile() {
     })
   }
 
+  const handleCancel = async (id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { data } = await cancelBooking(id)
+        if (data.error) {
+          toast.error(data.message)
+        } else {
+          toast.success(data.message)
+        }
+       
+      }
+      setfetch(!fetch)
+    })
+  }
+
   return (
     <div>
       <Header />
-
+      <Toaster />
       {/* Modal */}
       <div className="flex justify-center bg-red-500">
         <Suspense fallback={
@@ -88,7 +112,7 @@ function Profile() {
             color="black"
           />
         }>
-          {openResetPassword && <ResetPassword close={() => setOpenResetPassword(false)} />}
+          {openResetPassword && <ResetPassword openModal={openResetPassword} close={() => setOpenResetPassword(false)} />}
         </Suspense>
       </div>
       {/* reset password */}
@@ -117,7 +141,7 @@ function Profile() {
           />
         }>
           {
-            openProof && <AddProof  close={() => setOpenBookings(false)} />
+            openProof && <AddProof close={() => setOpenProof(false)} />
           }
         </Suspense>
       </div>
@@ -153,18 +177,11 @@ function Profile() {
               <MDBCard className="cursor-custom hover:cursor-pointer mb-4 mb-lg-0">
                 <MDBCardBody className="p-0 ">
                   <MDBListGroup flush className="rounded-3">
-                    <MDBListGroupItem className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100 ">
-                      <div className="flex gap-3">
-                      <AccountBalanceWalletIcon />
-                      <MDBCardText className='text-muted' ><span className='text-xs'><CurrencyRupeeIcon/></span>0</MDBCardText>
-                      </div>
-                      <MDBCardText>Wallet</MDBCardText>
-                    </MDBListGroupItem>
                     <MDBListGroupItem onClick={() => setOpenResetPassword(true)} className=" hover:bg-slate-100 d-flex justify-content-between align-items-center p-3">
                       <PasswordIcon />
                       <MDBCardText>Change Password</MDBCardText>
                     </MDBListGroupItem>
-                    <MDBListGroupItem onClick={()=>setOpenProof(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
+                    <MDBListGroupItem onClick={() => setOpenProof(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
                       <PermMediaIcon />
                       <MDBCardText>Add Proof</MDBCardText>
                     </MDBListGroupItem>
@@ -221,7 +238,7 @@ function Profile() {
                         </MDBCol>
                         <MDBCol sm="2" md="2">
                           {booking.paymentStatus === "Paid" ? (
-                            <MDBBtn className="" >Cancel</MDBBtn>
+                            <MDBBtn onClick={() => handleCancel(booking._id)} className="" >Cancel</MDBBtn>
                           ) : (
                             <MDBBtn className="" disabled>Cancel</MDBBtn>
                           )

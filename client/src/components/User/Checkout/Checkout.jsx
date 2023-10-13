@@ -22,6 +22,8 @@ function Checkout() {
   const [licenseImage, setLicenseImage] = useState()
   const [idImage, setIdImage] = useState()
   const [openLoading, setOpenLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
+
   const presetKey = process.env.REACT_APP_Preset_KEY;
   const cloudName = process.env.REACT_APP_Cloud_Name;
   const navigate=useNavigate()
@@ -124,7 +126,7 @@ function Checkout() {
           })
         console.log(idImg, 'idImage response')
         const idUrl = idImg.data.secure_url
-        console.log(idUrl)
+
 
         const details = {
           formDatas,
@@ -151,6 +153,9 @@ function Checkout() {
       console.log(err,err.message)
     }
   }
+  const handleCheck=(e)=>{
+    setChecked(!checked)
+  }
   return (
     <>
       <div>
@@ -162,7 +167,10 @@ function Checkout() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex flex-col justify-center md:flex-row h-auto ">
             <div className=" flex justify-center items-center md:ml-5  md:w-1/2 px-4 py-6">
+              
               <form action="" className="space-y-4 w-3/4 border shadow-sm border-blue-100 p-5 rounded-md">
+                <label htmlFor="">Already added</label>
+                <input type="checkbox" value={checked} onChange={handleCheck} />
                 <h2 className="text-xl font-semibold mb-4">Add License</h2>
                 <div className="mb-3">
                   <label className="text-base font-semibold" htmlFor="licenseFile">

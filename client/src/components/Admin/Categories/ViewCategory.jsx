@@ -9,48 +9,46 @@ import axiosInstance from '../../../axios/axios';
 import AddCategoryItems from '../AdminModals/AddCategoryItems/AddCategoryItem';
 import { getCategoryItems } from '../../../Api/AdminApi';
 
-function ViewCategory({CategoryName}) {
-    console.log(CategoryName,'categoryName')
+function ViewCategory({ category }) {
 
-    const StyledTableCell = styled(TableCell)(({ theme }) => ({
-      [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
-      },
-      [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-      },
-    }));
-    
-    const StyledTableRow = styled(TableRow)(({ theme }) => ({
-      '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
-      },
-      // hide last border
-      '&:last-child td, &:last-child th': {
-        border: 0,
-      },
-    }));
-    
-    const navigate=useNavigate()
-    const [items, setItems] = useState([]);
-    const [refreshPage, setRefresh] = useState(true)
-    const[name,setName]=useState('')
-    const [openModal, setOpenModal] = React.useState(false);
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
+  const navigate = useNavigate()
+  const [items, setItems] = useState([]);
+  const [refreshPage, setRefresh] = useState(true)
+  const [openModal, setOpenModal] = React.useState(false);
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
 
-    useEffect(() => {
-      async function fetchData() {
-        try { 
-          const { data } = await axiosInstance('adminToken').get(`/admin/viewCategory?name=${CategoryName}`);
-          setItems(data.category.items);
-        } catch (error) {
-          console.error('Error fetching users:', error);
-        }
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const { data } = await axiosInstance('adminToken').get(`/admin/viewCategory?id=${category[0]._id}`);
+        setItems(data.category.items);
+      } catch (error) {
+        console.error('Error fetching users:', error);
       }
-      fetchData();
-    }, [name,refreshPage]);
+    }
+    fetchData();
+  }, [category, refreshPage]);
 
   async function handleBan(id) {
     try {
@@ -64,10 +62,10 @@ function ViewCategory({CategoryName}) {
       });
       if (result.isConfirmed) {
         const { data } = await getCategoryItems(id);
-        if(!data.error){
+        if (!data.error) {
           toast.success(data.message)
           setRefresh(!refreshPage);
-        }else{
+        } else {
           toast.error(data.error)
         }
       }
@@ -75,57 +73,45 @@ function ViewCategory({CategoryName}) {
       console.error('Error banning user:', error);
     }
   }
-  const handleAddCategoryItem=async()=>{
-
-  }
-
- 
 
   return (
     <div>
-      <Sidebar/>
-        <div className="pr-4">
-          <div className="flex justify-end pb-4 pr-3">
-          <Button variant='outlined'onClick={handleOpen}>Add Item</Button>
+      <div className="pr-4 flex gap-4">
+        <div className="max-w-xl">
+        <div className="flex items-center justify-end pb-5">
+          <div className="">
+          <Button variant='outlined' size='large' onClick={handleOpen}>Add Item</Button>
           </div>
-        <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>No</StyledTableCell>
-              <StyledTableCell align="left"> Items</StyledTableCell>
+        </div>
 
-              <StyledTableCell align="left">Action</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {
-              items.map((item, i) => (
-              <StyledTableRow key={item._id}>
-                <StyledTableCell component="th" scope="row">
-                  {i + 1}
-                </StyledTableCell>
-                <div className="table-vehicle-img">
-                <img align="right" src={item.images}/>
-                </div>
-                <StyledTableCell align="left">{item.vehicleName}</StyledTableCell>
-                <StyledTableCell align="left">
-                  {
-                      item.list ? <Button onClick={(e) => handleBan(item._id)} variant="contained" color="error">
-                      unlist
-                    </Button> : <Button onClick={(e) => handleBan(vehicle._id)} variant="outlined" color="success">
-                      list
-                    </Button>
-                  }
-                </StyledTableCell>
-                <StyledTableCell align="left"><Button color="primary" onClick={()=>navigate('/admin/editVehicle',{state:item})}>Edit</Button></StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <AddCategoryItems open={openModal} handleClose={handleClose} />
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 400 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell key='no' align='center' >No</StyledTableCell>
+                  <StyledTableCell key='item' align="center"> Items</StyledTableCell>
+
+                  <StyledTableCell key='action' align="center">Action</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  items.map((item, i) => (
+                    <StyledTableRow key={item._id}>
+                      <StyledTableCell align='center' component="th" scope="row">
+                        {i + 1}
+                      </StyledTableCell>
+
+                      <StyledTableCell align="center">{item}</StyledTableCell>
+                      <StyledTableCell align="center"><Button color="primary">Delete</Button></StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       </div>
+      <AddCategoryItems category={category} open={openModal} handleClose={handleClose} refresh={() => setRefresh(!refreshPage)} />
     </div>
   )
 }

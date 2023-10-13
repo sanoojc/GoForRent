@@ -11,7 +11,8 @@ export const addHub=(data)=>axiosInstance('adminToken').post('/admin/hubs',data)
 export const listHub=(id)=>axiosInstance('adminToken').patch(`/admin/hubs?id=${id}`)
 export const addCategory=(data)=>axiosInstance('adminToken').post('/admin/category',{data})
 export const getCategories=()=>axiosInstance('adminToken').get('/admin/category')
-export const getCategoryItems=(category)=>axiosInstance('adminToken').get('/admin/category',category)
+export const getCategoryItems=(category)=>axiosInstance('adminToken').get('/admin/category',category) //get all categories
+export const AddCategoryItem=(id,item)=>axiosInstance('adminToken').get(`/admin/categoryItem?id=${id}&item=${item}`) //add items in a specific category
 export const listBooking=(id)=>axiosInstance('adminToken').patch(`/admin/hubs?id=${id}`)
 export const getHub=(name)=>axiosInstance('adminToken').get(`/admin/hubs?name=${name}`)
 export const changeBookingStatus=(id,status)=>axiosInstance('adminToken').patch(`/admin/bookings?id=${id}`,{status})
