@@ -36,7 +36,7 @@ const userSchema=mongoose.Schema({
         type:String
     },
     licenseImage:{
-        type:String
+        type:Array
     },
     idType:{
         type:String
@@ -45,7 +45,7 @@ const userSchema=mongoose.Schema({
         type:Number
     },
     idImage:{
-        type:String
+        type:Array
     },
     bookings:{
         type:Array

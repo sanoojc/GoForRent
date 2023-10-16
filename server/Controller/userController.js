@@ -307,6 +307,8 @@ export async function paymentVerification(req, res) {
       .digest("hex");
 
     if (expectedSignature === response.razorpay_signature) {
+      console.log('details.........',details)
+      const user=await userModel.findByIdAndUpdate(user._id,{$set:{}})
       const booking = new bookingModel({
         userId:user._id,
         userName:user.name,

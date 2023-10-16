@@ -63,13 +63,15 @@ export async function getHub(req, res) {
 }
 export async function addHub(req, res) {
     try {
-        const { hubName, longitude, latitude } = req.body
+        let { hubName, longitude, latitude } = req.body
         const hub = await hubModel.findOne({ hubName: new RegExp(hubName, "i") })
+        hubName = hubName.charAt(0).toUpperCase() + hubName.slice(1).toLowerCase()
         if (hub) {
             return res.json({ error: true, message: 'hub already added' })
         } else {
             const newHub = new hubModel({ hubName, longitude, latitude })
             newHub.save()
+            console.log('hii')
             return res.json({ error: false, message: 'hub sucessfully added' })
         }
     } catch (err) {
