@@ -295,7 +295,8 @@ export async function paymentVerification(req, res) {
     if (!user) {
       return res.json({ login: false });
     }
-    const { response, details } = req.body
+    const { response} = req.body
+    const details=req.body.details??''
     const body = response.razorpay_order_id + "|" + response.razorpay_payment_id;
     const start = new Date(details.vehicleData.checkIn)
     const end = new Date(details.vehicleData.checkOut)
@@ -308,7 +309,13 @@ export async function paymentVerification(req, res) {
 
     if (expectedSignature === response.razorpay_signature) {
       console.log('details.........',details)
-      const user=await userModel.findByIdAndUpdate(user._id,{$set:{}})
+      if(!user.licenseImage && !user.idImage && !details){
+        return res.json({error:true,message:'User ID and license must be uploaded'})
+      }
+      if(!user.licenseImage && !user.idImage){
+        user.licenseImage.push(details.licenseFrontImage,details.licenseBackImage)
+      }
+      await user.save()
       const booking = new bookingModel({
         userId:user._id,
         userName:user.name,

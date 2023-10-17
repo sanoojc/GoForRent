@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../Header/Header'
 import { format } from 'date-fns'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate} from 'react-router-dom'
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { DetailsValidationSchema } from '../../../Validations/UserDetailsValidations';
 import axios from 'axios';
 import { checkoutVerification, paymentVerification } from '../../../Api/UserApi';
 import toast, { Toaster } from 'react-hot-toast';
@@ -21,23 +18,31 @@ function Checkout() {
   const [fromDay, setFromDay] = useState()
   const [toDay, setToDay] = useState()
   const [total, setTotal] = useState(0)
-  const [licenseFrontImage, setLicenseFrontImage] = useState()
-  const [licenseBackImage, setLicenseBackImage] = useState()
-  const [idImage, setIdImage] = useState()
+
+  const [licenseNumber, setLicenseNumber] = useState('')
+  const [licenseFrontImage, setLicenseFrontImage] = useState('')
+  const [licenseBackImage, setLicenseBackImage] = useState('')
+  const [idType, setIdType] = useState('')
+  const [idNumber, setIdNumber] = useState('')
+  const [idFrontImage, setIdFrontImage] = useState('')
+  const [idBackImage, setIdBackImage] = useState('')
   const [openLoading, setOpenLoading] = useState(false);
-  const [checked, setChecked] = useState(false);
 
   const presetKey = process.env.REACT_APP_Preset_KEY;
   const cloudName = process.env.REACT_APP_Cloud_Name;
   const navigate = useNavigate()
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(DetailsValidationSchema)
-  })
-
-  async function handleIdImageUpload(e) {
-    setIdImage(e.target.files[0])
-  }
+  useEffect(() => {
+    const startDate = new Date(location.state.checkIn);
+    const endDate = new Date(location.state.checkOut);
+    const start = format(startDate, 'dd/MM/yyyy');
+    const end = format(endDate, 'dd/MM/yyyy');
+    setFromDay(start)
+    setToDay(end)
+    const timeDifference = endDate.getTime() - startDate.getTime()
+    setNoOfDays(Math.floor(timeDifference / (1000 * 60 * 60 * 24)) + 1)
+    setTotal(((Math.floor(timeDifference / (1000 * 60 * 60 * 24))) + 1) * location.state.vehicle.rent)
+  }, [])
 
   async function handleLicenseFront(e) {
     setLicenseFrontImage(e.target.files[0])
@@ -56,7 +61,6 @@ function Checkout() {
         description: "Test Transaction",
         order_id: order.id,
         handler: async (response) => {
-
           const { data } = await paymentVerification({
             response,
             details
@@ -81,67 +85,50 @@ function Checkout() {
       console.log(err)
     }
   }
+  async function uploadImage(file){
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", presetKey);
+    formData.append("cloud_name", cloudName);
+    const image = await axios.post(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }, withCredentials: false,
+      })
+    console.log(image, 'image response')
+    const imageUrl = image.data.secure_url
+    console.log(imageUrl)
+    return imageUrl
+  }
 
-  useEffect(() => {
 
-    const startDate = new Date(location.state.checkIn);
-    const endDate = new Date(location.state.checkOut);
-    const start = format(startDate, 'dd/MM/yyyy');
-    const end = format(endDate, 'dd/MM/yyyy');
-    setFromDay(start)
-    setToDay(end)
-    const timeDifference = endDate.getTime() - startDate.getTime()
-    setNoOfDays(Math.floor(timeDifference / (1000 * 60 * 60 * 24)) + 1)
-    setTotal(((Math.floor(timeDifference / (1000 * 60 * 60 * 24))) + 1) * location.state.vehicle.rent)
-  }, [])
   async function submit() {
     try {
-      console.log('helloo')
+
       setOpenLoading(true)
-      if (idImage && licenseImage) {
-        const file = licenseImage
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", presetKey);
-        formData.append("cloud_name", cloudName);
-        const licenseImg = await axios.post(
-          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }, withCredentials: false,
-          })
-        console.log(licenseImg, 'licenseImage response')
-        const licenseUrl = licenseImg.data.secure_url
-        console.log(licenseUrl)
-
-        const idfile = idImage
-        const idformData = new FormData();
-        idformData.append("file", idfile);
-        idformData.append("upload_preset", presetKey);
-        idformData.append("cloud_name", cloudName);
-        const idImg = await axios.post(
-          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-          idformData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }, withCredentials: false,
-          })
-        console.log(idImg, 'idImage response')
-        const idUrl = idImg.data.secure_url
-
+      if (idFrontImage && idBackImage && licenseFrontImage && licenseBackImage){
+       const licenseFrontUrl=await uploadImage(licenseFrontImage)
+       console.log('sucess',licenseFrontUrl)
+       const licenseBackUrl=await uploadImage(licenseBackImage)
+       const idFrontUrl=await uploadImage(idFrontImage)
+       const idBackUrl=await uploadImage(idBackImage)
 
         const details = {
-          formDatas,
-          licenseImage: licenseImg.data.secure_url,
-          idImage: idImg.data.secure_url,
+          licenseNumber,
+          licenseFrontUrl,
+          licenseBackUrl,
+          idType,
+          idNumber,
+          idFrontUrl,
+          idBackUrl,
           amount: total,
           vehicleData: location.state
         }
         setOpenLoading(false)
-        let { data } = await checkoutVerification({ total })
+        const { data } = await checkoutVerification({ total })
         if (data.error) {
           toast.error(data.message)
         } else {
@@ -166,12 +153,23 @@ function Checkout() {
     }
     console.log(checked)
   }
-  const handleCheckout = () => {
-    if (checked) {
-      console.log('checked')
+  const handleCheckout = async() => {
+    if (user.licenseImage && user.idImage) {
+      const { data } = await checkoutVerification({ total })
+        if (data.error) {
+          toast.error(data.message)
+        } else {
+          toast.success(data.message)
+          handleRazorPay(data.order, details)
+        }
     } else {
-      console.log('else')
-      submit()
+      if(licenseNumber.trim()===''||idType.trim()===''||idNumber.trim()===''){
+        toast.error('Fill all the fields')
+      }else if(!licenseFrontImage|| !licenseBackImage || !idFrontImage || !idBackImage){
+        toast.error('Upload all images')
+      }else{
+        submit()
+      }
     }
   }
   return (
@@ -212,7 +210,7 @@ function Checkout() {
                       </div>
                       <div className="flex flex-col gap-2 sm:gap-3 font-bold">
                         <label htmlFor="">License Number</label>
-                        <input className='border rounded-md' type="text" />
+                        <input onChange={(e)=>setLicenseNumber(e.target.value)} className='border rounded-md' type="text" />
                         <div className="p-3 border rounded-md mt-1">
                             <label className='flex justify-center font-bold text-lg' htmlFor="">License Image</label>
                             <div className=" px-2 flex flex-col gap-2">
@@ -228,19 +226,19 @@ function Checkout() {
                         </div>
 
                         <label className='py-2' htmlFor="">ID Type</label>
-                        <select className='border rounded-md h-12 px-2' name="" id="">
+                        <select onChange={(e)=>setIdType(e.target.value)} className='border rounded-md h-12 px-2' value={idType} name="" id="">
                             <option value="Aadhar">Aadhar</option>
                             <option value="VoterID">Voter ID</option>
                         </select>
                         <label htmlFor="">ID Number</label>
-                        <input className='border rounded-md' type="text" />
+                        <input onChange={(e)=>setIdNumber(e.target.value)} className='border rounded-md' type="text" />
                         <div className=" p-3 border rounded-md mt-1">
                             <label className='flex justify-center' htmlFor="">Image</label>
                             <div className="flex flex-col gap-2">
                                 <label className='pl-5 pb-2' htmlFor="">Front</label>
-                                <input className='pl-2 pt-2 border rounded-md' type="file" accept='image/*' />
+                                <input onChange={(e)=>setIdFrontImage(e.target.files[0])} className='pl-2 pt-2 border rounded-md' type="file" accept='image/*' />
                                 <label className='pl-5 pb-2' htmlFor="">Back</label>
-                                <input className='pl-2 pt-2 border rounded-md' type="file" accept='image/*' />
+                                <input onChange={(e)=>setIdBackImage(e.target.files[0])} className='pl-2 pt-2 border rounded-md' type="file" accept='image/*' />
                             </div>
                         </div>
                     </div>
