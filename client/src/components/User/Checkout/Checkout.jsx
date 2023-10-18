@@ -9,7 +9,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion'
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import BackdropLoader from '../../Backdrop/Backdrop';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 function Checkout() {
   const location = useLocation()
@@ -30,6 +30,7 @@ function Checkout() {
 
   const presetKey = process.env.REACT_APP_Preset_KEY;
   const cloudName = process.env.REACT_APP_Cloud_Name;
+  const dispatch=useDispatch()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -70,6 +71,7 @@ function Checkout() {
           } else {
             toast.success("Payment SuccessFull");
             navigate("/profile");
+            dispatch({type:'refresh'})
           }
         },
         theme: {
@@ -134,6 +136,7 @@ function Checkout() {
         } else {
           toast.success(data.message)
           handleRazorPay(data.order, details)
+          
         }
       }
       else {
@@ -183,7 +186,7 @@ function Checkout() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex flex-col justify-center md:flex-row h-auto ">
             {
-              !user.licenseImage && !user.idImage &&
+              !user.details.licenseImage && !user.details.idImage &&
               (
                 <div className=" flex justify-center items-center md:ml-5  md:w-1/2 px-4 py-6">
 

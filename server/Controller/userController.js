@@ -285,13 +285,11 @@ export async function addDetails(req, res) {
 export async function paymentVerification(req, res) {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    console.log(token,'user token')
     if (!token)
       return res.json({ login: false, error: true, message: "no token" });
 
     const verifiedJWT = jwt.verify(token, process.env.jwt_key);
     const user = await userModel.findById(verifiedJWT.id, { password: 0 });
-    console.log(user,'verified user')
     if (!user) {
       return res.json({ login: false });
     }
@@ -309,13 +307,18 @@ export async function paymentVerification(req, res) {
 
     if (expectedSignature === response.razorpay_signature) {
       console.log('details.........',details)
-      if(!user.licenseImage && !user.idImage && !details){
+      if(user.licenseImage.length==0 && user.idImage.length==0 && !details){
         return res.json({error:true,message:'User ID and license must be uploaded'})
       }
-      if(!user.licenseImage && !user.idImage){
-        user.licenseImage.push(details.licenseFrontImage,details.licenseBackImage)
+      if(user.licenseImage.length==0 && user.idImage.length==0){
+        user.licenseImage.push(details.licenseFrontUrl,details.licenseBackUrl)
+        user.idImage.push(details.idFrontUrl,details.idBackUrl)
+        user.idType=details.idType
+        user.idNumber=details.idNumber
+        console.log(user)
+        await user.save()
+        console.log(user)
       }
-      await user.save()
       const booking = new bookingModel({
         userId:user._id,
         userName:user.name,

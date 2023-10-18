@@ -182,8 +182,10 @@ function Profile() {
                       <MDBCardText>Change Password</MDBCardText>
                     </MDBListGroupItem>
                     <MDBListGroupItem onClick={() => setOpenProof(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
-                      <PermMediaIcon />
-                      <MDBCardText>Add Proof</MDBCardText>
+                      <PermMediaIcon />{
+                        user.details.licenseImage && user.details.idImage?(<MDBCardText>Edit Proof</MDBCardText>):( <MDBCardText>Add Proof</MDBCardText>)
+                      }
+                     
                     </MDBListGroupItem>
                     <MDBListGroupItem onClick={() => setOpenBookings(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
                       <HistoryIcon />

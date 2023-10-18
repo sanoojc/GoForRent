@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import BackdropLoader from '../Backdrop/Backdrop'
 
 export default function AddProof({ close }) {
+    const 
     const [open, setOpen] = useState(false)
     return (
         <AnimatePresence>
