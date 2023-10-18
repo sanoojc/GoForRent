@@ -1,10 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useState } from 'react'
 import BackdropLoader from '../Backdrop/Backdrop'
-import { useSelector } from 'react-redux'
 
 export default function AddProof({ close }) {
-    const {user}=useSelector((state)=>state)
     const [open, setOpen] = useState(false)
     return (
         <AnimatePresence>
