@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import './Login.css'
 import { Link } from 'react-router-dom';
 import { useDispatch} from 'react-redux';
@@ -16,10 +16,14 @@ import GoogleIcon from '@mui/icons-material/Google';
 import {Toaster, toast} from 'react-hot-toast'
 import {useGoogleLogin} from '@react-oauth/google'
 import BackdropLoader from '../../Backdrop/Backdrop';
+import ForgotPassword from '../../Modal/ForgotPassword';
+import { Jelly } from '@uiball/loaders';
 
 
 function Login() {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [forgotPasswordModal, setForgotPasswordModal] = useState(false)
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -49,7 +53,9 @@ function Login() {
       toast.error("error: ",err )
     })
   }
-  
+  const handleClose=()=>{
+ setForgotPasswordModal(false)
+  }
   const googleLogin = useGoogleLogin({
     onSuccess: (codeResponse) => {
       try {
@@ -84,7 +90,21 @@ function Login() {
   return (
     <>
     <Toaster/>
-   
+
+          {/* Modal */}
+          <div className="flex justify-center bg-red-500">
+        <Suspense fallback={
+          <Jelly
+            size={80}
+            speed={0.9}
+            color="black"
+          />
+        }>
+          {forgotPasswordModal && <ForgotPassword close={handleClose} />}
+        </Suspense>
+      </div>
+      {/* Modal  */}
+      
     <div className="login-container  ">
       <form onSubmit={handleSubmit(submit)} className="login-box border shadow-md">
         <div className="login-input-box">
@@ -139,7 +159,9 @@ function Login() {
           <Button variant="contained" type='submit' color='primary'> Login</Button>
           <Button variant="outlined" onClick={googleLogin} endIcon={<GoogleIcon/>}>sign in with</Button>
           <><p>Don't have an account?<Link to='/signup'> sign up</Link></p></>
-          <><Link to='/forgotpassword' >Forgot password?</Link></>
+          <div className="hover:cursor-pointer text-blue-500" onClick={()=>setForgotPasswordModal(true)}>
+          Forgot password?
+          </div>
         </div>
       </form>
 

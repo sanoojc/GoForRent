@@ -141,7 +141,7 @@ function Profile() {
           />
         }>
           {
-            openProof && <AddProof close={() => setOpenProof(false)} />
+            openProof && <AddProof user={user} close={() => setOpenProof(false)} />
           }
         </Suspense>
       </div>
@@ -183,7 +183,7 @@ function Profile() {
                     </MDBListGroupItem>
                     <MDBListGroupItem onClick={() => setOpenProof(true)} className="d-flex justify-content-between align-items-center p-3 hover:bg-slate-100">
                       <PermMediaIcon />{
-                        user.details.licenseImage && user.details.idImage?(<MDBCardText>Edit Proof</MDBCardText>):( <MDBCardText>Add Proof</MDBCardText>)
+                        user.details.licenseImage.length && user.details.idImage.length?(<MDBCardText>Edit Proof</MDBCardText>):( <MDBCardText>Add Proof</MDBCardText>)
                       }
                      
                     </MDBListGroupItem>

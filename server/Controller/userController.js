@@ -41,6 +41,25 @@ export async function login(req, res) {
     console.log(err)
   }
 }
+export async function forgotPassword(req,res){
+  try{
+    const {email}=req.body
+    console.log(req.body,'hiiii')
+    const user=await userModel.findOne({email:email})
+    if(!user){
+      return res.json({error:true,message:'No user found !'})
+    }
+    console.log(user,'hiii')
+    const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
+    sentOTP(email,otp)
+    Otp = otp
+    return res.json({ error: false, message: 'success' })
+  }catch(error){
+    console.log(error);
+    res.json({ error, error: true, message: "Something went wrong" });           
+  }
+
+}
 
 export async function signup(req, res) {
   const { name, email, number, password, confirmPassword } = req.body
@@ -107,6 +126,24 @@ export async function verifyOtp(req, res) {
     return res.json({ error: true, message: 'incorrect otp' })
   }
 }
+export async function verifyMailOtp(req, res) {
+  try{
+    console.log(req.body)
+    const {otp} = req.body
+    if(!Otp){
+      return res.json({error:true,message:'Something went wrong'})
+    }
+    if (Otp == otp) {
+      Otp=''
+      return res.json({error:false,message:'Success'})
+    } else {
+      return res.json({ error: true, message: 'incorrect otp' })
+    }
+  }catch(err){
+    return res.json({ error: true, message: 'Something went wrong' })
+
+  }
+}
 export async function googleAuth(req, res) {
   try {
     if (req.body.access_token) {
@@ -146,6 +183,56 @@ export async function googleAuth(req, res) {
   } catch (error) {
     res.json({ login: false, message: "Internal Serverl Error" });
   }
+}
+
+export async function addProof(req,res){
+  try{
+
+    const{licenseNumber,licenseFrontUrl,licenseBackUrl,idType,idNumber,idFrontUrl,idBackUrl}=req.body
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token)
+    return res.json({ login: false, error: true, message: "No token" });
+  
+  const verifiedJWT = jwt.verify(token, process.env.jwt_key);
+  const user = await userModel.findById(verifiedJWT.id, { password: 0 });
+  if (!user) {
+    return res.json({ login: false });
+  }
+  if(licenseNumber.trim()==''|| idType.trim()==''|| !idNumber){
+    return res.json({error:true,message:'Fill all the fields'})
+  }
+  if(licenseFrontUrl.trim()=='' || licenseBackUrl.trim()=='' || idFrontUrl.trim()=='' || idBackUrl.trim()==''){
+    return res.json({error:true,message:'Upload all images'})
+  }
+  if(!user.licenseImage.length || !user.idImage.length){
+    user.licenseNumber=licenseNumber
+    user.licenseImage.push(licenseFrontUrl,licenseBackUrl)
+    user.idType=idType
+    user.idNumber=idNumber
+    user.idImage.push(idFrontUrl,idBackUrl)
+    await user.save()
+    return res.json({error:false,message:'Success'})
+  }
+  else{
+    user.licenseNumber=licenseNumber
+    user.licenseImage.splice(0,user.licenseImage.length)
+    user.idImage.splice(0,user.idImage.length)
+    user.licenseImage.push(licenseFrontUrl,licenseBackUrl)
+    user.idType=idType
+    user.idNumber=idNumber
+    user.idImage.push(idFrontUrl,idBackUrl)
+    await user.save()
+    return res.json({error:false,message:'Success'})
+  }
+  }catch(error){
+    console.log(error)
+    return res.json({error:true,message:'something went wrong'})
+  }
+
+
+
+
+
 }
 export async function fetchUserData(req,res){
   try{
@@ -200,6 +287,29 @@ export async function changePassword(req,res){
   }
 
 }
+
+export async function setNewPassword(req,res){
+  try{
+
+    console.log(req.body)
+    const {email,password,confirmPassword}=req.body
+    if(password.length<4 || password.trim()==''){
+      return res.json({error:true,message:'Password must be atleast 4 digits'})
+    }
+    if(password===confirmPassword){
+      const hashedPassword = await bcrypt.hash(password, 10)
+      const user=await userModel.findOneAndUpdate({email:email},{$set:{
+        password:hashedPassword
+      }})
+      console.log(user)
+      return res.json({error:false,message:'Success'})
+    }
+    
+  }catch(error){
+    console.log(error)
+    return res.json({error:true,message:'Internal server error'})
+  }
+}
 export async function logout(req, res) {
   try {
     res.json({ error: false, message: 'logged out successfully' })
@@ -210,10 +320,12 @@ export async function logout(req, res) {
 
 export async function getVehicles(req, res) {
   try {
+    console.log(req.body)
     const name = req.query.name ?? ''
     const page = req.query.page ?? 1
     const count = req.query.count ?? 3
     const sort = req.query.sort ?? ''
+    
     const skip = (page - 1) * count
     console.log(name,'name')
     console.log(page,'page')
@@ -230,6 +342,7 @@ export async function getVehicles(req, res) {
         .limit(count).
         skip(skip)
         .lean()
+        console.log(vehicle,'hhhhhhhh')
         return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
       } else if (sort === 'Low to High') {
         const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
@@ -277,7 +390,7 @@ export async function addDetails(req, res) {
     if (err) {
       return res.json({ error: true, message: 'server error' })
     } else {
-      return res.json({ error: false, message: 'sucessf', order })
+      return res.json({ error: false, message: 'Sucess', order })
     }
   })
 }
@@ -294,7 +407,9 @@ export async function paymentVerification(req, res) {
       return res.json({ login: false });
     }
     const { response} = req.body
+
     const details=req.body.details??''
+    console.log(details,'zpsdhfjkal ')
     const body = response.razorpay_order_id + "|" + response.razorpay_payment_id;
     const start = new Date(details.vehicleData.checkIn)
     const end = new Date(details.vehicleData.checkOut)
@@ -306,11 +421,17 @@ export async function paymentVerification(req, res) {
       .digest("hex");
 
     if (expectedSignature === response.razorpay_signature) {
-      console.log('details.........',details)
-      if(user.licenseImage.length==0 && user.idImage.length==0 && !details){
+
+      if(!user.licenseImage.length && !user.idImage.length && !details){
         return res.json({error:true,message:'User ID and license must be uploaded'})
       }
-      if(user.licenseImage.length==0 && user.idImage.length==0){
+      console.log(user)
+      if (user.licenseImage.includes(null) || user.idImage.includes(null)) {
+        return res.json({ error: true, message: 'Reupload the image' });
+      }
+      if(user.licenseImage)
+      if(!user.licenseImage.length || !user.idImage.length==0){
+        console.log(details)
         user.licenseImage.push(details.licenseFrontUrl,details.licenseBackUrl)
         user.idImage.push(details.idFrontUrl,details.idBackUrl)
         user.idType=details.idType
@@ -358,10 +479,9 @@ export async function refund(req,res){
     await booking.save()
     res.json({error:false,message:'sucess'})
   }catch(err){
-    res.json({error:true,message:'Internal server error'})
-    console.log(err)
+    console.log('hiiiii',err)
+    return res.json({error:true,message:'Internal server error'})
   }
-
 }
 
 //FILTER

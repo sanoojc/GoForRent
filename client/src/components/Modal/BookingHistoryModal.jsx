@@ -22,7 +22,7 @@ export default function BookingHistoryModal({ bookings, close }) {
                             <MDBCol sm="12" md="12" lg="12" >
                                 <h3 className='text-center text-white pb-5'>BOOKING HISTORY</h3>
                                 <MDBCard className="mb-4">
-                                    <MDBCardBody>
+                                    <MDBCardBody className=' h-96 overflow-y-scroll' >
                                         <MDBRow>
                                             <MDBCol sm="3" md="3" lg='3'>
                                                 <MDBCardText>Image</MDBCardText>

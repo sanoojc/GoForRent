@@ -37,6 +37,7 @@ app.use('/admin',adminRouter)
 app.use('/chat',chatRouter)
 app.use('/message',messageRouter)
 app.use('/',userRouter)
+
 server.listen(8000,()=>{
     console.log('server connected')
 })

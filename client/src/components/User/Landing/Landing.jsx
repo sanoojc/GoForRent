@@ -38,14 +38,20 @@ function Landing() {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [loading,setLoading]=useState(false)
     const [categories,setCategories]=useState([])
+    const [filter,setFilter]=useState({})
     const options = ['name', <><CurrencyRupeeIcon />Low to High</>, <><CurrencyRupeeIcon />High to Low</>];
+    const handleFilter=(items)=>{
+        console.log(items)
+        setFilter({...items})
+
+    }
 
     useEffect(() => {
         inputRef.current.blur()
         setLoading(true)
-        getVehicles(name, page, count,sort,hub).then((res) => {
+        getVehicles(name, page, count,sort,hub,filter).then((res) => {
             if (!res.data.error) {
-                setCategories(res.data.categories)
+                setCategories([...res.data.categories])
                 setHubs(res.data.hubs)
                 setVehicles(res.data.vehicles)
             }
@@ -53,7 +59,8 @@ function Landing() {
             toast.error('error', err)
         })
         setLoading(false)
-    }, [name, page,hub])
+    }, [name, page,hub,filter]) 
+    
     function handlePage(e, value) {
         setPage(value)
     }
@@ -61,7 +68,7 @@ function Landing() {
         const selectedOption = options[selectedIndex];
         const text = getTextFromOption(selectedOption);
         setSort(text)
-        getVehicles(name, page, count, sort).then((res) => {
+        getVehicles(name, page, count, sort,filter).then((res) => {
             if (!res.data.error) {
                 console.log(res.data.vehicles, 'vehicles')
                 setVehicles(res.data.vehicles)
@@ -127,7 +134,7 @@ function Landing() {
           color="black" 
          />
         }>
-          {showModal &&<FilterModal value={showModal} setShowModal={setShowModal} categories={categories} />}
+          {showModal &&<FilterModal value={showModal} setShowModal={setShowModal} handleFilter={handleFilter} categories={categories} />}
         </Suspense>
       </div>
       {/* Modal  */}

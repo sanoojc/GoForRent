@@ -54,9 +54,9 @@ function ChatBox({ chat, currentUser }) {
                             {
                                 messages.map((message)=>(
                                     <>
-                                      <div className={message.senderId===currentUser? "message own":"message "}>
-                                            <span>{message.text}</span>
-                                            <span>{format(message.createdAt) }</span>
+                                      <div className={message.senderId===currentUser? "message own":"message"}>
+                                            <span>{message.text}</span><br/>
+                                            <span className='text-xs'>{format(message.createdAt) }</span>
                                         </div>  
                                     </>
                                 ))

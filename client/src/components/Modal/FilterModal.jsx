@@ -12,55 +12,64 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  width: 500,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
-export default function FilterModal({value,setShowModal,categories}) {
+export default function FilterModal({ value,handleFilter, setShowModal, categories }) {
 
-    const handleFilter=()=>{
-      setShowModal(false)
+  const handleFilterData = () => {
+    if(data){
+      handleFilter(data)
     }
+    setShowModal(false)
+  }
+  const [data,setData]=useState({}) 
+  const setValue=(e,item)=>{
+    setData({...data,[item]:e.target.value})
+  }
 
   return (
     <>
-     <Modal
-            open={value}
-            onClose={()=>setShowModal(false)}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description">
-            <Box sx={style}>
-              <div className=" flex">
-
-             {
-               categories.map((item)=>{
-                 <FormControl key={item._id} variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">{item.name}</InputLabel>
-                <Select
-                  labelId="demo-simple-select-standard-label"
-                  id="demo-simple-select-standard"
-                  value={item.name}
-                  label="Age"
+      <Modal
+        open={value}
+        onClose={() => setShowModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description">
+        <Box sx={style}>
+          <h3 className="text-center pb-2 border-b-2" >Filter</h3>
+          <div className=" flex">
+            {
+              categories.map((item) => (
+                <FormControl key={item._id} variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                  <InputLabel key={item._id} id="demo-simple-select-standard-label">{item.name}</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    key={item._id}
+                    onChange={(e)=>setValue(e,item.name)}
+                    value={data[item.name]}
+                    label="Age"
                   >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-            </FormControl>
-              })
+                    {
+                      item.items.map((elem)=>(
+
+                        <MenuItem value={elem}>{elem}</MenuItem>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
+              ))
             }
-            </div>
-              <div className="d-flex justify-center pt-5">
-                <Button  variant="outlined" onClick={handleFilter}>Apply</Button>
-              </div>
-            </Box>
-          </Modal>
+          </div>
+          <div className="d-flex justify-center pt-5">
+            <Button variant="outlined" onClick={handleFilterData}>Apply</Button>
+          </div>
+        </Box>
+      </Modal>
     </>
   );
 }

@@ -66,9 +66,11 @@ function Checkout() {
             response,
             details
           });
-          if (data.err) {
+          if (data.error) {
+            console.log(data)
             toast.error(data.message);
           } else {
+            console.log(data)
             toast.success("Payment SuccessFull");
             navigate("/profile");
             dispatch({type:'refresh'})
@@ -157,7 +159,11 @@ function Checkout() {
     console.log(checked)
   }
   const handleCheckout = async() => {
-    if (user.licenseImage && user.idImage) {
+    if (user.details.licenseImage && user.details.idImage ) {
+      const details={
+        amount: total,
+        vehicleData: location.state
+      }
       const { data } = await checkoutVerification({ total })
         if (data.error) {
           toast.error(data.message)
@@ -186,7 +192,7 @@ function Checkout() {
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex flex-col justify-center md:flex-row h-auto ">
             {
-              !user.details.licenseImage && !user.details.idImage &&
+              !user.details.licenseImage.length && !user.details.idImage.length&&
               (
                 <div className=" flex justify-center items-center md:ml-5  md:w-1/2 px-4 py-6">
 

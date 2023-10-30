@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Chat.css'
 import { useSelector } from 'react-redux'
 import { userChats } from '../../../Api/UserApi'
 import Conversation from '../../Conversation/Conversation'
 import Header from '../Header/Header'
 import ChatBox from '../../ChatBox/ChatBox'
+import { io } from 'socket.io-client'
 
 function Chat() {
+    const socket =useRef()
     const { user } = useSelector((state) => state)
     const [chats, setChats] = useState([])
     const [currentChat, setCurrentChat] = useState(null)
+    const [onlineUsers, setOnlineUsers] = useState([])
+    useEffect(()=>{
+        socket.current=io('http://localhost:8000')
+        console.log(user)
+        socket.current.emit("new-user-add",user.details._id)
+        socket.current.on("get-users",(users)=>setOnlineUsers(users))
+    },[user])
     useEffect(() => {
         (async () => {
             const { data } = await userChats(user.details._id)
