@@ -28,3 +28,4 @@ export const uploadProof=(data)=>axiosInstance('userToken').post(`/proof`,data)
 
 export const userChats=(id)=>axiosInstance('userToken').get(`/chat/${id}`)
 export const getMessages=(id)=>axiosInstance('userToken').get(`/message/${id}`)
+export const addMessage=(data)=>axiosInstance('userToken').post(`/message`,data)

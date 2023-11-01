@@ -9,9 +9,9 @@ export async function addMessage(req,res){
             text
         })
        await  message.save()
-        return res.json({error:false,message:'sucess',message})
+        return res.json({error:false,message:'sucess',messages:message})
     }catch(err){
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function getMessages(req,res){
@@ -20,6 +20,6 @@ export async function getMessages(req,res){
         const messages=await messageModel.find({chatId}).lean()
         return res.json({error:false,message:'sucess',messages})
     }catch(err){
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }

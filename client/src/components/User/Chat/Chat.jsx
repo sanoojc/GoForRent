@@ -13,12 +13,33 @@ function Chat() {
     const [chats, setChats] = useState([])
     const [currentChat, setCurrentChat] = useState(null)
     const [onlineUsers, setOnlineUsers] = useState([])
+    const [sendMessage,setSendMessage]=useState(null)
+    const [reciveMessage,setReciveMessage]=useState(null)
+    
+
+
     useEffect(()=>{
         socket.current=io('http://localhost:8000')
         console.log(user)
         socket.current.emit("new-user-add",user.details._id)
         socket.current.on("get-users",(users)=>setOnlineUsers(users))
     },[user])
+
+        // sending message to socket sever
+        useEffect(()=>{
+            if(sendMessage!==null){
+                socket.current.emit('send-message',sendMessage)
+            }
+        },[sendMessage])
+    
+        // recive message from server
+        useEffect(()=>{
+            socket.current.on('recive-message',(data)=>{
+                setReciveMessage(data)
+            },[])
+        })
+
+    console.log(onlineUsers)
     useEffect(() => {
         (async () => {
             const { data } = await userChats(user.details._id)
@@ -36,7 +57,7 @@ function Chat() {
                         <div className="Chat-list">
                             {
                                 chats.map((chat) => (
-                                    <div className="" onClick={()=>setCurrentChat(chat)}>
+                                    <div className=" border-b-2" onClick={()=>setCurrentChat(chat)}>
                                         <Conversation data={chat} currentUserId={user.details._id} />
                                     </div>
                                 ))
@@ -46,7 +67,7 @@ function Chat() {
                 </div>
                 {/* Right side  */}
                 <div className="Right-side-chat">
-                    <ChatBox chat={currentChat} currentUser={user.details._id} />
+                    <ChatBox chat={currentChat} currentUser={user.details._id} setSendMessage={setSendMessage} reciveMessage={reciveMessage} />
 
                 </div>
             </div>

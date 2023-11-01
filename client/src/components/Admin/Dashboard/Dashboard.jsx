@@ -6,13 +6,17 @@ import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
 import DeviceHubIcon from '@mui/icons-material/DeviceHub';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { getDashboardData } from '../../../Api/AdminApi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import BasicLineChart from '../Charts/BasicLineChart/BasicLineChart';
+import BasicPieChart from '../Charts/BasicPieChart/BasicPieChart';
+
 
 function Dashboard() {
   const [users,setUsers]=useState([])
   const [vehicles,setVehicles]=useState([])
   const [bookings,setBookings]=useState([])
   const [hubs,setHubs]=useState([])
+  const navigate=useNavigate()
   useEffect(()=>{
     (async()=>{
       const {data}=await getDashboardData()
@@ -56,6 +60,18 @@ function Dashboard() {
           </div>
         </Link>
       </div>
+      <div className="flex mt-5 items-center justify-around">
+        <div className="">
+      <BasicPieChart bookings={bookings}/>
+        </div>
+        <div className="">
+
+      <BasicLineChart bookings={bookings}/>
+        </div>
+      </div>
+        <div className="flex justify-center w-full my-4">
+          <button onClick={()=>navigate("/admin/reports")} className='bg-blue-500 w-1/2 py-2 rounded-md text-white font-bold mx-5'>SALES REPORT</button>
+        </div>
     </div>
   )
 }

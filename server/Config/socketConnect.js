@@ -11,6 +11,14 @@ export default function socketConnect(io, activeUsers){
             io.emit("get-users", activeUsers);
 
         })
+        socket.on('send-message',(data)=>{
+            const{reciverId}=data
+            const user=activeUsers[reciverId]
+            console.log('sending to ',reciverId)
+            if(user){
+                io.to(user.socketId).emit('recive-message',data)
+            }
+        })
         socket.on("disconnect",()=>{
             Object.keys(activeUsers).forEach((key) => {
                 if(activeUsers[key].socketId === socket.id) {

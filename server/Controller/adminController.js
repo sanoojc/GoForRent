@@ -12,7 +12,6 @@ var salt = bcrypt.genSaltSync(10)
 export async function login(req, res) {
     try {
         const { email, password } = req.body
-        console.log(req.body)
         const admin = await adminModel.findOne({ email })
         if (admin) {
             if (!bcrypt.compareSync(password, admin.password)) {
@@ -27,7 +26,7 @@ export async function login(req, res) {
             return res.json({ error: true, login: false, message: "admin not found" })
         }
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function validateAdmin(req, res) {
@@ -43,7 +42,6 @@ export async function validateAdmin(req, res) {
         }
         return res.json({ error: false, admin, login: true, message: 'successfully logged in' });
     } catch (err) {
-        console.log(err)
         res.json({ login: false, error: err });
     }
 }
@@ -54,11 +52,10 @@ export async function getHub(req, res) {
         if (name == null || name == "undefined") {
             name = ''
         }
-        console.log(name, 'name')
         const hub = await hubModel.find({ hubName: new RegExp(name, "i") }).lean()
         return res.json({ error: false, message: 'sucess', hub: hub })
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function addHub(req, res) {
@@ -71,11 +68,10 @@ export async function addHub(req, res) {
         } else {
             const newHub = new hubModel({ hubName, longitude, latitude })
             newHub.save()
-            console.log('hii')
             return res.json({ error: false, message: 'hub sucessfully added' })
         }
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function editHub(req, res) {
@@ -88,15 +84,13 @@ export async function editHub(req, res) {
             return res.json({ error: true, message: 'something went wrong' })
         }
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function listHub(req, res) {
     try {
         const id = req.query.id
-        console.log(id, 'hub id')
         let hub = await hubModel.findById({ _id: id })
-        console.log(hub, 'hub')
         if (hub) {
             if (hub.list) {
                 hub = await hubModel.findByIdAndUpdate(id, { $set: { list: false } })
@@ -109,14 +103,7 @@ export async function listHub(req, res) {
             return res.json({ error: true, message: 'Hub not found' })
         }
     } catch (err) {
-        console.log(err)
-    }
-}
-export async function deleteHub(req, res) {
-    try {
-
-    } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 //USERS
@@ -126,15 +113,13 @@ export async function getUsers(req, res) {
         const users = await userModel.find({ name: new RegExp(name, "i") }).lean()
         return res.json({ error: false, user: users })
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function banUser(req, res) {
     try {
         const id = req.params.id
-        console.log(id)
         let user = await userModel.findById({ _id: id })
-        console.log(user)
         if (user) {
             if (user.ban) {
                 user = await userModel.findByIdAndUpdate(id, { $set: { ban: false } })
@@ -147,17 +132,16 @@ export async function banUser(req, res) {
             return res.json({ error: true, message: 'user not found' })
         }
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 //CATEGORY
 export async function fetchCategory(req, res) {
     try {
         const categories = await categoryModel.find()
-        console.log(categories)
         return res.json({ error: false, message: 'sucess', categories })
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function addCategory(req, res) {
@@ -180,7 +164,6 @@ export async function findCategory(req, res) {
         const category = await categoryModel.findById(id)
         return res.json({ error: false, message: 'sucess', category })
     } catch (err) {
-        console.log(err)
         return res.json({ error: true, message: 'internal server error' })
     }
 }
@@ -203,7 +186,7 @@ export async function addCategoryItem(req, res) {
             return res.json({ error: true, message: 'Field is empty' })
         }
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 
 
@@ -215,12 +198,10 @@ export async function getBookings(req, res) {
         const bookings = await bookingModel.find().populate('userId').lean()
         res.json({ error: false, message: 'sucess', bookings })
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function changeBookingStatus(req, res) {
-    console.log(req.query)
-    console.log(req.body)
     try {
         const booking = await bookingModel.findByIdAndUpdate({ _id: req.query.id }, { $set: { paymentStatus: req.body.status } })
         if (booking) {
@@ -230,7 +211,7 @@ export async function changeBookingStatus(req, res) {
 
         }
     } catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 
 }
@@ -245,6 +226,102 @@ export async function fetchDashboardData(req, res) {
         return res.json({ error: false, message: 'sucess', users, vehicles, bookings, hubs })
     }
     catch (err) {
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
+    }
+}
+
+// sales report
+export async function salesReport(req, res) {
+    try {
+        let startDate = new Date(new Date().setDate(new Date().getDate() - 8));
+        let endDate = new Date();
+        let filter = req.query.filter ?? ""
+        if (req.query.startDate) startDate = new Date(req.query.startDate);
+        if (req.query.endDate) endDate = new Date(req.query.endDate);
+        const currentDate = new Date();
+        startDate.setHours(0,0,0,0)
+        endDate.setHours(24,0,0,0)
+        switch (req.query.filter) {
+            case 'thisYear':
+                startDate = new Date(currentDate.getFullYear(), 0, 1);
+                endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                break;
+            case 'lastYear':
+                startDate = new Date(currentDate.getFullYear() - 1, 0, 1);
+                endDate = new Date(currentDate.getFullYear() - 1, 11, 31);
+                break;
+            case 'thisMonth':
+                startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                break;
+            case 'lastMonth':
+                startDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+                endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                break;
+            default:
+                if (!req.query.filter && !req.query.startDate) filter = "lastWeek";
+            }
+        let salesCount = 0;
+        let completedBookings;
+        let salesSum = 0
+        let result
+        if (req.query.startDate || req.query.endDate || req.query.filter) {
+            if (req.query.startDate) {
+                startDate = new Date(startDate);
+            }
+            if (req.query.endDate) {
+                endDate = new Date(endDate);
+            }
+            if (req.query.filter) {
+                filter = req.query.filter;
+            }
+            const query = {};
+            query.toDate= { $gte: startDate, $lte: endDate };
+            const bookings = await bookingModel.find(query).sort({ date: -1 }).lean();
+            salesCount = bookings.length;
+            completedBookings = bookings.filter(item => item.paymentStatus === "Completed");
+            completedBookings.forEach((item) =>{
+                salesSum = item.totalAmount+salesSum
+                console.log(item)
+            });
+            console.log(salesSum);
+        }
+        else {
+            console.log("else case");
+            completedBookings = await bookingModel.find({ paymentStatus: "Completed" }).lean();
+         
+            completedBookings = completedBookings.map((booking) => {
+                booking.toDate = new Date(booking.date).toLocaleString();
+                return booking;
+            });
+            salesCount=await bookingModel.countDocuments({ 'paymentStatus': 'Completed' });
+            result=await bookingModel.aggregate([
+                {
+                    $match: { 'paymentStatus': 'Completed' }
+                },
+                {
+                    $unwind: "$paymentStatus"
+                },
+                {
+                    $match: { 'paymentStatus': 'Completed' }
+                },
+                {
+                    $group: { _id: null, totalPrice: { $sum: '$total' } }
+                }
+            ]);
+            salesSum = result[0]?.totalPrice ?? 0
+        }
+        const users = await bookingModel.distinct('address.name')
+        const userCount = users.length
+        for (const i of completedBookings) {
+            i.dispatch = new Date(i.dispatch).toLocaleDateString()    
+        }
+        console.log(salesSum)
+        console.log(startDate,endDate,'dates....');
+        res.json({ userCount, salesCount, salesSum, completedBookings })
+    } catch (error) {
+        console.log(error)
+        res.status(404)
+        throw new Error("cant get")
     }
 }

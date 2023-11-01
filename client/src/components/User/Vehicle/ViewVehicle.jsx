@@ -114,7 +114,7 @@ function ViewVehicle() {
                                         maxDate={checkOut}
                                         dateFormat="dd/MM/yyyy"
                                         excludeDates={disableDays}
-                                        onChange={handleCheckIn}
+                                        onChange={handleCheckIn} 
                                     />
                                     {/* <input className='outline-none' type='date' min={new Date().toISOString().split('T')[0]} defaultValue={'2023-10-06'} onChange={handleCheckIn}></input> */}
                                 </div>

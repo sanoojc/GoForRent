@@ -15,6 +15,7 @@ import AddCategories from '../../components/Admin/Categories/AddCategories';
 import ViewCategory from '../../components/Admin/Categories/ViewCategory';
 import EditVehicle from '../../components/Admin/ShowVehicles/EditVehicle/EditVehicle';
 import Bookings from '../../components/Admin/Bookings/Bookings';
+import SalesReport from '../../components/Admin/SalesReport/SalesReport';
 
 
 
@@ -47,6 +48,7 @@ function AdminRoutes() {
                 <Route path='/addHub' element={<AddHub/>}/>
                 <Route path='/addCategory' element={<AddCategories/>}/>
                 <Route path='/viewCategory' element={<ViewCategory/>}/>
+                <Route path='/reports' element={<SalesReport/>}/>
 
               </>
           }

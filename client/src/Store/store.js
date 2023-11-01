@@ -5,7 +5,6 @@ const initialState={
     user:{login:null,
          data:null,
         bookings:null},
-    employees:{login:null},
     refresh:true
 }
 function reducer(state=initialState,action){

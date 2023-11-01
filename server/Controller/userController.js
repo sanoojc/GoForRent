@@ -38,24 +38,21 @@ export async function login(req, res) {
       res.json({ error: true, message: "you have not registered.please sign up" })
     }
   } catch (err) {
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
 }
 export async function forgotPassword(req,res){
   try{
     const {email}=req.body
-    console.log(req.body,'hiiii')
     const user=await userModel.findOne({email:email})
     if(!user){
       return res.json({error:true,message:'No user found !'})
     }
-    console.log(user,'hiii')
     const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
     sentOTP(email,otp)
     Otp = otp
     return res.json({ error: false, message: 'success' })
   }catch(error){
-    console.log(error);
     res.json({ error, error: true, message: "Something went wrong" });           
   }
 
@@ -75,7 +72,6 @@ export async function signup(req, res) {
   }
   const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false });
   // // mobileOTP(number,otp)
-  console.log(otp)
   sentOTP(email, otp)
   Otp = otp
   userDetails = req.body
@@ -97,7 +93,6 @@ export async function validateUser(req, res) {
     }
     return res.json({ user, login: true });
   } catch (err) {
-    console.log(err)
     res.json({ login: false, error: err });
   }
 }
@@ -110,7 +105,7 @@ export async function resendOtp(req, res) {
     sentOTP(email, otp)
     return res.json({ error: false, message: 'success' })
   } catch (err) {
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
 }
 export async function verifyOtp(req, res) {
@@ -128,7 +123,6 @@ export async function verifyOtp(req, res) {
 }
 export async function verifyMailOtp(req, res) {
   try{
-    console.log(req.body)
     const {otp} = req.body
     if(!Otp){
       return res.json({error:true,message:'Something went wrong'})
@@ -225,7 +219,6 @@ export async function addProof(req,res){
     return res.json({error:false,message:'Success'})
   }
   }catch(error){
-    console.log(error)
     return res.json({error:true,message:'something went wrong'})
   }
 
@@ -243,13 +236,12 @@ export async function fetchUserData(req,res){
     }
     return res.json({error:true,message:'no user found'})
   }catch(err){
-    console.log(err)
-  }
+    return res.json({ error: true, message: 'internal server error' })
+    }
 }
 export async function editProfile (req,res){
   try{
     const{id,name,profileUrl}=req.body
-    console.log(profileUrl)
     if(profileUrl){
       const user=await userModel.findByIdAndUpdate(id,{$set:{name,profile:profileUrl}})
       res.json({error:false,message:'success',user})
@@ -258,9 +250,8 @@ export async function editProfile (req,res){
       res.json({error:false,message:'success',user})
 
     }
-    console.log(user)
   }catch(err){
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
   
   
@@ -283,7 +274,6 @@ export async function changePassword(req,res){
     }
   }catch(err){
     return res.json({error:true,message:"Internal server error"})
-    console.log(err)
   }
 
 }
@@ -291,7 +281,6 @@ export async function changePassword(req,res){
 export async function setNewPassword(req,res){
   try{
 
-    console.log(req.body)
     const {email,password,confirmPassword}=req.body
     if(password.length<4 || password.trim()==''){
       return res.json({error:true,message:'Password must be atleast 4 digits'})
@@ -301,12 +290,10 @@ export async function setNewPassword(req,res){
       const user=await userModel.findOneAndUpdate({email:email},{$set:{
         password:hashedPassword
       }})
-      console.log(user)
       return res.json({error:false,message:'Success'})
     }
     
   }catch(error){
-    console.log(error)
     return res.json({error:true,message:'Internal server error'})
   }
 }
@@ -314,45 +301,40 @@ export async function logout(req, res) {
   try {
     res.json({ error: false, message: 'logged out successfully' })
   } catch (err) {
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
 }
 
 export async function getVehicles(req, res) {
   try {
-    console.log(req.body)
     const name = req.query.name ?? ''
     const page = req.query.page ?? 1
     const count = req.query.count ?? 3
     const sort = req.query.sort ?? ''
-    
+    const bodyType=req.body.BodyType??''
+    const fuelType=req.body.FuelType??''
+    const transmission=req.body.BodyType??''
     const skip = (page - 1) * count
-    console.log(name,'name')
-    console.log(page,'page')
-    console.log(count,'count')
-    console.log(skip,'skip')
-    console.log(sort,'sorted')
     const hub = req.query.hub ? req.query.hub:'calicut'
       const hubs=await hubModel.find({list:true}).lean()
       const categories=await categoryModel.find().lean()
     if (sort) {
       if (sort === 'name') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },bodyType: { $regex: new RegExp(bodyType, "i") },fuelType: { $regex: new RegExp(fuelType, "i") },transmission: { $regex: new RegExp(transmission, "i") },list: true})
         .sort({ vehicleName: 1 })
-        .limit(count).
-        skip(skip)
+        .limit(count)
+        .skip(skip)
         .lean()
-        console.log(vehicle,'hhhhhhhh')
         return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
       } else if (sort === 'Low to High') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },bodyType: { $regex: new RegExp(bodyType, "i") },fuelType: { $regex: new RegExp(fuelType, "i") },transmission: { $regex: new RegExp(transmission, "i") },list: true})
         .sort({ rent: 1 })
         .limit(count)
         .skip(skip)
         .lean()
         return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
       } else if (sort === 'High to Low') {
-        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+        const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },bodyType: { $regex: new RegExp(bodyType, "i") },fuelType: { $regex: new RegExp(fuelType, "i") },transmission: { $regex: new RegExp(transmission, "i") },list: true})
         .sort({ rent: -1 })
         .limit(count)
         .skip(skip)
@@ -360,14 +342,14 @@ export async function getVehicles(req, res) {
         return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
       }
     } else {
-      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },list: true})
+      const vehicle = await vehicleModel.find({$or:[{vehicleName: new RegExp(name, "i")},{brand: new RegExp(name, "i")}],hubId: { $regex: new RegExp(hub, "i") },bodyType: { $regex: new RegExp(bodyType, "i") },fuelType: { $regex: new RegExp(fuelType, "i") },transmission: { $regex: new RegExp(transmission, "i") },list: true})
       .limit(count)
       .skip(skip)
       .lean()
       return res.json({ error: false, message: 'success',hubs, vehicles: vehicle,categories })
     }
   } catch (err) {
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
 }
 
@@ -409,7 +391,6 @@ export async function paymentVerification(req, res) {
     const { response} = req.body
 
     const details=req.body.details??''
-    console.log(details,'zpsdhfjkal ')
     const body = response.razorpay_order_id + "|" + response.razorpay_payment_id;
     const start = new Date(details.vehicleData.checkIn)
     const end = new Date(details.vehicleData.checkOut)
@@ -425,20 +406,26 @@ export async function paymentVerification(req, res) {
       if(!user.licenseImage.length && !user.idImage.length && !details){
         return res.json({error:true,message:'User ID and license must be uploaded'})
       }
-      console.log(user)
       if (user.licenseImage.includes(null) || user.idImage.includes(null)) {
         return res.json({ error: true, message: 'Reupload the image' });
       }
-      if(user.licenseImage)
-      if(!user.licenseImage.length || !user.idImage.length==0){
-        console.log(details)
-        user.licenseImage.push(details.licenseFrontUrl,details.licenseBackUrl)
-        user.idImage.push(details.idFrontUrl,details.idBackUrl)
+
+      if(!user.licenseImage.length || !user.idImage.length){
+        if(details.idFrontUrl && details.idBackUrl){
+          if(details.idBackUrl==null || details.idFrontUrl==null){
+          }else{
+            user.idImage.push(details.idFrontUrl,details.idBackUrl)
+          }
+        }
+        if(details.licenseFrontUrl && details.licenseBackUrl){
+          if(details.licenseFrontUrl==null || details.licenseBackUrl==null){
+          }else{
+            user.licenseImage.push(details.licenseFrontUrl,details.licenseBackUrl)
+          }
+        }
         user.idType=details.idType
         user.idNumber=details.idNumber
-        console.log(user)
-        await user.save()
-        console.log(user)
+        await user.save()              
       }
       const booking = new bookingModel({
         userId:user._id,
@@ -457,7 +444,6 @@ export async function paymentVerification(req, res) {
       return res.json({error: true,message: "payment verification failed",});
     }
   } catch (error) {
-    console.log(error);
     res.json({ error, err: true, message: "Something went wrong" });
   }
 }
@@ -469,7 +455,6 @@ export async function refund(req,res){
     
     const paymentId=booking.paymentDetails.razorpay_payment_id
     const amount=(booking.totalAmount*100)
-    console.log(amount)
     const refund=await instance.payments.refund(paymentId,{
       amount: amount,
       speed: "optimum",
@@ -479,7 +464,6 @@ export async function refund(req,res){
     await booking.save()
     res.json({error:false,message:'sucess'})
   }catch(err){
-    console.log('hiiiii',err)
     return res.json({error:true,message:'Internal server error'})
   }
 }
@@ -488,10 +472,9 @@ export async function refund(req,res){
 export async function filterElements(req,res){
   try{
     const categories=await categoryModel.find().lean()
-    console.log(categories)
     return res.json({error:false,message:'sucess',categories:categories})
   }catch(err){
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
 }
 // HUB
@@ -500,7 +483,7 @@ export async function getHub(req,res){
     const hubs=await hubModel.find().lean()
     return res.json({error:false,message:'sucess',hubs})
   }catch(err){
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
   }
 }
 
@@ -524,7 +507,5 @@ export async function bookingDates (req,res){
     return res.json({error:false,message:'sucess',allDates})
   }catch(err){
     res.json({error:true,message:'Internal server error'})
-    console.log(err)
   }
-
 }

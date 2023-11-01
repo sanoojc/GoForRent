@@ -18,6 +18,7 @@ export async function userChats(req,res){
         return res.json({eror:false,message:'sucess',chat})
     }catch(err){
         console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function findChat(req,res){
@@ -26,5 +27,6 @@ export async function findChat(req,res){
         return res.json({eror:false,message:'sucess',chat})
     }catch(err){
         console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }

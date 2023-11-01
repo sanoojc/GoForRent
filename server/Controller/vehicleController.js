@@ -6,7 +6,7 @@ export async function getVehicle(req,res){
         const vehicles=await vehicleModel.find({ vehicleName: new RegExp(name, "i") }).lean()
         return res.json({error:false,vehicles:vehicles})
     }catch(err){
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function listVehicle(req,res){
@@ -30,7 +30,7 @@ export async function listVehicle(req,res){
         }
     }
     catch(err){
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 
 }
@@ -50,14 +50,13 @@ export async function addVehicle(req,res){
             res.status(400).json({error:true,message:'cannot get all fields'})
         }
     }catch(err){
-        console.log(err)
+        return res.json({ error: true, message: 'internal server error' })
     }
 }
 export async function editVehicle(req,res){
     try{
     const {id}=req.query
     const {details,images}=req.body
-    console.log(req.body, "body ++++");
     if(details.hubId.trim()===''||details.vehicleName.trim()===''||details.brand.trim()===''|| !details.year||details.classOfVehicle.trim()===''||details.bodyType.trim()===''||details.transmission.trim()===''||details.fuelType.trim()===''|| !details.noOfSeats||details.vehicleNumber.trim()===''|| !details.rent){
         return res.json({error:true,message:'fill all fields'})
     }else{
@@ -97,6 +96,6 @@ export async function editVehicle(req,res){
         }
     }
 }catch(err){
-    console.log(err)
+    return res.json({ error: true, message: 'internal server error' })
 }
 }

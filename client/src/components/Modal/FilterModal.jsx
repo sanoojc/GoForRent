@@ -52,7 +52,6 @@ export default function FilterModal({ value,handleFilter, setShowModal, categori
                     key={item._id}
                     onChange={(e)=>setValue(e,item.name)}
                     value={data[item.name]}
-                    label="Age"
                   >
                     {
                       item.items.map((elem)=>(

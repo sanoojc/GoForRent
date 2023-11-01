@@ -27,7 +27,6 @@ function ForgotPassword({ close }) {
         toast.error(data.message)
       else {
         toast.success(data.message)
-        console.log('hi')
         setEmailModal(false)
       }
     }
@@ -60,7 +59,7 @@ function ForgotPassword({ close }) {
               </div>
             </div>) : (
           !validation ?
-        (<Otp validation={()=>setValidation(true)} />) :(<NewPassword colse={close} email={email} />)
+        (<Otp email={email} validation={()=>setValidation(true)} />) :(<NewPassword colse={close} email={email} />)
         
         )
           }
