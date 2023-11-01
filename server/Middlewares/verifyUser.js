@@ -14,6 +14,7 @@ const verifyUser=async(req,res,next)=>{
         }
     }catch(err){
         console.log(err)
+        res.json({error:true,message:'internal server error'})
     }
 }
 export default verifyUser
